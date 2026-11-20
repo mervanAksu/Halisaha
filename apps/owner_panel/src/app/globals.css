@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-textPrimary antialiased;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-white hover:bg-primary/90;
+  }
+  .btn-accent {
+    @apply btn bg-accent text-white hover:bg-accent/90;
+  }
+  .btn-secondary {
+    @apply btn border border-border bg-white text-textPrimary hover:bg-surface;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-white hover:bg-danger/90;
+  }
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+  .input {
+    @apply w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-textPrimary placeholder:text-textSecondary focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 disabled:bg-surface;
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium text-textPrimary;
+  }
+  .hint {
+    @apply mt-1 text-xs text-textSecondary;
+  }
+  .panel-card {
+    @apply rounded-2xl border border-border bg-card p-6 shadow-sm;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold;
+  }
+  .bg-stripes {
+    background-image: repeating-linear-gradient(
+      45deg,
+      #d1d5db,
+      #d1d5db 6px,
+      #e5e7eb 6px,
+      #e5e7eb 12px
+    );
+  }
+}
