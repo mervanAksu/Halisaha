@@ -17,7 +17,6 @@ jobs:
 
   mobile:
     runs-on: ubuntu-latest
-    if: ${{ hashFiles('apps/mobile/pubspec.yaml') != '' }}
     defaults: { run: { working-directory: apps/mobile } }
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +28,6 @@ jobs:
 
   owner-panel:
     runs-on: ubuntu-latest
-    if: ${{ hashFiles('apps/owner_panel/package.json') != '' }}
     defaults: { run: { working-directory: apps/owner_panel } }
     steps:
       - uses: actions/checkout@v4
