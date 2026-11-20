@@ -14,3 +14,10 @@ do $$ begin
 end $$;
 grant usage on schema public, auth to anon, authenticated, service_role;
 grant execute on function auth.uid() to anon, authenticated, service_role;
+
+-- Mirror Supabase's default privileges: on a real project, every new table/function/sequence in `public`
+-- is granted to anon/authenticated/service_role automatically. Migrations must revoke explicitly.
+-- (Without this line the local suite missed a critical privilege bug — see CHANGELOG "Security".)
+alter default privileges in schema public grant all on tables    to anon, authenticated, service_role;
+alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
+alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
