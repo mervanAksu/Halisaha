@@ -9,7 +9,7 @@ venues 1─1 venue_payout_accounts (IBAN; yalnızca sahibi + admin görür)
 venues 1─* venue_hours (iso_weekday, open_time, close_time; close<=open → gece yarısını aşar)
 venues 1─* pitches (hourly_price_kurus, deposit_kurus, slot_minutes)
 pitches 1─* bookings (source: app|manual|block; status: pending_payment|confirmed|cancelled|expired|completed|no_show)
-bookings 1─* payments (merchant_oid unique; status: initiated|succeeded|failed|refund_required|refunded)
+bookings 1─* payments (merchant_oid unique; status: initiated|succeeded|failed|refund_required|refund_processing|refunded)
 profiles *─* venues  via favorites
 profiles 1─* device_tokens
 ```
@@ -21,7 +21,8 @@ profiles 1─* device_tokens
 - **Komisyon:** `commission_kurus = deposit_kurus × venues.commission_bps / 10000` (varsayılan %10). Rezervasyon anında sabitlenir.
 - **Durum geçişleri:**
   - `pending_payment → confirmed` (ödeme başarılı) | `cancelled` (müşteri) | `expired` (süre doldu)
-  - `expired → confirmed` (geç gelen başarılı ödeme, slot hâlâ boşsa; doluysa ödeme `refund_required`)
+  - `expired → confirmed` (geç gelen başarılı ödeme, slot hâlâ boşsa ve maç başlamamışsa; aksi halde ödeme `refund_required`)
+  - Ödeme: `initiated → succeeded | failed | refund_required`; `succeeded → refund_required` (iade hakkı doğan iptal); `refund_required → refund_processing` (iade işi talep eder) `→ refunded`, PayTR reddederse geri `refund_required`
   - `confirmed → cancelled` (müşteri/işletme) | `completed` (cron, bitiş saatinden sonra) | `no_show` (işletme)
 - **Silinen kullanıcı:** `bookings.user_id` ve `payments.user_id` alanları `set null` olur. Mali kayıt korunur.
 

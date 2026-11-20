@@ -58,3 +58,11 @@ cd apps/owner_panel && npm ci && npm run typecheck && npm run lint && npm run de
 - Kuruşu float ile hesaplama.
 - Ödeme sonucunu istemciden gelen bilgiye göre onaylama.
 - Referans uygulamanın markasını, görsellerini veya metinlerini kopyalama.
+- Yeni bir SQL fonksiyonunu yalnızca `from public` ile kısıtlama. Supabase yeni fonksiyonları anon ve
+  authenticated rollerine otomatik açar. Bu hata ilk incelemede kritik bir açık olarak yakalandı.
+
+## Öğrenilenler (incelemelerden)
+- 2026-11-20: Varsayılan fonksiyon yetkileri, müşterinin `confirm_payment` RPC'sini çağırıp ödeme yapmadan
+  rezervasyon onaylatmasına izin veriyordu. Çözüm: migration 090800'daki allow-list ve test 30a.
+- 2026-11-20: Geç gelen ödeme, başlamış bir maçı onaylayabiliyordu. Çözüm: `starts_at <= now()` → iade.
+- Bu tür dersler buraya kısa bir satır olarak eklenir ve ilgili skill dosyası da güncellenir.

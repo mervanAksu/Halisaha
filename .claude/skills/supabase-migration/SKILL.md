@@ -24,10 +24,14 @@ description: Supabase'e yeni tablo, kolon, RLS politikası veya RPC eklerken izl
      if auth.uid() is null then raise exception 'not_authenticated' using errcode = '28000'; end if;
      -- yetki kontrolü, iş kuralı, insert/update
    end $$;
-   revoke all on function public.do_thing(uuid) from public;
-   grant execute on function public.do_thing(uuid) to authenticated;
+   -- Supabase grants EXECUTE on new public functions to anon/authenticated by default.
+   -- `from public` alone is NOT enough:
+   revoke all on function public.do_thing(uuid) from public, anon, authenticated;
+   grant execute on function public.do_thing(uuid) to authenticated;   -- or service_role for server-only
    ```
+   Then add the function name to the allow-list in `supabase/tests/30_privileges_and_hardening.sql` (test 30a).
+   That test fails for any function callable by anon/authenticated that is not on the list.
 5. **Hata kodları:** İstemcinin anlayacağı sabit mesajlar kullanılır (`slot_taken`, `outside_opening_hours`, `hold_expired` …). Bu kodlar `docs/API_CONTRACT.md` içindeki hata tablosunda listelenir.
-6. **Test yaz:** `supabase/tests/NNN_<konu>.sql` dosyası oluştur. Test, `assert`/`raise exception` ile başarısızlığı göstermeli. `./supabase/tests/run_local.sh` ile çalıştır.
+6. **Test yaz:** Test ortamı (`00_supabase_shim.sql`) Supabase'in varsayılan yetkilerini taklit eder; yetki testleri gerçekçidir. `supabase/tests/NNN_<konu>.sql` dosyası oluştur. Test, `assert`/`raise exception` ile başarısızlığı göstermeli. `./supabase/tests/run_local.sh` ile çalıştır.
 7. **Belgele:** `docs/DATA_MODEL.md` ve `docs/API_CONTRACT.md` dosyalarını güncelle.
 8. Panel tiplerini yeniden üret: `supabase gen types typescript --local > apps/owner_panel/src/lib/database.types.ts`.

@@ -10,6 +10,9 @@ description: Mobil uygulamayı TestFlight, Google Play kapalı test ve mağaza y
 - [ ] Apple Developer Program (99 USD/yıl), Google Play Console (25 USD, tek seferlik)
 - [ ] Google kişisel hesap kullanılıyorsa: 12 test kullanıcısı ile **14 gün kesintisiz** kapalı test gerekir
 - [ ] PayTR canlı hesap onayı ve callback URL tanımı
+- [ ] İade cron'u (`paytr-refunds`) canlı projede zamanlandı (docs/PAYMENTS_PAYTR.md §İade)
+- [ ] Supabase Auth: SMS rate limit + captcha açık; `config.toml`'daki sabit test OTP numarası canlıda **yok**
+- [ ] Canlı DB'de `select proname, proacl from pg_proc where pronamespace = 'public'::regnamespace` ile fonksiyon yetkileri kontrol edildi
 
 ## Uygulama
 - [ ] `flutter build appbundle --release` / `flutter build ipa --release` başarılı

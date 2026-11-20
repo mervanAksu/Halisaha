@@ -32,8 +32,13 @@ Mobil                   Supabase (RPC/Edge)                      PayTR
 ## PayTR panel ayarları
 - **Bildirim URL:** `https://<proje>.supabase.co/functions/v1/paytr-callback` (`verify_jwt=false`)
 - Başarılı ve başarısız dönüş URL'leri yalnızca WebView'in kapanması için kullanılır. Sonuç backend'den okunur.
+- `PAYMENT_RESULT_BASE_URL` yolu `/payment/result` içermelidir. Mobil uygulama WebView'i bu yolu görünce kapatır.
 
 ## İade
+> **Zorunlu kurulum adımı:** iade cron'u repo migration'larında yok, çünkü proje URL'si ve gizli anahtar ortama özel. Canlıya çıkmadan önce aşağıdaki `cron.schedule` çalıştırılmalıdır. Yoksa iadeler hiç işlenmez.
+
+İade işi kayıtları `claim_refunds` ile atomik olarak talep eder (`refund_processing`, `SKIP LOCKED`). Böylece aynı anda çalışan iki iş aynı ödemeyi iki kez iade edemez. İade tutarı tahsil edilen tutarı aşamaz. PayTR reddederse kayıt sebebiyle birlikte kuyruğa döner. Ağ hatasında sonuç belirsiz olduğu için kayıt `refund_processing` durumunda kalır ve elle kontrol edilir.
+
 `payments.status='refund_required'` → `paytr-refund` fonksiyonu (dakikalık/saatlik cron, `x-cron-secret` header'ı ile)
 → `https://www.paytr.com/odeme/iade` (`merchant_id, merchant_oid, return_amount ("500.00"), paytr_token = base64(HMAC(merchant_id+merchant_oid+return_amount+salt, key))`) → `mark_refunded`.
 

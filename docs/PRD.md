@@ -27,13 +27,13 @@ uygulama. Kapora işletmeyi no-show'a karşı korur. İşletme takvimini tek bir
 | M7 | Favorilerim | Favori sahalar listesi |
 | M8 | Destek | E-posta, telefon, WhatsApp, web sitesi, SSS (akordeon) |
 | M9 | Profilim | Ad ve telefon, profili düzenle, bildirim ayarları, Hakkında, Gizlilik Politikası, Kullanım Koşulları, KVKK Aydınlatma Metni, Mesafeli Satış Sözleşmesi, Çıkış, **Hesabımı sil** |
-| M10 | Push bildirim | Rezervasyon onaylandı, maçtan 2 saat önce hatırlatma, işletme iptal etti |
+| M10 | Push bildirim (**v1.1'e ertelendi**) | Rezervasyon onaylandı, maçtan 2 saat önce hatırlatma, işletme iptal etti. `device_tokens` tablosu hazır, FCM entegrasyonu `apps/mobile/lib/features/notifications/README.md` dosyasında |
 
 ### İşletme paneli (web)
 | # | Özellik | Kabul kriteri |
 |---|---|---|
 | P1 | Giriş | E-posta + şifre. Yalnızca `owner` veya `admin` rolü girebilir |
-| P2 | Takvim | Saha bazlı gün ve hafta görünümü. Uygulama rezervasyonu, manuel rezervasyon, kapalı saat ve bekleyen ödeme farklı renkte. Tıklayınca detay |
+| P2 | Takvim | Saha bazlı gün görünümü (hafta görünümü v1.1). Uygulama rezervasyonu, manuel rezervasyon, kapalı saat ve bekleyen ödeme farklı renkte. Tıklayınca detay |
 | P3 | Manuel rezervasyon / saat kapatma | Boş slota tıkla → müşteri adı ve telefonu gir veya "kapat" → `owner_create_manual_booking` |
 | P4 | Rezervasyon listesi | Filtre (tarih, durum), iptal (uygulama rezervasyonunda iade uyarısı), geldi / gelmedi işaretleme |
 | P5 | Tesis ayarları | Bilgiler, fotoğraflar, haftalık çalışma saatleri (gece yarısını aşabilir), iptal penceresi |
@@ -42,6 +42,8 @@ uygulama. Kapora işletmeyi no-show'a karşı korur. İşletme takvimini tek bir
 | P8 | Admin | Saha onayı/askıya alma, komisyon oranı, iade bekleyen ödemeler listesi |
 
 ## v1.1
+- Push bildirimleri (M10)
+- Panelde hafta görünümü ve çoklu slot kapatma
 - Kampanya sayacı ("5 maç oyna, 6. maçın kaporası bizden")
 - Saha puanlama ve yorum
 - Takım arkadaşlarını davet ve kaporayı bölüşme
