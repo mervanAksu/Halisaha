@@ -73,7 +73,7 @@ askıya alır, komisyonu ve alt üye işyeri anahtarını belirler.
 
 ### Yalnızca service role (Edge Function / cron)
 `start_payment(booking_id, user_id)`, `confirm_payment(merchant_oid, success, total_amount_kurus, payload)`,
-`expire_stale_holds()`, `complete_past_bookings()`.
+`expire_stale_holds()`, `complete_past_bookings()`, `prepare_account_deletion(user_id)`, `mark_refunded(payment_id, payload)`.
 
 ## Edge Functions (`supabase.functions.invoke(name, body)`)
 
@@ -92,9 +92,9 @@ WebView'in `merchant_ok_url` veya `merchant_fail_url` adresine yönlenmesi yaln�
 İstek: `{}`. Gelecekteki `confirmed` rezervasyonlar iptal edilir. İptal penceresi içindeyse kapora kuralı aynen
 uygulanır. Ardından auth kullanıcısı silinir ve `profiles`, `favorites`, `device_tokens` cascade ile silinir.
 `bookings.user_id` ve `payments.user_id` alanları null'a çekilir; mali kayıt anonim olarak saklanır (VUK).
-Yanıt: `204`.
+Yanıt: `204`. Hatalar: `not_authenticated`, `owner_account` (saha sahibi hesapları platform ekibince kapatılır).
 
-### `paytr-refund` (cron, service role)
+### `paytr-refund` (cron; `x-cron-secret` header'ı zorunlu)
 `payments.status='refund_required'` kayıtlarını PayTR iade API'siyle iade eder ve `refunded` yapar.
 
 ## Hata kodları → kullanıcı mesajı
@@ -113,5 +113,6 @@ Yanıt: `204`.
 | `not_cancellable` | Bu rezervasyon iptal edilemez. |
 | `forbidden` | Bu işlem için yetkin yok. |
 | `invalid_range` / `invalid_status` / `invalid_source` | Geçersiz istek. |
+| `owner_account` | Saha sahibi hesapları uygulamadan silinemez. Destek ekibiyle iletişime geç. |
 | `payment_provider_error` | Ödeme altyapısına ulaşılamadı. Biraz sonra tekrar dene. |
 | (diğer) | Bir şeyler ters gitti. Tekrar dene. |

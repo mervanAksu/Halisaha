@@ -1,0 +1,26 @@
+# Supabase project config (local dev). Generated defaults trimmed to what this project changes.
+project_id = "halisaha"
+
+[api]
+schemas = ["public"]
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000"]
+
+[auth.sms]
+enable_signup = true
+enable_confirmations = true
+# Production: configure a Turkish SMS provider or Twilio + rate limits + captcha (see docs/DECISIONS.md ADR-6).
+[auth.sms.test_otp]
+# App Review demo number (fixed OTP). Remove or rotate after review.
+905550000099 = "123456"
+
+[auth.email]
+enable_signup = false   # owners are invited by the platform team
+
+[functions.paytr-callback]
+verify_jwt = false      # PayTR calls this; trust comes from the HMAC hash
+
+[functions.paytr-refund]
+verify_jwt = false      # protected by x-cron-secret

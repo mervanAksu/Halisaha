@@ -9,4 +9,6 @@ Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: S
 - Supabase şeması: sahalar, saha alanları, çalışma saatleri (gece yarısını aşabilir), rezervasyonlar, ödemeler, favoriler.
 - Çift rezervasyonu DB seviyesinde engelleyen exclusion constraint; 10 dk ödeme tutma; kullanıcı başına 2 tutma sınırı.
 - RLS politikaları ve RPC'ler: müsaitlik, tutma, iptal (iade penceresi), işletme manuel rezervasyon/kapatma, admin onayı.
-- Supabase CLI gerektirmeyen SQL test koşucusu ve 14 senaryoluk rezervasyon testi.
+- Supabase CLI gerektirmeyen SQL test koşucusu ve 17 senaryoluk rezervasyon/ödeme/hesap silme testi.
+- PayTR Edge Function'ları: ödeme başlatma (iFrame token), hash doğrulamalı idempotent callback, iade işi.
+- Uygulama içi hesap silme (gelecek rezervasyonlar iptal, mali kayıt anonimleştirilir).
