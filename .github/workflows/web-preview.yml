@@ -1,0 +1,93 @@
+name: Web preview (demo)
+
+# Builds the Flutter app in DEMO_MODE (no backend, fake payment) for the web and publishes it to GitHub Pages:
+#   https://mervanaksu.github.io/Halisaha/
+# One-time setup: repo Settings → Pages → Source: "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+    paths: ['apps/mobile/**', '.github/workflows/web-preview.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/mobile } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+
+      - name: Generate web platform folder (not committed)
+        run: |
+          flutter create . --platforms=web --project-name halisaha --org com.halisaha
+          # flutter create must not change tracked files; drop its sample test
+          git checkout -- lib test pubspec.yaml analysis_options.yaml
+          rm -f test/widget_test.dart
+
+      - name: Brand the web shell (title, home-screen name, colours)
+        run: |
+          python3 - <<'EOF'
+          import json, re
+          p = 'web/index.html'; s = open(p, encoding='utf-8').read()
+          s = re.sub(r'<title>.*?</title>', '<title>Halısaha · Demo</title>', s, flags=re.S)
+          s = re.sub(r'(name="apple-mobile-web-app-title" content=")[^"]*', r'\1Halısaha', s)
+          s = re.sub(r'(name="description" content=")[^"]*', r'\1Halı saha rezervasyon uygulaması (demo)', s)
+          if 'name="theme-color"' not in s:
+              s = s.replace('</head>', '  <meta name="theme-color" content="#0F2A44">\n</head>')
+          open(p, 'w', encoding='utf-8').write(s)
+          m = json.load(open('web/manifest.json', encoding='utf-8'))
+          m.update(name='Halısaha (Demo)', short_name='Halısaha', background_color='#F5F7FA',
+                   theme_color='#0F2A44', description='Halı saha rezervasyon uygulaması (demo)')
+          json.dump(m, open('web/manifest.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+          EOF
+
+      - run: flutter pub get
+      - name: Build (demo mode)
+        run: flutter build web --release --dart-define=DEMO_MODE=true --base-href /Halisaha/
+
+      - name: SPA fallback for GitHub Pages
+        run: cp build/web/index.html build/web/404.html
+
+      - name: Smoke test + iPhone-size screenshots
+        run: |
+          mkdir -p /tmp/site && cp -r build/web /tmp/site/Halisaha
+          (cd /tmp/site && python3 -m http.server 8080 >/dev/null 2>&1 &)
+          sleep 2
+          npx -y playwright@1.49.1 install chromium >/dev/null
+          for v in 390x844; do
+            npx -y playwright@1.49.1 screenshot --viewport-size=$v --wait-for-timeout=12000 \
+              http://localhost:8080/Halisaha/ /tmp/shot-home.png
+          done
+          ls -la /tmp/shot-*.png
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web-preview-screenshots
+          path: /tmp/shot-*.png
+
+      - uses: actions/configure-pages@v5
+        with: { enablement: true }
+        continue-on-error: true   # needs a one-time manual enable if the token may not do it
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: apps/mobile/build/web }
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
