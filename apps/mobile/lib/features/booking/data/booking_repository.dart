@@ -60,4 +60,17 @@ class BookingRepository {
         final response = await _client.rpc('cancel_booking', params: params);
         return CancelResult.fromJson(asRow(response));
       });
+
+  /// Status of the newest payment attempt of a booking (`initiated`, `succeeded`, `failed`,
+  /// `refund_required`, `refunded`), or null when none exists. RLS: own rows only.
+  Future<String?> fetchLatestPaymentStatus(String bookingId) => guard(() async {
+        final response = await _client
+            .from('payments')
+            .select('status')
+            .eq('booking_id', bookingId)
+            .order('created_at', ascending: false)
+            .limit(1);
+        final rows = asRows(response);
+        return rows.isEmpty ? null : rows.first['status'] as String?;
+      });
 }

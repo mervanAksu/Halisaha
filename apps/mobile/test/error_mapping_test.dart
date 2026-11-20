@@ -20,6 +20,13 @@ void main() {
     'invalid_status': 'Geçersiz istek.',
     'invalid_source': 'Geçersiz istek.',
     'payment_provider_error': 'Ödeme altyapısına ulaşılamadı. Biraz sonra tekrar dene.',
+    'owner_account': 'Saha sahibi hesapları uygulamadan silinemez. Destek ekibiyle iletişime geç.',
+    'venue_not_found': 'Tesis bulunamadı.',
+    'payment_not_found': 'Ödeme kaydı bulunamadı.',
+    'too_many_recent_holds': 'Kısa sürede çok fazla rezervasyon denemesi yaptın. Biraz sonra tekrar dene.',
+    'too_many_active_bookings': 'Aynı anda en fazla 4 aktif rezervasyonun olabilir.',
+    'too_many_payment_attempts': 'Bu rezervasyon için çok fazla ödeme denemesi yapıldı. Yeni bir saat seç.',
+    'slot_started': 'Bu maç başladığı için işlem yapılamaz.',
   };
 
   test('every contract code maps to its Turkish message', () {

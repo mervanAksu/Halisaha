@@ -38,6 +38,9 @@ class _VenueDetailScreenState extends ConsumerState<VenueDetailScreen> {
   DateTime? _selectedStart;
   late final DateTime _today = istanbulToday();
 
+  /// Before 06:00 (Istanbul) yesterday's business day is still open for overnight venues.
+  late final bool _includeYesterday = toIstanbul(DateTime.now()).hour < 6;
+
   Pitch _effectivePitch(VenueDetail venue) {
     for (final p in venue.pitches) {
       if (p.id == _pitchId) return p;
@@ -82,7 +85,7 @@ class _VenueDetailScreenState extends ConsumerState<VenueDetailScreen> {
   }
 
   AvailabilityKey _key(Pitch pitch) {
-    final date = DateTime.utc(_today.year, _today.month, _today.day + _dayIndex);
+    final date = DateTime.utc(_today.year, _today.month, _today.day + _dayIndex - (_includeYesterday ? 1 : 0));
     return (pitchId: pitch.id, isoDate: formatIsoDate(date));
   }
 
@@ -265,6 +268,7 @@ class _VenueDetailScreenState extends ConsumerState<VenueDetailScreen> {
       DateStrip(
         today: _today,
         selectedIndex: _dayIndex,
+        includeYesterday: _includeYesterday,
         onSelected: (i) => setState(() {
           _dayIndex = i;
           _selectedStart = null;

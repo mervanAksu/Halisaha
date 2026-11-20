@@ -22,6 +22,13 @@ const List<String> knownErrorCodes = <String>[
   'invalid_status',
   'invalid_source',
   'payment_provider_error',
+  'owner_account',
+  'venue_not_found',
+  'payment_not_found',
+  'too_many_recent_holds',
+  'too_many_active_bookings',
+  'too_many_payment_attempts',
+  'slot_started',
 ];
 
 /// Turkish user message for a contract error code (API_CONTRACT "Hata kodları").
@@ -59,6 +66,18 @@ String messageForCode(String code) {
       return S.errNetwork;
     case 'venue_not_found':
       return S.errVenueNotFound;
+    case 'owner_account':
+      return S.errOwnerAccount;
+    case 'payment_not_found':
+      return S.errPaymentNotFound;
+    case 'too_many_recent_holds':
+      return S.errTooManyRecentHolds;
+    case 'too_many_active_bookings':
+      return S.errTooManyActiveBookings;
+    case 'too_many_payment_attempts':
+      return S.errTooManyPaymentAttempts;
+    case 'slot_started':
+      return S.errSlotStarted;
     case 'profile_not_found':
       return S.errProfileMissing;
     default:

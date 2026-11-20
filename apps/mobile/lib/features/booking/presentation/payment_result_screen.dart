@@ -10,6 +10,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../domain/booking.dart';
+import '../domain/payment_session.dart';
 import 'booking_providers.dart';
 
 /// Decides success / failure purely from the booking status in the database.
@@ -46,29 +47,49 @@ class PaymentResultScreen extends ConsumerWidget {
           : const _Checking();
     } else if (value.isDecided) {
       final booking = value.booking!;
-      if (booking.status == BookingStatus.expired || booking.status == BookingStatus.cancelled) {
-        body = _Message(
-          icon: Icons.cancel_outlined,
-          color: AppColors.danger,
-          title: S.paymentFailedTitle,
-          text: S.paymentFailedBody,
-          actions: [
-            PrimaryButton(label: S.tryAgain, onPressed: () => context.go(AppRoutes.venue(booking.venueId))),
-            _secondary(context, S.goToMatches, () => context.go(AppRoutes.matches)),
-          ],
-        );
-      } else {
-        body = _Message(
-          icon: Icons.check_circle_outline,
-          color: AppColors.accent,
-          title: S.paymentSuccessTitle,
-          text: S.paymentSuccessBody,
-          extra: _BookingSummary(booking: booking),
-          actions: [
-            PrimaryButton(label: S.goToMatches, onPressed: () => context.go(AppRoutes.matches)),
-            _secondary(context, S.goHome, () => context.go(AppRoutes.home)),
-          ],
-        );
+      switch (value.outcome) {
+        case PaymentOutcome.success:
+          body = _Message(
+            icon: Icons.check_circle_outline,
+            color: AppColors.accent,
+            title: S.paymentSuccessTitle,
+            text: S.paymentSuccessBody,
+            extra: _BookingSummary(booking: booking),
+            actions: [
+              PrimaryButton(label: S.goToMatches, onPressed: () => context.go(AppRoutes.matches)),
+              _secondary(context, S.goHome, () => context.go(AppRoutes.home)),
+            ],
+          );
+        case PaymentOutcome.refund:
+          body = _Message(
+            icon: Icons.info_outline,
+            color: AppColors.warning,
+            title: S.paymentRefundTitle,
+            text: S.paymentRefundBody,
+            actions: [
+              PrimaryButton(label: S.goToMatches, onPressed: () => context.go(AppRoutes.matches)),
+              _secondary(context, S.goHome, () => context.go(AppRoutes.home)),
+            ],
+          );
+        case PaymentOutcome.failed:
+        case PaymentOutcome.checking:
+          // A failed attempt on a still-live hold can be retried without picking a new slot.
+          final holdAlive = booking.status == BookingStatus.pendingPayment &&
+              booking.holdExpiresAt != null &&
+              booking.holdExpiresAt!.isAfter(DateTime.now());
+          body = _Message(
+            icon: Icons.cancel_outlined,
+            color: AppColors.danger,
+            title: S.paymentFailedTitle,
+            text: S.paymentFailedBody,
+            actions: [
+              if (holdAlive)
+                PrimaryButton(label: S.retryPayment, onPressed: () => _resumePayment(context, ref, booking))
+              else
+                PrimaryButton(label: S.tryAgain, onPressed: () => context.go(AppRoutes.venue(booking.venueId))),
+              _secondary(context, S.goToMatches, () => context.go(AppRoutes.matches)),
+            ],
+          );
       }
     } else if (value.timedOut) {
       body = _Message(
@@ -92,6 +113,24 @@ class PaymentResultScreen extends ConsumerWidget {
         body: SafeArea(child: body),
       ),
     );
+  }
+
+  static Future<void> _resumePayment(BuildContext context, WidgetRef ref, Booking booking) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+    try {
+      final session = await ref.read(bookingRepositoryProvider).startPayment(booking.id);
+      router.pushReplacement(
+        AppRoutes.payment,
+        extra: PaymentArgs(
+          bookingId: booking.id,
+          iframeUrl: session.iframeUrl,
+          holdExpiresAt: session.holdExpiresAt ?? booking.holdExpiresAt ?? DateTime.now(),
+        ),
+      );
+    } on AppException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    }
   }
 
   static Widget _secondary(BuildContext context, String label, VoidCallback onPressed) {

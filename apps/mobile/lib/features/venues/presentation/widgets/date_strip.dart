@@ -10,10 +10,20 @@ const int dateStripDays = 14;
 
 /// Horizontal 14-day strip starting today (Istanbul). [selectedIndex] is 0..13.
 class DateStrip extends StatelessWidget {
-  const DateStrip({super.key, required this.today, required this.selectedIndex, required this.onSelected});
+  const DateStrip({
+    super.key,
+    required this.today,
+    required this.selectedIndex,
+    required this.onSelected,
+    this.includeYesterday = false,
+  });
 
   /// Today's Istanbul calendar date (see `istanbulToday`).
   final DateTime today;
+
+  /// Before 06:00 Istanbul time the previous business day is still running (overnight venues):
+  /// it is offered as the first chip ("Dün gece").
+  final bool includeYesterday;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
@@ -25,10 +35,11 @@ class DateStrip extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-        itemCount: dateStripDays,
+        itemCount: dateStripDays + (includeYesterday ? 1 : 0),
         separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.s),
         itemBuilder: (context, index) {
-          final date = DateTime.utc(today.year, today.month, today.day + index);
+          final offset = index - (includeYesterday ? 1 : 0);
+          final date = DateTime.utc(today.year, today.month, today.day + offset);
           final selected = index == selectedIndex;
           final fg = selected ? AppColors.onPrimary : AppColors.textPrimary;
           final fgSecondary = selected ? AppColors.onPrimary : AppColors.textSecondary;
@@ -46,7 +57,7 @@ class DateStrip extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    index == 0 ? S.today : formatWeekdayShort(date),
+                    offset == -1 ? S.lastNight : (offset == 0 ? S.today : formatWeekdayShort(date)),
                     style: theme.textTheme.bodySmall?.copyWith(color: fgSecondary),
                   ),
                   const SizedBox(height: 2),

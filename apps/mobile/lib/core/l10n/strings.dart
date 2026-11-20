@@ -15,6 +15,7 @@ abstract final class S {
   static const String linkOpenFailed = 'Bağlantı açılamadı.';
   static const String openSettings = 'Ayarları aç';
   static const String today = 'Bugün';
+  static const String lastNight = 'Dün gece';
   static const String date = 'Tarih';
   static const String time = 'Saat';
   static const String pitch = 'Saha';
@@ -46,7 +47,13 @@ abstract final class S {
   static const String errGeneric = 'Bir şeyler ters gitti. Tekrar dene.';
   // Client-side additions (not in the contract table).
   static const String errNetwork = 'İnternet bağlantını kontrol edip tekrar dene.';
-  static const String errVenueNotFound = 'Saha bulunamadı.';
+  static const String errVenueNotFound = 'Tesis bulunamadı.';
+  static const String errOwnerAccount = 'Saha sahibi hesapları uygulamadan silinemez. Destek ekibiyle iletişime geç.';
+  static const String errPaymentNotFound = 'Ödeme kaydı bulunamadı.';
+  static const String errTooManyRecentHolds = 'Kısa sürede çok fazla rezervasyon denemesi yaptın. Biraz sonra tekrar dene.';
+  static const String errTooManyActiveBookings = 'Aynı anda en fazla 4 aktif rezervasyonun olabilir.';
+  static const String errTooManyPaymentAttempts = 'Bu rezervasyon için çok fazla ödeme denemesi yapıldı. Yeni bir saat seç.';
+  static const String errSlotStarted = 'Bu maç başladığı için işlem yapılamaz.';
   static const String errProfileMissing = 'Profil bilgilerin yüklenemedi. Tekrar dene.';
   static const String errOtpInvalid = 'Kod hatalı veya süresi dolmuş. Yeni bir kod isteyebilirsin.';
   static const String errTooManyRequests = 'Çok fazla deneme yaptın. Biraz bekleyip tekrar dene.';
@@ -161,6 +168,10 @@ abstract final class S {
   static const String paymentStillPendingTitle = 'Ödeme sonucu henüz ulaşmadı';
   static const String paymentStillPendingBody =
       'Ödemen onaylanırsa rezervasyonun Maçlarım sekmesinde görünür. Biraz sonra tekrar kontrol edebilirsin.';
+  static const String paymentRefundTitle = 'Ödemen alındı';
+  static const String paymentRefundBody =
+      'Ödemen alındı ama saat dolduğu için rezervasyon onaylanamadı. Kaporan iade edilecek.';
+  static const String retryPayment = 'Ödemeyi tekrar dene';
   static const String resultErrorTitle = 'Sonuç alınamadı';
   static const String tryAgain = 'Tekrar dene';
   static const String checkAgain = 'Tekrar kontrol et';
