@@ -11,6 +11,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: S
 - Fotoğraf bucket'ı yalnızca 5 MB'a kadar JPEG, PNG ve WebP kabul ediyor. Panelde oturum kapatma POST ile yapılıyor.
 
 ### Fixed
+- CI: GitHub Actions'ta dört iş de yeşil (SQL testleri, Flutter analyze ve 39 test, panel typecheck ve lint, gizli bilgi taraması). Panelde `@supabase/ssr` 0.12'ye yükseltildi (supabase-js 2.119 tipleriyle uyum).
 - Müsaitlik ekranı 15 dakika içinde başlayan slotları artık 'geçmiş' gösteriyor (hold kuralıyla tutarlı).
 - Mobil ödeme sonucu, gecikmiş ödemede yanlışlıkla 'başarısız' demiyor; başarısız ödemede 2 dk beklemiyor.
 - Gece yarısını aşan sahalarda 00:00–06:00 arası slotlar mobilde ('Dün gece') ve panelde ('Bugün') erişilebilir.

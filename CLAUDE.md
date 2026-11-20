@@ -65,4 +65,5 @@ cd apps/owner_panel && npm ci && npm run typecheck && npm run lint && npm run de
 - 2026-11-20: Varsayılan fonksiyon yetkileri, müşterinin `confirm_payment` RPC'sini çağırıp ödeme yapmadan
   rezervasyon onaylatmasına izin veriyordu. Çözüm: migration 090800'daki allow-list ve test 30a.
 - 2026-11-20: Geç gelen ödeme, başlamış bir maçı onaylayabiliyordu. Çözüm: `starts_at <= now()` → iade.
+- 2026-11-20: Yazım ortamında paket indirilemiyorsa derleme doğrulaması CI'da yapılır; `gh run view --log-failed` ile hata okunup düzeltilir. CI yeşil olmadan iş "bitti" sayılmaz.
 - Bu tür dersler buraya kısa bir satır olarak eklenir ve ilgili skill dosyası da güncellenir.
