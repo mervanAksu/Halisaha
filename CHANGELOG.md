@@ -3,7 +3,12 @@
 Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: SemVer.
 
 ## [Unreleased]
+### Security
+- `venues` tablosundaki komisyon oranı ve PayTR alt üye işyeri anahtarı anonim okumaya kapatıldı (kolon bazlı yetki + `admin_list_venues` RPC).
+
 ### Added
+- Flutter müşteri uygulaması: OTP girişi, saha listesi/detay, slot seçimi, kapora ödemesi (PayTR WebView), maçlarım, favoriler, destek, profil, hesap silme.
+- İşletme/admin web paneli: takvim, manuel rezervasyon ve saat kapatma, tesis/saha yönetimi, ödeme bilgileri, saha onayı, iade listesi.
 - Çok ajanlı geliştirme altyapısı: MASTER_PROMPT, CLAUDE.md, AGENTS.md, 7 alt ajan, 5 skill.
 - Ürün dokümanları: PRD, veri modeli, API sözleşmesi, tasarım dili, ADR kayıtları.
 - Supabase şeması: sahalar, saha alanları, çalışma saatleri (gece yarısını aşabilir), rezervasyonlar, ödemeler, favoriler.

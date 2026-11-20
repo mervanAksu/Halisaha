@@ -1,0 +1,13 @@
+# Local environment values (never commit)
+env/local.json
+env/*.local.json
+
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+*.iml
+.idea/
