@@ -1,0 +1,33 @@
+# secrets
+.env
+.env.*
+!.env.example
+**/env/*.json
+!**/env/example.json
+supabase/.env
+supabase/functions/.env
+# node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+# flutter
+apps/mobile/.dart_tool/
+apps/mobile/build/
+apps/mobile/.flutter-plugins
+apps/mobile/.flutter-plugins-dependencies
+apps/mobile/ios/Pods/
+apps/mobile/ios/Flutter/Generated.xcconfig
+apps/mobile/android/.gradle/
+apps/mobile/android/local.properties
+apps/mobile/android/key.properties
+*.jks
+*.keystore
+# supabase
+supabase/.branches
+supabase/.temp
+# os/ide
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

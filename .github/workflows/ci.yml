@@ -1,0 +1,48 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  database:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL 16
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -yq postgresql-16 postgresql-contrib-16
+      - name: SQL tests
+        run: PG_BIN=/usr/lib/postgresql/16/bin ./supabase/tests/run_local.sh
+
+  mobile:
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('apps/mobile/pubspec.yaml') != '' }}
+    defaults: { run: { working-directory: apps/mobile } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  owner-panel:
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('apps/owner_panel/package.json') != '' }}
+    defaults: { run: { working-directory: apps/owner_panel } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm install
+      - run: npm run typecheck
+      - run: npm run lint
+
+  secrets-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No secrets committed
+        run: |
+          ! git grep -nE "(service_role|SERVICE_ROLE)[^\n]*eyJhbGci|merchant_key\s*[:=]\s*['\"][A-Za-z0-9]{8,}|sk_live_" -- . ':!*.md'
