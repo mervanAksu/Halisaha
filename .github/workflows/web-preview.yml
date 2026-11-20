@@ -65,9 +65,10 @@ jobs:
           (cd /tmp/site && python3 -m http.server 8080 >/dev/null 2>&1 &)
           sleep 2
           npx -y playwright@1.49.1 install chromium >/dev/null
-          for v in 390x844; do
-            npx -y playwright@1.49.1 screenshot --viewport-size=$v --wait-for-timeout=12000 \
-              http://localhost:8080/Halisaha/ /tmp/shot-home.png
+          for route in "" "#/matches" "#/profile"; do
+            name=$(echo "${route:-home}" | tr -cd 'a-z')
+            npx -y playwright@1.49.1 screenshot --device="iPhone 13" --wait-for-timeout=12000 \
+              "http://localhost:8080/Halisaha/${route}" "/tmp/shot-${name}.png"
           done
           ls -la /tmp/shot-*.png
 
