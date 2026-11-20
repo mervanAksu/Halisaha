@@ -65,7 +65,7 @@ Kampanya sayacı ("5 maçta 1 kapora bizden", v1.1).
 |---|---|---|
 | `owner_create_manual_booking(p_pitch_id, p_starts_at, p_ends_at, p_source 'manual'\|'block', p_customer_name?, p_customer_phone?, p_note?)` | Telefonla gelen rezervasyonu girer veya saati kapatır | `forbidden, invalid_range, invalid_source, slot_taken` |
 | `owner_cancel_booking(p_booking_id, p_reason?)` | Herhangi bir rezervasyonu iptal eder. Uygulama rezervasyonunda kapora **tam iade** edilir | `forbidden, not_cancellable` |
-| `owner_mark_attendance(p_booking_id, p_status 'completed'\|'no_show')` | Geçmiş maçı işaretler | `forbidden, invalid_status` |
+| `owner_mark_attendance(p_booking_id, p_status 'completed'\|'no_show')` | Geçmiş maçı işaretler (kapalı saat kayıtları işaretlenemez) | `forbidden, invalid_status` |
 
 ### Admin
 `admin_update_venue(p_venue_id, p_status?, p_commission_bps?, p_paytr_submerchant_key?)`: sahayı onaylar veya
@@ -113,6 +113,8 @@ Yanıt: `204`. Hatalar: `not_authenticated`, `owner_account` (saha sahibi hesapl
 | `not_cancellable` | Bu rezervasyon iptal edilemez. |
 | `forbidden` | Bu işlem için yetkin yok. |
 | `invalid_range` / `invalid_status` / `invalid_source` | Geçersiz istek. |
+| `venue_not_found` | Tesis bulunamadı. |
+| `payment_not_found` | Ödeme kaydı bulunamadı. |
 | `owner_account` | Saha sahibi hesapları uygulamadan silinemez. Destek ekibiyle iletişime geç. |
 | `payment_provider_error` | Ödeme altyapısına ulaşılamadı. Biraz sonra tekrar dene. |
 | (diğer) | Bir şeyler ters gitti. Tekrar dene. |
