@@ -24,7 +24,7 @@ Yeni kullanıcıda `profiles` satırı trigger ile oluşur. İlk girişte `full_
 | Tablo | Müşteri | İşletme sahibi | Not |
 |---|---|---|---|
 | `profiles` | kendi satırı: select, update(`full_name`,`marketing_consent`,`kvkk_ack_at`) | kendi + sahasında rezervasyon yapan müşteriler (select) | `role` istemciden değişmez |
-| `venues` | `status='active'` olanlar: select | kendi sahaları: select/insert/update (status, commission hariç) | |
+| `venues` | `status='active'` olanlar: select | kendi sahaları: select/insert/update (status, commission hariç) | `commission_bps` ve `paytr_submerchant_key` istemciye kolon izniyle kapalıdır; admin `admin_list_venues()` RPC'siyle okur |
 | `venue_hours` | select | kendi sahaları: CRUD | `iso_weekday` 1=Pzt…7=Paz. `close_time <= open_time` → gece yarısını aşar |
 | `pitches` | select | kendi sahaları: CRUD | |
 | `bookings` | kendi: select | kendi sahaları: select | **Yazma yalnızca RPC ile** |
@@ -68,6 +68,7 @@ Kampanya sayacı ("5 maçta 1 kapora bizden", v1.1).
 | `owner_mark_attendance(p_booking_id, p_status 'completed'\|'no_show')` | Geçmiş maçı işaretler (kapalı saat kayıtları işaretlenemez) | `forbidden, invalid_status` |
 
 ### Admin
+`admin_list_venues()`: tüm sahaları komisyon ve PayTR anahtarıyla birlikte döndürür (yalnızca admin).
 `admin_update_venue(p_venue_id, p_status?, p_commission_bps?, p_paytr_submerchant_key?)`: sahayı onaylar veya
 askıya alır, komisyonu ve alt üye işyeri anahtarını belirler.
 

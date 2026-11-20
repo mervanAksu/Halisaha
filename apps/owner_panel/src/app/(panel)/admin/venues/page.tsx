@@ -6,10 +6,8 @@ import { toTurkishError } from '@/lib/errors';
 
 export default async function AdminVenuesPage() {
   const { supabase } = await requireAdmin();
-  const { data, error } = await supabase
-    .from('venues')
-    .select('id, name, district, owner_id, status, commission_bps, paytr_submerchant_key, created_at')
-    .order('created_at', { ascending: false });
+  // commission_bps / paytr_submerchant_key are not column-granted to clients; admins read them via RPC.
+  const { data, error } = await supabase.rpc('admin_list_venues');
   if (error) throw new Error(toTurkishError(error));
   const rows = data ?? [];
 

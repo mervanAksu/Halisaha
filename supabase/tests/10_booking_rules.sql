@@ -167,3 +167,33 @@ do $$ begin
   raise notice 'ok 11b payout accounts hidden';
 end $$;
 reset role;
+
+-- 12. Commercial venue columns are hidden from anon and customers; admin reads them via RPC.
+set role anon;
+do $$ begin
+  perform commission_bps from public.venues limit 1;
+  raise exception 'FAIL: anon read commission_bps';
+exception when insufficient_privilege then raise notice 'ok 12a commission hidden from anon';
+end $$;
+do $$ begin
+  assert (select count(*) from public.venues) = 2, 'anon still lists active venues via safe columns';
+exception when insufficient_privilege then
+  -- count(*) needs no column privilege; reaching here means a regression
+  raise exception 'FAIL: anon cannot list venues';
+end $$;
+reset role;
+set role authenticated;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000c1', false);
+do $$ begin
+  perform public.admin_list_venues();
+  raise exception 'FAIL: customer called admin_list_venues';
+exception when others then
+  assert sqlerrm = 'forbidden', 'got ' || sqlerrm;
+  raise notice 'ok 12b admin_list_venues forbidden for customers';
+end $$;
+select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a1', false);
+do $$ begin
+  assert (select count(*) from public.admin_list_venues() where commission_bps = 1000) = 2, 'admin sees commission';
+  raise notice 'ok 12c admin reads commission via RPC';
+end $$;
+reset role;

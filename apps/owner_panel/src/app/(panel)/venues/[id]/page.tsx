@@ -23,7 +23,13 @@ export default async function VenueDetailPage({
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
   const [venueRes, hoursRes, pitchesRes] = await Promise.all([
-    supabase.from('venues').select('*').eq('id', id).maybeSingle(),
+    supabase
+      .from('venues')
+      .select(
+        'id, owner_id, name, description, city, district, address, lat, lng, phone, cover_photo_path, photo_paths, amenities, status, cancellation_window_hours, created_at, updated_at',
+      )
+      .eq('id', id)
+      .maybeSingle(),
     supabase.from('venue_hours').select('*').eq('venue_id', id),
     supabase.from('pitches').select('*').eq('venue_id', id).order('sort_order').order('name'),
   ]);

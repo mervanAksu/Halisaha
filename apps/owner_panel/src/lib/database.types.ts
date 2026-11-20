@@ -297,6 +297,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_list_venues: {
+        Args: Record<string, never>;
+        Returns: VenueRow[];
+      };
       admin_update_venue: {
         Args: {
           p_venue_id: string;
