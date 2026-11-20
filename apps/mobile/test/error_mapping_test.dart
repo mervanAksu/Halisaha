@@ -41,7 +41,7 @@ void main() {
   });
 
   test('PostgrestException message carrying a code is mapped', () {
-    final e = AppException.from(PostgrestException(message: 'slot_taken', code: 'P0001'));
+    final e = AppException.from(const PostgrestException(message: 'slot_taken', code: 'P0001'));
     expect(e.code, 'slot_taken');
     expect(e.message, 'Bu saat az önce doldu. Başka bir saat seç.');
   });
@@ -53,7 +53,7 @@ void main() {
   });
 
   test('unknown Postgrest errors become the generic message', () {
-    final e = AppException.from(PostgrestException(message: 'permission denied for table x'));
+    final e = AppException.from(const PostgrestException(message: 'permission denied for table x'));
     expect(e.message, 'Bir şeyler ters gitti. Tekrar dene.');
   });
 

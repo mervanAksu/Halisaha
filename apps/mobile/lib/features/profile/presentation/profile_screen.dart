@@ -54,6 +54,7 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
       builder: (_) => _EditNameDialog(initial: widget.profile.fullName),
     );
     if (newName == null || newName == widget.profile.fullName) return;
+    if (!context.mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(profileProvider.notifier).updateName(newName);
@@ -75,7 +76,7 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
         ],
       ),
     );
-    if (confirmed != true) return;
+    if (confirmed != true || !context.mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(authRepositoryProvider).signOut();

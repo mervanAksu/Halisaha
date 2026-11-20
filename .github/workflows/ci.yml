@@ -8,12 +8,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install PostgreSQL 16
+      - name: Ensure PostgreSQL (preinstalled on GitHub Ubuntu runners)
         run: |
-          sudo apt-get update -q
-          sudo apt-get install -yq postgresql-16 postgresql-contrib-16
+          ls -d /usr/lib/postgresql/*/bin || (sudo apt-get update -q && sudo apt-get install -yq postgresql postgresql-contrib)
+          ls -d /usr/lib/postgresql/*/bin
       - name: SQL tests
-        run: PG_BIN=/usr/lib/postgresql/16/bin ./supabase/tests/run_local.sh
+        run: ./supabase/tests/run_local.sh
 
   mobile:
     runs-on: ubuntu-latest
@@ -23,7 +23,8 @@ jobs:
       - uses: subosito/flutter-action@v2
         with: { channel: stable, cache: true }
       - run: flutter pub get
-      - run: flutter analyze
+      # Infos are reported but not fatal (Flutter 3.47 deprecates package:flutter/material.dart; migration tracked in DECISIONS.md ADR-7)
+      - run: flutter analyze --no-fatal-infos
       - run: flutter test
 
   owner-panel:
@@ -34,6 +35,10 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm install
+      - name: Report resolved versions
+        run: |
+          npm ls @supabase/ssr @supabase/supabase-js @supabase/postgrest-js next typescript || true
+          echo "latest ssr: $(npm view @supabase/ssr version)  latest supabase-js: $(npm view @supabase/supabase-js version)"
       - run: npm run typecheck
       - run: npm run lint
 
@@ -43,4 +48,4 @@ jobs:
       - uses: actions/checkout@v4
       - name: No secrets committed
         run: |
-          ! git grep -nE "(service_role|SERVICE_ROLE)[^\n]*eyJhbGci|merchant_key\s*[:=]\s*['\"][A-Za-z0-9]{8,}|sk_live_" -- . ':!*.md'
+          ! git grep -nE "(service_role|SERVICE_ROLE)[^\n]*eyJhbGci|merchant_key\s*[:=]\s*['\"][A-Za-z0-9]{8,}|sk_live_" -- . ':!*.md' ':!.github/**'

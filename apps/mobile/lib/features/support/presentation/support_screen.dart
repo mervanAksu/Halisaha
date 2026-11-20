@@ -14,9 +14,9 @@ class SupportScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final contacts = <_Contact>[
       if (AppConfig.supportEmail.isNotEmpty)
-        _Contact(Icons.mail_outline, S.contactEmail, AppConfig.supportEmail, 'mailto:${AppConfig.supportEmail}'),
+        const _Contact(Icons.mail_outline, S.contactEmail, AppConfig.supportEmail, 'mailto:${AppConfig.supportEmail}'),
       if (AppConfig.supportPhone.isNotEmpty)
-        _Contact(Icons.phone_outlined, S.contactPhone, AppConfig.supportPhone, 'tel:${AppConfig.supportPhone}'),
+        const _Contact(Icons.phone_outlined, S.contactPhone, AppConfig.supportPhone, 'tel:${AppConfig.supportPhone}'),
       if (AppConfig.supportWhatsapp.isNotEmpty)
         _Contact(
           Icons.chat_outlined,
@@ -25,7 +25,7 @@ class SupportScreen extends StatelessWidget {
           'https://wa.me/${AppConfig.supportWhatsapp.replaceAll(RegExp(r'[^0-9]'), '')}',
         ),
       if (AppConfig.websiteUrl.isNotEmpty)
-        _Contact(Icons.language, S.contactWebsite, AppConfig.websiteUrl, AppConfig.websiteUrl),
+        const _Contact(Icons.language, S.contactWebsite, AppConfig.websiteUrl, AppConfig.websiteUrl),
     ];
 
     return Scaffold(

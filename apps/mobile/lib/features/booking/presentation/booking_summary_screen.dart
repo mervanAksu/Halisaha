@@ -115,7 +115,7 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
           ),
           const SizedBox(height: AppSpacing.l),
           if (!zeroDeposit)
-            _InfoBox(icon: Icons.timer_outlined, text: S.holdInfo),
+            const _InfoBox(icon: Icons.timer_outlined, text: S.holdInfo),
           if (!zeroDeposit) const SizedBox(height: AppSpacing.m),
           _InfoBox(icon: Icons.policy_outlined, title: S.cancellationPolicyTitle, text: S.cancellationPolicy(draft.cancellationWindowHours)),
           const SizedBox(height: AppSpacing.l),

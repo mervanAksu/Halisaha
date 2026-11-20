@@ -26,3 +26,8 @@ Karar: Ödeme için 10 dk süre verilir. Kötüye kullanıma (saatleri ödemeden
 ## ADR-6 · Müşteri girişi telefon OTP, işletme girişi e-posta (2026-11-20)
 Karar: Müşteriler telefon numarasıyla girer (sahaların zaten telefonla iletişim kurduğu bir kitle). İşletme panelinde e-posta ve şifre kullanılır.
 Sonuç: SMS maliyeti oluşur ve SMS pumping riski vardır. Supabase Auth rate limit ve captcha (hCaptcha/Turnstile) açılmalıdır.
+
+## ADR-7 · Flutter 3.47 `material_ui` geçişi ertelendi (2026-11-20)
+Bağlam: CI'daki Flutter 3.47, `package:flutter/material.dart` importunu kullanımdan kaldırılmış (deprecated) olarak işaretliyor. Yerine `package:material_ui` geliyor.
+Karar: v1'de `material.dart` ile devam ediliyor ve `flutter analyze --no-fatal-infos` kullanılıyor. Geçiş, paket kararlı hale gelince tek bir PR ile yapılacak.
+Sonuç: CI bilgi notlarını raporlar ama başarısız olmaz. Uyarı (warning) ve hatalar hâlâ CI'ı başarısız yapar.
