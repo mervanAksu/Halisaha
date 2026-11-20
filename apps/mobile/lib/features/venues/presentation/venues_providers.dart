@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/venues_repository.dart';
 import '../domain/slot.dart';
@@ -40,6 +41,7 @@ class LocationController extends Notifier<LocationState> {
 
   /// Fetches a position only if permission was already granted; never prompts.
   Future<void> initSilently() async {
+    if (AppConfig.demoMode) return; // demo: never touch geolocation
     if (state.status != LocationStatus.unknown) return;
     try {
       final permission = await Geolocator.checkPermission();
@@ -57,6 +59,7 @@ class LocationController extends Notifier<LocationState> {
 
   /// Asks for permission (user tapped the banner) and fetches the position.
   Future<void> request() async {
+    if (AppConfig.demoMode) return;
     try {
       final enabled = await Geolocator.isLocationServiceEnabled();
       if (!enabled) {

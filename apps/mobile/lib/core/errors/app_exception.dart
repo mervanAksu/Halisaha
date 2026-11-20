@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -139,7 +138,7 @@ class AppException implements Exception {
       return const AppException('auth_error', S.errAuthGeneric);
     }
 
-    if (error is SocketException || error is TimeoutException) {
+    if (error is TimeoutException) {
       return AppException.fromCode('network');
     }
     final typeName = error.runtimeType.toString();

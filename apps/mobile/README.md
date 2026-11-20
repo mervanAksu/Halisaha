@@ -62,6 +62,35 @@ flutter test
 
 Without the defines the app shows a configuration error screen instead of crashing.
 
+## Demo / web önizleme
+
+Backend'siz demo modu: Supabase başlatılmaz, PayTR/WebView kullanılmaz, tüm veri bellekte tutulur
+(sayfa yenilenince sıfırlanır). Uygulama "Demo Oyuncu" olarak giriş yapmış açılır.
+
+```bash
+cd apps/mobile
+flutter run -d chrome --dart-define=DEMO_MODE=true
+```
+
+GitHub Pages için derleme (CI):
+
+```bash
+flutter build web --release --dart-define=DEMO_MODE=true --base-href /Halisaha/
+```
+
+Notlar:
+
+* `lib/demo/` altında repository sınıflarının bellek içi karşılıkları vardır (`implements`), `main.dart` bunları
+  kök `ProviderScope`'a override eder. `AppConfig.demoMode` kapalıyken hiçbir demo kodu çalışmaz.
+* Kurgusal 6 saha (biri 12:00-06:00 gece sahası), 14 günlük deterministik müsaitlik (tarih + saha ile tohumlanır;
+  sunucudaki gibi 15 dakika içinde başlayan slotlar `past`), 2 geçmiş + 1 gelecek örnek maç.
+* Ödeme: "Demo ödeme" ekranında "Ödemeyi tamamla (demo)" veya "Başarısız ödeme dene (demo)". Sonuç ekranı yine
+  rezervasyon durumunu okur (bellek içi).
+* Çıkış yap / hesabı sil demo modunda kapalıdır ("Demo modunda bu işlem kapalı").
+* Web yönlendirmesi: go_router'ın varsayılan hash stratejisi (`/Halisaha/#/...`) kullanılır; GitHub Pages'te 404
+  yönlendirmesi gerekmez. `web/index.html` repoda tutulur (`flutter create` gerekmez).
+* Demo olmayan web derlemesinde gerçek ödeme desteklenmez ("Web'de ödeme desteklenmiyor").
+
 ## Native configuration (after `flutter create`)
 
 ### iOS (`ios/Runner/Info.plist`)

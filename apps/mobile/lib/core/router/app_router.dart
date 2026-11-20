@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +22,8 @@ import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/support/presentation/support_screen.dart';
 import '../../features/venues/presentation/home_screen.dart';
 import '../../features/venues/presentation/venue_detail_screen.dart';
+import '../../demo/demo_payment_screen.dart';
+import '../config/app_config.dart';
 import '../l10n/strings.dart';
 import '../supabase/supabase_providers.dart';
 import '../widgets/empty_state.dart';
@@ -46,6 +49,7 @@ class _RouterRefresh extends ChangeNotifier {
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _RouterRefresh();
+  // Demo: authStateProvider is overridden with an empty stream, Supabase is never touched.
   ref.listen<AsyncValue<AuthState>>(authStateProvider, (_, __) => refresh.ping());
   ref.listen<AsyncValue<Profile?>>(profileProvider, (_, __) => refresh.ping());
   ref.onDispose(refresh.dispose);
@@ -109,6 +113,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final args = state.extra;
           if (args is! PaymentArgs) return const _MissingArgumentsScreen();
+          if (AppConfig.demoMode) return DemoPaymentScreen(args: args);
+          if (kIsWeb) return const _WebPaymentUnsupportedScreen();
           return PaymentWebViewScreen(args: args);
         },
       ),
@@ -129,9 +135,11 @@ final routerProvider = Provider<GoRouter>((ref) {
 ///  * otherwise             -> never stay on the auth screens
 String? _redirect(Ref ref, GoRouterState state) {
   final loc = state.matchedLocation;
-  final user = ref.read(supabaseClientProvider).auth.currentUser;
+  final userId = AppConfig.demoMode
+      ? ref.read(currentUserIdProvider)
+      : ref.read(supabaseClientProvider).auth.currentUser?.id;
 
-  if (user == null) {
+  if (userId == null) {
     return (loc == AppRoutes.login || loc == AppRoutes.otp) ? null : AppRoutes.login;
   }
 
@@ -161,6 +169,24 @@ class _MissingArgumentsScreen extends StatelessWidget {
       body: EmptyState(
         icon: Icons.search_off,
         message: S.errGeneric,
+        actionLabel: S.goHome,
+        onAction: () => context.go(AppRoutes.home),
+      ),
+    );
+  }
+}
+
+/// Real PayTR payment needs a native WebView; the web build only supports demo payments.
+class _WebPaymentUnsupportedScreen extends StatelessWidget {
+  const _WebPaymentUnsupportedScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(S.securePayment)),
+      body: EmptyState(
+        icon: Icons.phone_iphone,
+        message: S.webPaymentUnsupported,
         actionLabel: S.goHome,
         onAction: () => context.go(AppRoutes.home),
       ),

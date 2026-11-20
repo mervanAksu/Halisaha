@@ -81,7 +81,7 @@ class _FavoriteTile extends ConsumerWidget {
             SizedBox(
               width: 96,
               height: 96,
-              child: NetworkImageBox(url: venuePhotoUrl(venue.coverPhotoPath)),
+              child: NetworkImageBox(url: venuePhotoUrl(venue.coverPhotoPath), title: venue.name),
             ),
             const SizedBox(width: AppSpacing.m),
             Expanded(

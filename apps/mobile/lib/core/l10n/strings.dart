@@ -294,4 +294,14 @@ abstract final class S {
   static const String deleteAccountFinalTitle = 'Son onay';
   static const String deleteAccountFinalBody = 'Hesabın kalıcı olarak silinecek. Emin misin?';
   static const String deleteAccountConfirm = 'Evet, hesabımı sil';
+
+  // --- Demo / web preview ------------------------------------------------------
+  static const String demoBanner = 'DEMO · gerçek ödeme alınmaz';
+  static const String demoDisabled = 'Demo modunda bu işlem kapalı';
+  static const String demoPaymentTitle = 'Demo ödeme';
+  static const String demoPaymentIntro = 'Bu bir demo. Kart bilgisi istenmez ve hiçbir ücret alınmaz.';
+  static const String demoPaymentDeposit = 'Ödenecek kapora';
+  static const String demoPaymentComplete = 'Ödemeyi tamamla (demo)';
+  static const String demoPaymentFail = 'Başarısız ödeme dene (demo)';
+  static const String webPaymentUnsupported = "Web'de ödeme desteklenmiyor. Ödeme için mobil uygulamayı kullan.";
 }

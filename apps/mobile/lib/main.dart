@@ -6,11 +6,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/config/app_config.dart';
+import 'demo/demo_overrides.dart';
+import 'demo/demo_store.dart';
 
+// Web routing: go_router's default hash URL strategy is kept on purpose (no `usePathUrlStrategy()`),
+// so deep links like `/Halisaha/#/venue/x` work on GitHub Pages without 404 rewrites.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('tr_TR');
   Intl.defaultLocale = 'tr_TR';
+
+  if (AppConfig.demoMode) {
+    // Backend-free preview: Supabase is never initialised or touched.
+    runApp(ProviderScope(overrides: demoOverrides(DemoStore()), child: const HalisahaApp()));
+    return;
+  }
 
   if (!AppConfig.isConfigured) {
     runApp(const ConfigErrorApp());

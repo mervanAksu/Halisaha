@@ -23,6 +23,10 @@ abstract final class AppConfig {
   static const String legalKvkk = 'kvkk';
   static const String legalDistanceSales = 'distance-sales';
 
+  /// Backend-free preview build (`--dart-define=DEMO_MODE=true`): in-memory repositories,
+  /// no Supabase, no PayTR. Used for the GitHub Pages web preview.
+  static const bool demoMode = bool.fromEnvironment('DEMO_MODE');
+
   static bool get isConfigured => supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 
   /// `<LEGAL_BASE_URL>/<slug>`; trailing slashes on the base are tolerated.

@@ -6,6 +6,7 @@ import 'core/config/app_config.dart';
 import 'core/l10n/strings.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/demo_banner.dart';
 
 const Locale appLocale = Locale('tr', 'TR');
 
@@ -29,6 +30,7 @@ class HalisahaApp extends ConsumerWidget {
       locale: appLocale,
       supportedLocales: const [appLocale],
       localizationsDelegates: _delegates,
+      builder: AppConfig.demoMode ? (context, child) => DemoBannerFrame(child: child) : null,
     );
   }
 }

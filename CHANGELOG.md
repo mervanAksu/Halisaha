@@ -19,6 +19,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: S
 - `venues` tablosundaki komisyon oranı ve PayTR alt üye işyeri anahtarı anonim okumaya kapatıldı (kolon bazlı yetki + `admin_list_venues` RPC).
 
 ### Added
+- Demo modu (`--dart-define=DEMO_MODE=true`): backend olmadan örnek sahalar ve sahte ödemeyle çalışan uygulama. GitHub Pages web önizlemesi (`.github/workflows/web-preview.yml`).
 - Flutter müşteri uygulaması: OTP girişi, saha listesi/detay, slot seçimi, kapora ödemesi (PayTR WebView), maçlarım, favoriler, destek, profil, hesap silme.
 - İşletme/admin web paneli: takvim, manuel rezervasyon ve saat kapatma, tesis/saha yönetimi, ödeme bilgileri, saha onayı, iade listesi.
 - Çok ajanlı geliştirme altyapısı: MASTER_PROMPT, CLAUDE.md, AGENTS.md, 7 alt ajan, 5 skill.

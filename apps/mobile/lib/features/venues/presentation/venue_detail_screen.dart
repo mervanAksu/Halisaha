@@ -161,7 +161,7 @@ class _VenueDetailScreenState extends ConsumerState<VenueDetailScreen> {
     return ListView(
       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       children: [
-        _PhotoGallery(paths: venue.galleryPaths),
+        _PhotoGallery(paths: venue.galleryPaths, venueName: venue.name),
         Padding(
           padding: const EdgeInsets.all(AppSpacing.l),
           child: Column(
@@ -304,9 +304,10 @@ class _VenueDetailScreenState extends ConsumerState<VenueDetailScreen> {
 }
 
 class _PhotoGallery extends StatefulWidget {
-  const _PhotoGallery({required this.paths});
+  const _PhotoGallery({required this.paths, required this.venueName});
 
   final List<String> paths;
+  final String venueName;
 
   @override
   State<_PhotoGallery> createState() => _PhotoGalleryState();
@@ -324,12 +325,12 @@ class _PhotoGalleryState extends State<_PhotoGallery> {
         fit: StackFit.expand,
         children: [
           if (paths.isEmpty)
-            const NetworkImageBox(url: null)
+            NetworkImageBox(url: null, title: widget.venueName)
           else
             PageView.builder(
               itemCount: paths.length,
               onPageChanged: (i) => setState(() => _page = i),
-              itemBuilder: (context, i) => NetworkImageBox(url: venuePhotoUrl(paths[i])),
+              itemBuilder: (context, i) => NetworkImageBox(url: venuePhotoUrl(paths[i]), title: widget.venueName),
             ),
           if (paths.length > 1)
             Positioned(

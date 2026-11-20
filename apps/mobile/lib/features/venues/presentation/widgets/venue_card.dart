@@ -40,7 +40,7 @@ class VenueCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    NetworkImageBox(url: venuePhotoUrl(venue.coverPhotoPath)),
+                    NetworkImageBox(url: venuePhotoUrl(venue.coverPhotoPath), title: venue.name),
                     if (price != null)
                       Positioned(
                         top: AppSpacing.m,
