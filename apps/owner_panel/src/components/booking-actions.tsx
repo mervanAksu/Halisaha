@@ -32,7 +32,9 @@ export function BookingActions({ booking, nowMs, onDone }: Props) {
     if (attendState?.ok) onDone?.(attendState.message);
   }, [attendState, onDone]);
 
-  const cancellable = booking.status === 'confirmed' || booking.status === 'pending_payment';
+  // owner_cancel_booking raises slot_started once the match has begun.
+  const cancellable =
+    (booking.status === 'confirmed' || booking.status === 'pending_payment') && booking.startsAtMs > nowMs;
   const canMark =
     booking.source !== 'block' &&
     (booking.status === 'confirmed' || booking.status === 'completed' || booking.status === 'no_show') &&

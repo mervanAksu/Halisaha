@@ -16,6 +16,11 @@ const MESSAGES: Record<string, string> = {
   invalid_status: 'Geçersiz istek.',
   invalid_source: 'Geçersiz istek.',
   payment_provider_error: 'Ödeme altyapısına ulaşılamadı. Biraz sonra tekrar dene.',
+  slot_started: "Bu maç başladığı için iptal edilemez; gerekiyorsa 'Gelmedi' olarak işaretle.",
+  too_many_payment_attempts: 'Çok fazla ödeme denemesi yapıldı. Biraz sonra tekrar dene.',
+  too_many_recent_holds: 'Kısa sürede çok fazla rezervasyon denemesi yapıldı. Biraz sonra tekrar dene.',
+  too_many_active_bookings: 'Aktif rezervasyon sınırına ulaşıldı.',
+  owner_account: 'Bu işlem işletme hesabıyla yapılamaz.',
   // Not in API_CONTRACT yet (raised by admin_update_venue / confirm_payment):
   venue_not_found: 'Tesis bulunamadı.',
   payment_not_found: 'Ödeme kaydı bulunamadı.',

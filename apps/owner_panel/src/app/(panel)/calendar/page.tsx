@@ -8,7 +8,7 @@ import { dayWindow, generateSlots } from '@/lib/calendar';
 import { first, getStaffContext, pickVenue, type SearchParams } from '@/lib/context';
 import { loadCustomers } from '@/lib/customers';
 import { toTurkishError } from '@/lib/errors';
-import { addDays, formatDateLong, isDateString, isoWeekday, todayIstanbul } from '@/lib/time';
+import { addDays, formatDateLong, isDateString, isoWeekday, todayIstanbul, TZ } from '@/lib/time';
 
 export default async function CalendarPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
@@ -18,7 +18,11 @@ export default async function CalendarPage({ searchParams }: { searchParams: Sea
     return <EmptyState title="Henüz bir tesisin yok. Önce tesisini ekle." actionHref="/venues/new" actionLabel="Tesis ekle" />;
   }
 
-  const today = todayIstanbul();
+  // Before 06:00 we are still inside yesterday's (possibly overnight) business day.
+  const istanbulHour = Number(
+    new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', hourCycle: 'h23' }).format(new Date()),
+  );
+  const today = istanbulHour < 6 ? addDays(todayIstanbul(), -1) : todayIstanbul();
   const requested = first(sp.date);
   const date = isDateString(requested) ? requested : today;
   const href = (d: string) => `/calendar?venue=${venue.id}&date=${d}`;

@@ -24,6 +24,7 @@ export type PaymentStatus =
   | 'succeeded'
   | 'failed'
   | 'refund_required'
+  | 'refund_processing'
   | 'refunded';
 
 type ProfileRow = {
@@ -309,6 +310,10 @@ export type Database = {
           p_paytr_submerchant_key?: string;
         };
         Returns: VenueRow;
+      };
+      owner_customer_contacts: {
+        Args: { p_user_ids: string[] };
+        Returns: { user_id: string; full_name: string; phone: string | null }[];
       };
       cancel_booking: {
         Args: { p_booking_id: string; p_reason?: string };

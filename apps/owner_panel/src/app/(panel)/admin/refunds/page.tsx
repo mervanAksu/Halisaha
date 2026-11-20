@@ -12,7 +12,7 @@ export default async function AdminRefundsPage() {
   const { data: payments, error } = await supabase
     .from('payments')
     .select('id, booking_id, user_id, merchant_oid, amount_kurus, created_at, updated_at')
-    .eq('status', 'refund_required')
+    .in('status', ['refund_required', 'refund_processing']) // processing = claimed by the refund job
     .order('updated_at', { ascending: true })
     .limit(200);
   if (error) throw new Error(toTurkishError(error));
