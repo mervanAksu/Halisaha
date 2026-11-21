@@ -69,7 +69,11 @@ Kampanya sayacı ("5 maçta 1 kapora bizden", v1.1).
 | `owner_customer_contacts(p_user_ids uuid[])` | Sahasında son 180 günde rezervasyonu olan müşterilerin yalnızca `user_id, full_name, phone` bilgisini döndürür (admin: herkes) | — |
 | `owner_mark_attendance(p_booking_id, p_status 'completed'\|'no_show')` | Geçmiş maçı işaretler (kapalı saat kayıtları işaretlenemez) | `forbidden, invalid_status` |
 
-### Admin
+### Bildirim
+`register_device_token(p_token, p_platform 'ios'|'android')`: FCM token'ını kaydeder. Tablo doğrudan yazılamaz. Aynı token başka kullanıcıdaysa yeni sahibine geçer. Kullanıcı başına en fazla 5 token tutulur.
+
+### Admin (MFA zorunlu: JWT `aal2`)
+`admin_verify_payout(p_venue_id)`: işletmenin IBAN/vergi bilgisini doğrular. Sahibi değiştirince doğrulama sıfırlanır. `audit_log` tablosunu yalnızca admin okur.
 `admin_list_venues()`: tüm sahaları komisyon ve PayTR anahtarıyla birlikte döndürür (yalnızca admin).
 `admin_update_venue(p_venue_id, p_status?, p_commission_bps?, p_paytr_submerchant_key?)`: sahayı onaylar veya
 askıya alır, komisyonu ve alt üye işyeri anahtarını belirler.
@@ -126,5 +130,8 @@ Yanıt: `204`. Hatalar: `not_authenticated`, `owner_account` (saha sahibi hesapl
 | `too_many_recent_holds` | Kısa sürede çok fazla rezervasyon denemesi yaptın. Biraz sonra tekrar dene. |
 | `too_many_payment_attempts` | Bu rezervasyon için çok fazla ödeme denemesi yapıldı. Yeni bir saat seç. |
 | `slot_started` | Bu maç başladığı için işlem yapılamaz. |
+| `submerchant_key_required` | Sahayı yayına almak için önce PayTR alt üye işyeri anahtarını girin. |
+| `reauth_required` | Güvenlik için tekrar giriş yapmalısın. |
+| `invalid_token` | Bildirim kaydı geçersiz. |
 | `payment_provider_error` | Ödeme altyapısına ulaşılamadı. Biraz sonra tekrar dene. |
 | (diğer) | Bir şeyler ters gitti. Tekrar dene. |

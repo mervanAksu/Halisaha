@@ -15,6 +15,9 @@ Ajan kadrosu ve iş bölümü: [`AGENTS.md`](AGENTS.md).
 
 ```
 supabase/            → Postgres migrations, RLS, RPC, Edge Functions (sahibi: backend-engineer, payments-engineer)
+security/            → tehdit modeli, bulgular, güvenlik temel ayarları (sahibi: red-team)
+site/legal/          → yasal ve destek sayfaları (GitHub Pages)
+store/               → mağaza metinleri, gizlilik formu cevapları, görseller
 apps/mobile/         → Flutter müşteri uygulaması (sahibi: flutter-engineer)
 apps/owner_panel/    → Next.js işletme paneli (sahibi: web-panel-engineer)
 docs/                → sözleşmeler ve kararlar (sahibi: orkestratör + docs-keeper)
@@ -51,6 +54,12 @@ flutter run --dart-define-from-file=env/dev.json
 cd apps/owner_panel && npm ci && npm run typecheck && npm run lint && npm run dev
 ```
 
+## Güvenlik kuralları (özet; ayrıntı: `.claude/skills/security-review`)
+- Her push'ta `Security` iş akışı çalışır: CodeQL, gitleaks, bağımlılık denetimi ve **saldırı paketi**. Açık `VULN` CI'ı kırmızıya düşürür.
+- Admin yetkisi MFA (`aal2`) ister. Hassas kolonlar kolon izniyle kapalıdır. Yeni fonksiyon allow-list'e eklenmeden çağrılamaz.
+- Auth, RLS, ödeme ya da kişisel veriye dokunan her işten sonra `red-team` ajanı çalıştırılır.
+- İmza anahtarları ve repo secrets ajanlar tarafından oluşturulmaz veya yazılmaz; kullanıcı yapar (`docs/RELEASE.md`).
+
 ## Yapma
 
 - `service_role` anahtarını istemci koduna koyma.
@@ -66,4 +75,6 @@ cd apps/owner_panel && npm ci && npm run typecheck && npm run lint && npm run de
   rezervasyon onaylatmasına izin veriyordu. Çözüm: migration 090800'daki allow-list ve test 30a.
 - 2026-11-20: Geç gelen ödeme, başlamış bir maçı onaylayabiliyordu. Çözüm: `starts_at <= now()` → iade.
 - 2026-11-20: Yazım ortamında paket indirilemiyorsa derleme doğrulaması CI'da yapılır; `gh run view --log-failed` ile hata okunup düzeltilir. CI yeşil olmadan iş "bitti" sayılmaz.
+- 2026-11-21: Kırmızı takım (114 saldırı) 10 açık + 17 statik bulgu çıkardı; hepsi kapatıldı. Ders: "engellendi" testleri doğru hata koduyla doğrulanmalı (TESTBUG), aksi halde yanlış güven verir.
+- 2026-11-21: Supabase `is_admin()` MFA ister; testlerde admin için `request.jwt.claims = {"aal":"aal2"}` ayarlanır.
 - Bu tür dersler buraya kısa bir satır olarak eklenir ve ilgili skill dosyası da güncellenir.

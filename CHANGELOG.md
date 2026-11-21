@@ -3,6 +3,16 @@
 Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: SemVer.
 
 ## [Unreleased]
+### Added (2026-11-21)
+- Marka **Rövanş** (`com.rovans.app`): özgün ikon, açılış ekranı, Play tanıtım görseli; açık "Temiz Çim" + koyu "Gece Maçı" teması, erişilebilirlik kontrast testleri.
+- Uygulama içi **işletmeci paneli** (Bugün takvimi, telefon rezervasyonu / saat kapatma, rezervasyonlar, sahalar, çalışma saatleri) + web demosunda denenebilir işletmeci modu.
+- Android/iOS iskeleti, imza kancası, kod karartmalı sürüm derlemesi (APK/AAB → GitHub Releases, iOS imzasız derleme), mağaza ekran görüntüsü üretimi, yasal ve destek sayfaları, `store/LISTING.md`, `docs/RELEASE.md`.
+- Panelde MFA (TOTP), IBAN doğrulama, denetim kaydı ekranı; isteğe bağlı Turnstile captcha.
+- Güvenlik CI'ı: CodeQL, gitleaks, bağımlılık denetimi, Dependabot, 114 saldırılık kırmızı takım paketi.
+
+### Security (2026-11-21, kırmızı takım)
+- 10 kanıtlanmış (F-01…F-10) ve 17+5 statik (S-01…S-17, M-01…M-05) bulgu kapatıldı; ayrıntı `security/FINDINGS.md`. Öne çıkanlar: başarısız→başarılı ödeme bildirimi yutulmuyor, iptal süresi rezervasyona sabit, PayTR anahtarı olmayan saha yayına alınamıyor, PayTR test modu açıkça seçilmeli, panel Next.js RCE yaması, admin için MFA zorunlu.
+
 ### Security
 - **Kritik:** Supabase'in varsayılan fonksiyon yetkileri, iç fonksiyonları (`confirm_payment`, `prepare_account_deletion`, `mark_refunded` …) anon ve authenticated rollerine açıyordu. Müşteri ödeme yapmadan rezervasyonunu onaylatabilirdi. Tüm fonksiyonlar deny-by-default yapıldı, allow-list ve test (30a) eklendi. Test ortamı artık Supabase varsayılanlarını taklit ediyor.
 - Geç gelen ödeme başlamış maçı onaylamıyor, iade ediliyor. İade işi çift iadeye karşı atomik talep ediyor, tutar tahsilatla sınırlı.

@@ -17,6 +17,7 @@ Bu dosya araçtan bağımsızdır (Claude Code, Codex, Cursor vb.). Claude Code 
 | `web-panel-engineer` | sonnet | `apps/owner_panel/` | İşletme ve admin paneli |
 | `qa-reviewer` | sonnet | yazmaz, rapor verir | Her özelliğin sonunda |
 | `security-reviewer` | opus | yazmaz, rapor verir | Auth, RLS, ödeme, gizli bilgi değişikliklerinde |
+| `red-team` | opus (mümkünse en güçlü model) | `security/`, `supabase/tests/40_attacks.sql` | Büyük özellik ve güvenlik düzeltmelerinden sonra; yerel ortama saldırı düzenler |
 | `docs-keeper` | haiku | `docs/`, `CHANGELOG.md` tutarlılığı | Her merge öncesi |
 
 > Kural: inceleyen ajan, kodu yazan ajandan **farklı** bir model veya bağlamla çalışır.
@@ -34,7 +35,7 @@ orchestrator ── PRD ve MASTER_PROMPT'a göre yorumlar ── belirsizse kull
    ├─▶ paralel iş dağıtır:  backend-engineer │ payments-engineer │ flutter-engineer │ web-panel-engineer
    │                         (her biri yalnızca kendi klasörüne yazar, commit atmaz)
    │
-   ├─▶ qa-reviewer (+ gerekiyorsa security-reviewer) → bulgu listesi
+   ├─▶ qa-reviewer (+ gerekiyorsa security-reviewer, red-team) → bulgu listesi / saldırı paketi
    │
    ├─▶ düzeltmeleri ilgili ajana geri verir
    │
@@ -73,6 +74,7 @@ DOĞRULANAMAYAN: …
 | `.claude/skills/paytr-integration` | PayTR token, callback, iade ve alt üye işyeri işlemleri |
 | `.claude/skills/release-checklist` | TestFlight, Play kapalı test ve mağaza yayını |
 | `.claude/skills/git-workflow` | Branch, commit formatı, CHANGELOG, push |
+| `.claude/skills/security-review` | Güvenlik kuralları ve kırmızı takım döngüsü |
 
 ## Bu dosyayı güncelle
 

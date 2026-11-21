@@ -26,7 +26,7 @@ Mobil                   Supabase (RPC/Edge)                      PayTR
 5. `merchant_key` ve `merchant_salt` yalnızca `supabase secrets` içinde tutulur ve log'a yazılmaz.
 
 ## Ortam değişkenleri (`supabase secrets set`)
-`PAYTR_MERCHANT_ID`, `PAYTR_MERCHANT_KEY`, `PAYTR_MERCHANT_SALT`, `PAYTR_TEST_MODE` (1/0),
+`PAYTR_MERCHANT_ID`, `PAYTR_MERCHANT_KEY`, `PAYTR_MERCHANT_SALT`, `PAYTR_TEST_MODE` (**zorunlu**, açıkça `1` ya da `0`; yoksa ödeme başlamaz), `PSEUDONYM_SALT`,
 `PAYTR_PLACEHOLDER_EMAIL_DOMAIN`, `PAYMENT_RESULT_BASE_URL`, `CRON_SECRET`.
 
 ## PayTR panel ayarları

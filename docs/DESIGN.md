@@ -27,7 +27,7 @@ renk, tipografi, ikon ve metinler özgündür. Referansın marka, logo ve görse
 | `border` | `#E5E7EB` | `#24342C` | |
 | `warning` | `#B45309` | `#F5C84B` | Ödeme bekleniyor |
 | `danger` | `#C81E3A` | `#FF5C73` | İptal, hesap silme |
-| `disabledSlot` | `#F1F2F4` / yazı `#6B7280` | `#1E2A24` / yazı `#8FA89A` | Dolu slot |
+| `disabledSlot` | `#F1F2F4` / yazı `#656C78` | `#1E2A24` / yazı `#8FA89A` | Dolu slot |
 
 Kontrast kuralı: `#22B573` üzerine beyaz yazı **yazılmaz** (2.65:1). Yeşil zeminde yazı varsa `action` tonu kullanılır.
 Tüm yazı/zemin çiftleri WCAG AA (≥4.5:1, büyük yazı ≥3:1) geçmelidir.

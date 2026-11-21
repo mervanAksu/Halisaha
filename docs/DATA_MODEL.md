@@ -26,5 +26,13 @@ profiles 1─* device_tokens
   - `confirmed → cancelled` (müşteri/işletme) | `completed` (cron, bitiş saatinden sonra) | `no_show` (işletme)
 - **Silinen kullanıcı:** `bookings.user_id` ve `payments.user_id` alanları `set null` olur. Mali kayıt korunur.
 
+## Güvenlik ekleri (2026-11-21, kırmızı takım)
+- `bookings.cancellation_window_hours` rezervasyon anındaki iptal süresidir, sonradan değişmez. `bookings.confirmed_at` gerçek (ödenmiş/onaylı) rezervasyon anıdır.
+- `bookings.commission_kurus` istemcilere kolon izniyle kapalıdır.
+- `venue_payout_accounts.verified_at`: admin onayı. Sahibi değiştirince sıfırlanır.
+- `audit_log` (append-only): saha durum, komisyon, PayTR anahtarı, iptal süresi ve IBAN değişiklikleri (IBAN'ın yalnızca son 4 hanesi).
+- `consent_events` (append-only): KVKK aydınlatma ve pazarlama izni geçmişi.
+- `venues_photo_paths_ok`: fotoğraflar `<venue_id>/<uuid>.(jpg|png|webp)` biçiminde olur, en fazla 10 tanedir, kapak fotoğrafı listeden seçilir.
+
 ## İndeksler
 `bookings(user_id, starts_at desc)`, `bookings(venue_id, starts_at)`, `bookings(hold_expires_at) where pending`, `venues(status, district)`.
