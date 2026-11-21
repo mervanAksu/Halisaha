@@ -1,0 +1,60 @@
+name: Security
+
+on:
+  push: { branches: [main] }
+  pull_request:
+  schedule:
+    - cron: '23 3 * * 1'   # weekly, Monday 06:23 Istanbul
+
+permissions:
+  contents: read
+
+jobs:
+  codeql:
+    name: CodeQL (TypeScript — panel + Edge Functions)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v3
+
+  secrets:
+    name: Secret scan (gitleaks, full history)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: gitleaks
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect --source /repo --redact --no-banner -v
+
+  dependencies:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: npm audit (panel, high+)
+        working-directory: apps/owner_panel
+        run: npm install --package-lock-only --ignore-scripts && npm audit --audit-level=high --omit=dev
+      - name: OSV scan (Dart + npm lockfiles)
+        run: |
+          docker run --rm -v "$PWD:/src" ghcr.io/google/osv-scanner:latest scan source -r /src || echo "::warning::osv-scanner reported issues (see log)"
+
+  attack-suite:
+    name: Attack suite (SQL red-team tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ls -d /usr/lib/postgresql/*/bin || (sudo apt-get update -q && sudo apt-get install -yq postgresql postgresql-contrib)
+      - name: Run migrations + all SQL tests incl. 40_attacks.sql; fail on any VULN warning
+        run: |
+          ./supabase/tests/run_local.sh 2>&1 | tee /tmp/sql.log
+          if grep -q "VULN " /tmp/sql.log; then echo "::error::Open vulnerabilities in attack suite"; grep "VULN " /tmp/sql.log; exit 1; fi
