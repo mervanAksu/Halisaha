@@ -24,6 +24,10 @@ const MESSAGES: Record<string, string> = {
   // Not in API_CONTRACT yet (raised by admin_update_venue / confirm_payment):
   venue_not_found: 'Tesis bulunamadı.',
   payment_not_found: 'Ödeme kaydı bulunamadı.',
+  submerchant_key_required: 'Sahayı yayına almak için önce PayTR alt üye işyeri anahtarını girin.',
+  reauth_required: 'Güvenlik için tekrar giriş yapmalısın.',
+  invalid_token: 'Geçersiz istek.',
+  mfa_required: 'İki adımlı doğrulama gerekli.',
 };
 
 // Direct table writes surface Postgres constraint names / codes instead of RPC codes.

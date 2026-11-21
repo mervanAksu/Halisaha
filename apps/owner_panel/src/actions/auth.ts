@@ -11,7 +11,14 @@ export async function login(_prev: ActionState, formData: FormData): Promise<Act
   if (!email || !password) return fail('E-posta ve şifre gerekli.');
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  // Present only when Turnstile is enabled; Supabase verifies it when captcha protection is on.
+  const rawToken = formData.get('cf-turnstile-response');
+  const captchaToken = typeof rawToken === 'string' && rawToken !== '' ? rawToken : undefined;
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+    options: captchaToken ? { captchaToken } : undefined,
+  });
   if (error || !data.user) return fail('E-posta veya şifre hatalı.');
 
   const { data: profile } = await supabase

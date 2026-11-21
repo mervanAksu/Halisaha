@@ -11,7 +11,7 @@ export function PayoutForm({
   initial,
 }: {
   venueId: string;
-  initial: { legal_name: string; tax_number: string; iban: string } | null;
+  initial: { legal_name: string; tax_number: string; ibanLast4: string | null; verified: boolean } | null;
 }) {
   const [state, action] = useActionState<ActionState, FormData>(savePayout, null);
   return (
@@ -27,8 +27,14 @@ export function PayoutForm({
       </div>
       <div>
         <label htmlFor="iban" className="label">IBAN</label>
-        <input id="iban" name="iban" required autoComplete="off" defaultValue={initial?.iban ?? ''} className="input" placeholder="TR00 0000 0000 0000 0000 0000 00" />
+        <input id="iban" name="iban" required autoComplete="off" defaultValue="" className="input" placeholder="TR00 0000 0000 0000 0000 0000 00" />
+        {initial?.ibanLast4 ? (
+          <p className="hint">
+            Kayıtlı IBAN: ****{initial.ibanLast4} ({initial.verified ? 'doğrulandı' : 'doğrulama bekliyor'}). Değiştirmek için yeni IBAN gir.
+          </p>
+        ) : null}
         <p className="hint">Boşluklu yazabilirsin; kaydederken otomatik düzeltilir.</p>
+        <p className="hint font-medium">Değişiklik platform ekibinin onayından sonra geçerli olur.</p>
       </div>
       <FormMessage state={state} />
       <SubmitButton>Kaydet</SubmitButton>

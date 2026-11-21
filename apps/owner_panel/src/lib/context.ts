@@ -40,6 +40,14 @@ export const getStaffContext = cache(async () => {
     redirect('/auth/signout?reason=forbidden');
   }
 
+  // MFA (S-04): admins must be aal2 (is_admin() requires it in the DB); owners must be aal2 once they
+  // have a verified TOTP factor. Redirect BEFORE any admin query runs.
+  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  const currentLevel = aal?.currentLevel ?? 'aal1';
+  const hasFactor = aal?.nextLevel === 'aal2' || currentLevel === 'aal2';
+  if (profile.role === 'admin' && currentLevel !== 'aal2') redirect('/login/mfa');
+  if (profile.role === 'owner' && hasFactor && currentLevel !== 'aal2') redirect('/login/mfa');
+
   // Owners see their own venues; admins can switch between all venues (RLS allows it).
   let query = supabase.from('venues').select('id, name, status').order('name');
   if (profile.role === 'owner') query = query.eq('owner_id', user.id);
@@ -50,6 +58,7 @@ export const getStaffContext = cache(async () => {
     supabase,
     user,
     profile: profile as StaffProfile,
+    mfaEnabled: hasFactor,
     venues: (venues ?? []) as VenueLite[],
   };
 });

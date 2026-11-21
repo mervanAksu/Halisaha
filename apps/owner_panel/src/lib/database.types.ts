@@ -1,4 +1,4 @@
-// HAND-WRITTEN — regenerate with `supabase gen types typescript --local`
+// HAND-WRITTEN (not generated) — regenerate with `supabase gen types typescript --local`
 // Source of truth: supabase/migrations/*.sql (core_schema, rls_policies, booking_rpcs).
 
 export type Json =
@@ -66,6 +66,7 @@ type VenuePayoutAccountRow = {
   legal_name: string;
   tax_number: string;
   iban: string;
+  verified_at: string | null;
   updated_at: string;
 };
 
@@ -102,7 +103,8 @@ type BookingRow = {
   ends_at: string;
   price_kurus: number;
   deposit_kurus: number;
-  commission_kurus: number;
+  // commission_kurus: column SELECT revoked from `authenticated` (F-06); never select it from the panel.
+  commission_kurus?: number;
   hold_expires_at: string | null;
   customer_name: string | null;
   customer_phone: string | null;
@@ -112,6 +114,8 @@ type BookingRow = {
   cancel_reason: string | null;
   created_at: string;
   updated_at: string;
+  cancellation_window_hours: number | null;
+  confirmed_at: string | null;
 };
 
 type PaymentRow = {
@@ -132,6 +136,16 @@ type FavoriteRow = {
   user_id: string;
   venue_id: string;
   created_at: string;
+};
+
+type AuditLogRow = {
+  id: number;
+  at: string;
+  actor: string | null;
+  table_name: string;
+  row_id: string;
+  action: string;
+  diff: Json;
 };
 
 type DeviceTokenRow = {
@@ -293,6 +307,12 @@ export type Database = {
           },
         ];
       };
+      audit_log: {
+        Row: AuditLogRow;
+        Insert: Insertable<AuditLogRow, 'table_name' | 'row_id' | 'action'>;
+        Update: Partial<AuditLogRow>;
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -310,6 +330,14 @@ export type Database = {
           p_paytr_submerchant_key?: string;
         };
         Returns: VenueRow;
+      };
+      admin_verify_payout: {
+        Args: { p_venue_id: string };
+        Returns: undefined;
+      };
+      register_device_token: {
+        Args: { p_token: string; p_platform: 'ios' | 'android' };
+        Returns: undefined;
       };
       owner_customer_contacts: {
         Args: { p_user_ids: string[] };

@@ -1,3 +1,4 @@
+import { BOOKING_COLUMNS } from '@/lib/columns';
 import { BookingActions } from '@/components/booking-actions';
 import { EmptyState } from '@/components/empty-state';
 import { PageHeader } from '@/components/page-header';
@@ -36,7 +37,7 @@ export default async function BookingsPage({ searchParams }: { searchParams: Sea
 
   let query = supabase
     .from('bookings')
-    .select('*')
+    .select(BOOKING_COLUMNS)
     .eq('venue_id', venue.id)
     .gte('starts_at', toTimestamptz(from, '00:00'))
     .lt('starts_at', toTimestamptz(addDays(to, 1), '00:00'))

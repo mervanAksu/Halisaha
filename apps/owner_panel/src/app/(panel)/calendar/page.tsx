@@ -1,3 +1,4 @@
+import { BOOKING_COLUMNS } from '@/lib/columns';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { CalendarGrid } from '@/components/calendar/calendar-grid';
@@ -43,7 +44,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Sea
     const win = dayWindow(date, hours.open_time, hours.close_time);
     const { data: rows, error } = await supabase
       .from('bookings')
-      .select('*')
+      .select(BOOKING_COLUMNS)
       .eq('venue_id', venue.id)
       .lt('starts_at', new Date(win.closeMs).toISOString())
       .gt('ends_at', new Date(win.openMs).toISOString())

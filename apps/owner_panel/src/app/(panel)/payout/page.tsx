@@ -14,7 +14,7 @@ export default async function PayoutPage({ searchParams }: { searchParams: Searc
 
   const { data, error } = await supabase
     .from('venue_payout_accounts')
-    .select('legal_name, tax_number, iban')
+    .select('legal_name, tax_number, iban, verified_at')
     .eq('venue_id', venue.id)
     .maybeSingle();
   if (error) throw new Error(toTurkishError(error));
@@ -28,7 +28,16 @@ export default async function PayoutPage({ searchParams }: { searchParams: Searc
           PayTR alt üye işyeri kaydı bu bilgilerle platform ekibi tarafından tamamlanır; senin ayrıca bir işlem yapmana gerek yoktur.
         </div>
         <div className="panel-card">
-          <PayoutForm key={venue.id} venueId={venue.id} initial={data} />
+          <PayoutForm key={venue.id} venueId={venue.id} initial={
+              data
+                ? {
+                    legal_name: data.legal_name,
+                    tax_number: data.tax_number,
+                    ibanLast4: data.iban.slice(-4),
+                    verified: data.verified_at !== null,
+                  }
+                : null
+            } />
         </div>
       </div>
     </>

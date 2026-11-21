@@ -45,3 +45,17 @@ export async function adminUpdateVenue(_prev: ActionState, formData: FormData): 
   revalidatePath('/', 'layout');
   return ok('Tesis güncellendi.');
 }
+
+export async function verifyPayout(_prev: ActionState, formData: FormData): Promise<ActionState> {
+  const client = await actionClient();
+  if (!client) return fail(toTurkishError({ message: 'not_authenticated' }));
+
+  const venueId = str(formData, 'venueId');
+  if (!venueId) return fail(toTurkishError({ message: 'forbidden' }));
+
+  const { error } = await client.supabase.rpc('admin_verify_payout', { p_venue_id: venueId });
+  if (error) return fail(toTurkishError(error));
+
+  revalidatePath('/admin/payouts');
+  return ok('IBAN doğrulandı.');
+}

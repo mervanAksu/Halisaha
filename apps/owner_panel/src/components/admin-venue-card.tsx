@@ -38,6 +38,9 @@ export function AdminVenueCard({ venue }: { venue: AdminVenue }) {
             <option value="active">Yayında</option>
             <option value="suspended">Askıya alındı</option>
           </select>
+          {!venue.paytrKey ? (
+            <p className="hint">Yayına almak için önce PayTR alt üye işyeri anahtarı girilmeli.</p>
+          ) : null}
         </div>
         <div>
           <label htmlFor={`pct-${venue.id}`} className="label">Komisyon (% kaporadan)</label>

@@ -80,6 +80,7 @@ export function VenueForm({ venue = EMPTY }: { venue?: VenueFormValues }) {
             className="input"
           />
           <p className="hint">Maça bu kadar saatten fazla varsa müşteri iptal ederse kapora iade edilir.</p>
+          <p className="hint">İptal süresindeki değişiklik yalnızca yeni rezervasyonlara uygulanır.</p>
         </div>
       </div>
 

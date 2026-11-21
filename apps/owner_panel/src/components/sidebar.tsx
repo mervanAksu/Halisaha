@@ -8,11 +8,14 @@ const LINKS = [
   { href: '/bookings', label: 'Rezervasyonlar' },
   { href: '/venues', label: 'Tesislerim' },
   { href: '/payout', label: 'Ödeme Bilgileri' },
+  { href: '/security', label: 'Güvenlik' },
 ];
 
 const ADMIN_LINKS = [
   { href: '/admin/venues', label: 'Saha Onayları' },
   { href: '/admin/refunds', label: 'İadeler' },
+  { href: '/admin/payouts', label: 'IBAN Doğrulama' },
+  { href: '/admin/audit', label: 'Denetim Kaydı' },
 ];
 
 export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
