@@ -17,6 +17,7 @@ class DateStrip extends StatelessWidget {
     required this.selectedIndex,
     required this.onSelected,
     this.includeYesterday = false,
+    this.yesterdayLabel = S.lastNight,
   });
 
   /// Today's Istanbul calendar date (see `istanbulToday`).
@@ -25,6 +26,9 @@ class DateStrip extends StatelessWidget {
   /// Before 06:00 Istanbul time the previous business day is still running (overnight venues):
   /// it is offered as the first chip ("Dün gece").
   final bool includeYesterday;
+
+  /// Label of the yesterday chip: "Dün gece" for customers (only shown before 06:00), "Dün" for owners.
+  final String yesterdayLabel;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
@@ -60,7 +64,7 @@ class DateStrip extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    offset == -1 ? S.lastNight : (offset == 0 ? S.today : formatWeekdayShort(date)),
+                    offset == -1 ? yesterdayLabel : (offset == 0 ? S.today : formatWeekdayShort(date)),
                     style: theme.textTheme.bodySmall?.copyWith(color: fgSecondary),
                   ),
                   const SizedBox(height: 2),

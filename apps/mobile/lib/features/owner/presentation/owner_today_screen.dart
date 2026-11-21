@@ -53,11 +53,12 @@ class _OwnerTodayScreenState extends ConsumerState<OwnerTodayScreen> {
             children: [
               switcher,
               const SizedBox(height: AppSpacing.s),
-              // The strip's first chip is "Dün gece": yesterday's business day, as in the customer flow.
+              // The strip's first chip is yesterday ("Dün"), so owners can review or fix the previous day.
               DateStrip(
                 today: _businessToday,
                 selectedIndex: _index,
                 includeYesterday: true,
+                yesterdayLabel: S.yesterday,
                 onSelected: (i) => setState(() => _index = i),
               ),
               const SizedBox(height: AppSpacing.s),

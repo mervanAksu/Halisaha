@@ -17,6 +17,7 @@ abstract final class S {
   static const String openSettings = 'Ayarları aç';
   static const String today = 'Bugün';
   static const String lastNight = 'Dün gece';
+  static const String yesterday = 'Dün';
   static const String date = 'Tarih';
   static const String time = 'Saat';
   static const String pitch = 'Saha';
@@ -337,6 +338,7 @@ abstract final class S {
   static const String ownerPanel = 'İşletmeci paneli';
   static const String ownerPanelSubtitle = 'Takvimi, rezervasyonları ve sahaları yönet';
   static const String ownerTabBookings = 'Rezervasyonlar';
+  static const String ownerTabBookingsShort = 'Rezervasyon';
   static const String ownerTabPitches = 'Sahalarım';
   static const String ownerTabHours = 'Saatler';
   static const String ownerExit = 'Müşteri uygulamasına dön';

@@ -47,7 +47,7 @@ class _OwnerShellState extends State<OwnerShell> {
             NavigationDestination(
               icon: Icon(Icons.event_note_outlined),
               selectedIcon: Icon(Icons.event_note),
-              label: S.ownerTabBookings,
+              label: S.ownerTabBookingsShort,
             ),
             NavigationDestination(
               icon: Icon(Icons.sports_soccer_outlined),
