@@ -45,8 +45,8 @@ jobs:
       - name: Commit
         working-directory: .
         run: |
-          git config user.name "rovans-ci"
-          git config user.email "ci@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add apps/mobile/android apps/mobile/ios
           git add -f apps/mobile/web/icons apps/mobile/web/favicon.png 2>/dev/null || true
           git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
