@@ -12,6 +12,13 @@ plugins {
 }
 
 android {
+    // Android Lint crashes on webview_flutter_android's generated Kotlin (tool bug, NoSuchMethodError in
+    // JavaDocParser). Code quality is enforced by `flutter analyze` in CI instead.
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+
     namespace = "com.rovans.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion

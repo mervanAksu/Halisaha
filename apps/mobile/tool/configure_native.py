@@ -62,6 +62,8 @@ if kts.exists():
         g, n = re.subn(r'signingConfig = signingConfigs\.getByName\("debug"\)',
                        'signingConfig = if (keystorePropertiesFile.exists()) signingConfigs.getByName("release") else signingConfigs.getByName("debug")', g)
         must(n >= 1, "release signingConfig line not found")
+    if "checkReleaseBuilds" not in g:
+        g = g.replace("android {\n", "android {\n    lint {\n        checkReleaseBuilds = false\n        abortOnError = false\n    }\n\n", 1)
     g = re.sub(r'applicationId = "[^"]*"', f'applicationId = "{APP_ID}"', g)
     g = re.sub(r'minSdk = [^\n]*', 'minSdk = 23', g)
     kts.write_text(g, encoding="utf-8")
