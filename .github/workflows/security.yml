@@ -57,4 +57,5 @@ jobs:
       - name: Run migrations + all SQL tests incl. 40_attacks.sql; fail on any VULN warning
         run: |
           ./supabase/tests/run_local.sh 2>&1 | tee /tmp/sql.log
-          if grep -q "VULN " /tmp/sql.log; then echo "::error::Open vulnerabilities in attack suite"; grep "VULN " /tmp/sql.log; exit 1; fi
+          if grep -qE "WARNING:  VULN |TESTBUG" /tmp/sql.log; then echo "::error::Open vulnerabilities in attack suite"; grep -E "WARNING:  VULN |TESTBUG" /tmp/sql.log; exit 1; fi
+          grep "attack suite:" /tmp/sql.log

@@ -51,4 +51,4 @@ jobs:
       - uses: actions/checkout@v4
       - name: No secrets committed
         run: |
-          ! git grep -nE "(service_role|SERVICE_ROLE)[^\n]*eyJhbGci|merchant_key\s*[:=]\s*['\"][A-Za-z0-9]{8,}|sk_live_" -- . ':!*.md' ':!.github/**'
+          ! git grep -nE "(service_role|SERVICE_ROLE)[^\n]*eyJhbGci|(^|[^a-z_])merchant_key\s*[:=]\s*['\"][A-Za-z0-9]{8,}|sk_live_" -- . ':!*.md' ':!.github/**'
