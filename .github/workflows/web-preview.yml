@@ -94,7 +94,7 @@ jobs:
           name: web-preview-screenshots
           path: /tmp/shot-*.png
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         with: { enablement: true }
         continue-on-error: true   # needs a one-time manual enable if the token may not do it
       - uses: actions/upload-pages-artifact@v3
