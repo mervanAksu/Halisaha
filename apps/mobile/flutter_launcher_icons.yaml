@@ -1,0 +1,14 @@
+# Run in CI: dart pub global run flutter_launcher_icons -f flutter_launcher_icons.yaml
+flutter_launcher_icons:
+  image_path: "assets/branding/icon_1024.png"
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  min_sdk_android: 23
+  adaptive_icon_background: "#0F2A44"
+  adaptive_icon_foreground: "assets/branding/icon_foreground.png"
+  web:
+    generate: true
+    image_path: "assets/branding/icon_1024.png"
+    background_color: "#0F2A44"
+    theme_color: "#0F2A44"

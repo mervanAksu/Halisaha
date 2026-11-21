@@ -7,7 +7,7 @@ name: Web preview (demo)
 on:
   push:
     branches: [main]
-    paths: ['apps/mobile/**', '.github/workflows/web-preview.yml']
+    paths: ['apps/mobile/**', 'site/**', 'tool/store_screenshots.mjs', '.github/workflows/web-preview.yml']
   workflow_dispatch:
 
 permissions:
@@ -72,6 +72,21 @@ jobs:
               "http://localhost:8080/Halisaha/${route}" "/tmp/shot-${name}.png"
           done
           ls -la /tmp/shot-*.png
+
+      - name: Store screenshots (published under /Halisaha/store/)
+        continue-on-error: true
+        run: |
+          (cd /tmp/site && python3 -m http.server 8081 >/dev/null 2>&1 &)
+          sleep 2
+          mkdir -p /tmp/storeshots && cd /tmp/storeshots && npm init -y >/dev/null && npm i playwright@1.49.1 >/dev/null
+          npx playwright install chromium >/dev/null
+          cp "$GITHUB_WORKSPACE/tool/store_screenshots.mjs" .
+          node store_screenshots.mjs http://localhost:8081/Halisaha/ "$GITHUB_WORKSPACE/apps/mobile/build/web/store"
+
+      - name: Legal and support pages (published under /Halisaha/legal/)
+        run: |
+          mkdir -p build/web/legal
+          cp -r "$GITHUB_WORKSPACE/site/legal/." build/web/legal/
 
       - uses: actions/upload-artifact@v4
         if: always()

@@ -1,0 +1,51 @@
+name: Scaffold native platforms
+
+# One-off (re-runnable) job: generates android/ and ios/ with `flutter create`, applies our configuration
+# (bundle id com.rovans.app, name, permissions, signing hook, icon, splash) and commits the result.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  scaffold:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/mobile } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with: { channel: stable, cache: true }
+
+      - name: flutter create (android, ios)
+        run: |
+          flutter create . --org com.rovans --project-name app --platforms=android,ios
+          # keep our tracked sources exactly as they are
+          git checkout -- lib test pubspec.yaml analysis_options.yaml web README.md
+          rm -f test/widget_test.dart
+
+      - name: Configure native projects
+        run: python3 tool/configure_native.py
+
+      - name: App icon and splash
+        run: |
+          flutter pub get
+          dart pub global activate flutter_launcher_icons
+          dart pub global activate flutter_native_splash
+          dart pub global run flutter_launcher_icons -f flutter_launcher_icons.yaml
+          dart pub global run flutter_native_splash:create --path=flutter_native_splash.yaml
+          git checkout -- pubspec.yaml lib web 2>/dev/null || true
+
+      - name: Sanity build (debug APK)
+        run: flutter build apk --debug --dart-define=DEMO_MODE=true
+
+      - name: Commit
+        working-directory: .
+        run: |
+          git config user.name "rovans-ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add apps/mobile/android apps/mobile/ios
+          git add -f apps/mobile/web/icons apps/mobile/web/favicon.png 2>/dev/null || true
+          git diff --cached --quiet && { echo "nothing to commit"; exit 0; }
+          git commit -m "chore(mobile): scaffold android/ios (com.rovans.app), icon, splash, signing hook"
+          git push

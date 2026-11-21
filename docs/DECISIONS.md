@@ -31,3 +31,13 @@ Sonuç: SMS maliyeti oluşur ve SMS pumping riski vardır. Supabase Auth rate li
 Bağlam: CI'daki Flutter 3.47, `package:flutter/material.dart` importunu kullanımdan kaldırılmış (deprecated) olarak işaretliyor. Yerine `package:material_ui` geliyor.
 Karar: v1'de `material.dart` ile devam ediliyor ve `flutter analyze --no-fatal-infos` kullanılıyor. Geçiş, paket kararlı hale gelince tek bir PR ile yapılacak.
 Sonuç: CI bilgi notlarını raporlar ama başarısız olmaz. Uyarı (warning) ve hatalar hâlâ CI'ı başarısız yapar.
+
+## ADR-8 · Marka "Rövanş", paket kimliği com.rovans.app, tasarım A+B (2026-11-21)
+Bağlam: "Halısaha" adı ayırt edici değil ve korunamaz. "Saha…" ve "Maç…" ile başlayan çok sayıda uygulama var.
+Karar: Ad "Rövanş", paket kimliği `com.rovans.app` (değiştirilemez). Tasarım: açık "Temiz Çim" varsayılan, sistem koyu modunda "Gece Maçı". Ek UI kiti kullanılmıyor (Material 3 + kendi tokenlarımız). Ayrıntı: `docs/DESIGN.md`.
+Sonuç: Marka için TÜRKPATENT başvurusu yapılmalı. Kontrast kuralları (`#22B573` üzerine beyaz yazı yok) testle korunuyor.
+
+## ADR-9 · Kaporasız mod ile erken yayın seçeneği (2026-11-21)
+Bağlam: PayTR ve kurumsal mağaza hesapları şirket kuruluşuna bağlı.
+Karar: `deposit_kurus = 0` olan sahalarda rezervasyon ödeme olmadan onaylanır. Bu davranış zaten şemada var ve kötüye kullanım sınırlarıyla korunuyor. İlk işletmelerle ödeme altyapısı olmadan canlıya çıkılabilir.
+Sonuç: No-show koruması bu modda yok. İşletmeye bunun söylenmesi ve kara liste özelliğinin v1.1'e alınması gerekir.

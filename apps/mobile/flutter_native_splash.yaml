@@ -1,0 +1,12 @@
+# Run in CI: dart pub global run flutter_native_splash:create --path=flutter_native_splash.yaml
+flutter_native_splash:
+  color: "#F5F7FA"
+  image: assets/branding/splash_logo.png
+  color_dark: "#0B1410"
+  image_dark: assets/branding/splash_logo.png
+  android_12:
+    color: "#F5F7FA"
+    image: assets/branding/splash_logo.png
+    color_dark: "#0B1410"
+    image_dark: assets/branding/splash_logo.png
+  web: false

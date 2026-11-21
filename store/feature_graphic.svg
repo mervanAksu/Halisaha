@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0F2A44"/><stop offset="1" stop-color="#0B5D3B"/></linearGradient></defs>
+  <rect width="1024" height="500" fill="url(#g)"/>
+  <g transform="translate(80,90) scale(0.31)">
+    <path d="M 512 222 A 290 290 0 1 1 260.9 367" fill="none" stroke="#22B573" stroke-width="64" stroke-linecap="round"/>
+    <polygon points="299.9,299.5 309.3,411.1 198.4,347.1" fill="#22B573" stroke="#22B573" stroke-width="10" stroke-linejoin="round"/>
+    <circle cx="512" cy="512" r="178" fill="#FFFFFF"/>
+    <polygon points="512,442 578,490 553,568 471,568 446,490" fill="#0F2A44"/>
+  </g>
+  <text x="440" y="225" font-family="DejaVu Sans, Arial, sans-serif" font-size="88" font-weight="700" fill="#FFFFFF">Rövanş</text>
+  <text x="444" y="290" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#CFEFDF">Boş saati gör,</text>
+  <text x="444" y="336" font-family="DejaVu Sans, Arial, sans-serif" font-size="34" fill="#CFEFDF">kaporayla anında tut.</text>
+</svg>
