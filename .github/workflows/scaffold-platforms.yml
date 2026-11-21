@@ -31,10 +31,13 @@ jobs:
         run: |
           flutter pub get
           dart pub global activate flutter_launcher_icons
-          dart pub global activate flutter_native_splash
           dart pub global run flutter_launcher_icons -f flutter_launcher_icons.yaml
-          dart pub global run flutter_native_splash:create --path=flutter_native_splash.yaml
-          git checkout -- pubspec.yaml lib web 2>/dev/null || true
+          # flutter_native_splash must run inside the project: add it temporarily, then restore pubspec
+          flutter pub add --dev flutter_native_splash
+          dart run flutter_native_splash:create --path=flutter_native_splash.yaml
+          git checkout -- pubspec.yaml lib 2>/dev/null || true
+          git checkout -- pubspec.lock 2>/dev/null || true
+          flutter pub get
 
       - name: Sanity build (debug APK)
         run: flutter build apk --debug --dart-define=DEMO_MODE=true
