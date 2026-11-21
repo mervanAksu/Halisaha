@@ -19,6 +19,9 @@ abstract final class AppRoutes {
   static const String payment = '/payment';
   static const String bookingResult = '/booking-result/:id';
 
+  /// In-app owner panel (role owner/admin only; the router redirects everyone else).
+  static const String owner = '/owner';
+
   static String venue(String id) => '/venue/$id';
   static String result(String bookingId) => '/booking-result/$bookingId';
   static String otpFor(String e164Phone) => '$otp?phone=${Uri.encodeQueryComponent(e164Phone)}';

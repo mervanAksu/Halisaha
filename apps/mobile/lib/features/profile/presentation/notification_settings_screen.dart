@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/l10n/strings.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 
 /// Placeholder: local toggles only. Real push preferences arrive with FCM
@@ -29,15 +29,20 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
           Container(
             padding: const EdgeInsets.all(AppSpacing.m),
             decoration: BoxDecoration(
-              color: AppColors.accentSoft,
+              color: context.tokens.accentSoft,
               borderRadius: BorderRadius.circular(AppRadius.button),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.info_outline, color: AppColors.accent),
+                Icon(Icons.info_outline, color: context.tokens.action),
                 const SizedBox(width: AppSpacing.m),
-                Expanded(child: Text(S.notificationsPlaceholderNote, style: theme.textTheme.bodySmall)),
+                Expanded(
+                  child: Text(
+                    S.notificationsPlaceholderNote,
+                    style: theme.textTheme.bodySmall?.copyWith(color: context.tokens.textPrimary),
+                  ),
+                ),
               ],
             ),
           ),

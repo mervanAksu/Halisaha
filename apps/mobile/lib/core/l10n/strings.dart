@@ -1,4 +1,5 @@
 import '../../features/booking/domain/booking.dart';
+import '../../features/venues/domain/slot_groups.dart';
 
 /// All user-facing text (Turkish). Code, identifiers and commit messages stay English.
 abstract final class S {
@@ -304,4 +305,106 @@ abstract final class S {
   static const String demoPaymentComplete = 'Ödemeyi tamamla (demo)';
   static const String demoPaymentFail = 'Başarısız ödeme dene (demo)';
   static const String webPaymentUnsupported = "Web'de ödeme desteklenmiyor. Ödeme için mobil uygulamayı kullan.";
+
+  // --- Slot picker, summary bar, confirmation (docs/DESIGN.md "Bileşen kuralları") --------
+  static const String slotBooked = 'Dolu';
+  static String slotPeriodLabel(SlotPeriod period) {
+    switch (period) {
+      case SlotPeriod.evening:
+        return 'Akşam';
+      case SlotPeriod.afternoon:
+        return 'Öğleden sonra';
+      case SlotPeriod.night:
+        return 'Sabah / Gece';
+    }
+  }
+
+  static String cancellationPolicyShort(int hours) => hours <= 0
+      ? 'Maç başlamadan önce iptal edersen kapora iade edilir.'
+      : 'Maça $hours saatten fazla varsa kapora iade edilir.';
+  static String nearestFreeDay(String weekday) => 'En yakın boş gün: $weekday';
+  static const String searchingNearestDay = 'En yakın boş gün aranıyor...';
+  static const String noSlotsNearby = 'Önümüzdeki günlerde de boş saat bulunamadı.';
+  static String summaryDepositNow(String deposit) => 'Şimdi $deposit kapora · kalan sahada';
+  static String summaryTotal(String total) => 'Toplam $total';
+  static const String securePaymentTrust = 'Güvenli ödeme · PayTR';
+  static const String verifiedVenue = 'Onaylı işletme';
+  static const String paidDeposit = 'Ödenen kapora';
+  static const String addressLabel = 'Adres';
+  static const String bookingConfirmedHint = 'Adrese dokunarak haritada açabilirsin.';
+
+  // --- İşletmeci modu (owner) -------------------------------------------------------------
+  static const String ownerPanel = 'İşletmeci paneli';
+  static const String ownerPanelSubtitle = 'Takvimi, rezervasyonları ve sahaları yönet';
+  static const String ownerTabBookings = 'Rezervasyonlar';
+  static const String ownerTabPitches = 'Sahalarım';
+  static const String ownerTabHours = 'Saatler';
+  static const String ownerExit = 'Müşteri uygulamasına dön';
+  static const String ownerNoVenues = 'Hesabına bağlı bir işletme bulunamadı. Destek ekibiyle iletişime geç.';
+  static const String ownerVenueLabel = 'Tesis';
+  static const String ownerNoPitchesToday = 'Bu tesiste aktif saha yok.';
+  static const String ownerClosedDay = 'Bu gün kapalı. Saatleri "Saatler" sekmesinden düzenleyebilirsin.';
+  static const String legendApp = 'Uygulama';
+  static const String legendPhone = 'Telefon';
+  static const String legendBlocked = 'Kapalı';
+  static const String legendPending = 'Ödeme bekliyor';
+  static const String legendFree = 'Boş';
+  static const String sourceApp = 'Uygulama rezervasyonu';
+  static const String sourceManual = 'Telefon rezervasyonu';
+  static const String sourceBlock = 'Kapalı saat';
+  static const String closeSlot = 'Saati kapat';
+  static const String customerNameLabel = 'Müşteri adı';
+  static const String customerNameRequired = 'Müşteri adını gir.';
+  static const String customerPhoneLabel = 'Telefon (isteğe bağlı)';
+  static const String noteLabel = 'Not (isteğe bağlı)';
+  static const String manualBookingCreated = 'Telefon rezervasyonu eklendi.';
+  static const String slotClosedDone = 'Saat kapatıldı.';
+  static const String customerLabel = 'Müşteri';
+  static const String phoneRowLabel = 'Telefon';
+  static const String noteRowLabel = 'Not';
+  static const String priceRowLabel = 'Ücret';
+  static const String depositRowLabel = 'Kapora';
+  static const String callCustomer = 'Ara';
+  static const String contactUnavailable = 'Müşteri bilgisi alınamadı.';
+  static const String ownerCancelWarnApp =
+      'Bu bir uygulama rezervasyonu. İptal edersen müşterinin kaporası tamamen iade edilir.';
+  static const String ownerCancelWarnOther = 'Rezervasyon iptal edilecek ve saat yeniden açılacak.';
+  static const String ownerCancelled = 'Rezervasyon iptal edildi.';
+  static const String attended = 'Geldi';
+  static const String notAttended = 'Gelmedi';
+  static const String attendanceSaved = 'Durum güncellendi.';
+  static const String filterAll = 'Tümü';
+  static const String filterApp = 'Uygulama';
+  static const String filterPhone = 'Telefon';
+  static const String filterBlocked = 'Kapalı';
+  static const String filterPending = 'Ödeme bekleyen';
+  static const String ownerNoUpcoming = 'Yaklaşan rezervasyon yok.';
+  static const String ownerNoMatchForFilter = 'Bu filtreye uyan rezervasyon yok.';
+  static const String ownerNoPitches = 'Bu işletmede henüz saha yok. Saha eklemek için web panelini kullan.';
+  static const String hourlyPriceLabel = 'Saat ücreti (₺)';
+  static const String depositLabel = 'Kapora (₺)';
+  static const String activeLabel = 'Rezervasyona açık';
+  static const String inactiveLabel = 'Pasif';
+  static const String editPitch = 'Sahayı düzenle';
+  static const String amountInvalid = 'Geçerli bir tutar gir.';
+  static const String depositTooHigh = 'Kapora, saat ücretinden büyük olamaz.';
+  static const String pitchUpdated = 'Saha güncellendi.';
+  static const List<String> weekdayNames = <String>[
+    'Pazartesi',
+    'Salı',
+    'Çarşamba',
+    'Perşembe',
+    'Cuma',
+    'Cumartesi',
+    'Pazar',
+  ];
+  static const String closedLabel = 'Kapalı';
+  static const String openLabel = 'Açılış';
+  static const String closeLabel = 'Kapanış';
+  static const String overnightHint = 'Gece yarısını aşar';
+  static const String hoursSaved = 'Çalışma saatleri kaydedildi.';
+  static const String demoOwnerSwitch = 'İşletmeci modunu dene (demo)';
+  static const String demoOwnerSwitchHint = 'Demo kullanıcıyı 2 örnek tesisin işletmecisi yapar.';
+  static const String statusPaymentPendingShort = 'Ödeme bekliyor';
+  static const String bookedByApp = 'Uygulama';
 }

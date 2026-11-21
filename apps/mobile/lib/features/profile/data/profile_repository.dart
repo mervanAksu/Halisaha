@@ -8,7 +8,7 @@ class ProfileRepository {
 
   final SupabaseClient _client;
 
-  static const String _columns = 'id, full_name, phone, email, marketing_consent, kvkk_ack_at';
+  static const String _columns = 'id, full_name, phone, email, role, marketing_consent, kvkk_ack_at';
 
   Future<Profile> fetch(String userId) => guard(() async {
         final row = await _client.from('profiles').select(_columns).eq('id', userId).maybeSingle();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/l10n/strings.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/urls.dart';
 
@@ -12,6 +12,7 @@ class SupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     final contacts = <_Contact>[
       if (AppConfig.supportEmail.isNotEmpty)
         const _Contact(Icons.mail_outline, S.contactEmail, AppConfig.supportEmail, 'mailto:${AppConfig.supportEmail}'),
@@ -36,12 +37,12 @@ class SupportScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AppSpacing.l),
             decoration: BoxDecoration(
-              color: AppColors.primary,
+              color: tokens.primary,
               borderRadius: BorderRadius.circular(AppRadius.card),
             ),
             child: Row(
               children: [
-                const Icon(Icons.support_agent, size: 40, color: AppColors.onPrimary),
+                Icon(Icons.support_agent, size: 40, color: tokens.onPrimary),
                 const SizedBox(width: AppSpacing.l),
                 Expanded(
                   child: Column(
@@ -49,12 +50,12 @@ class SupportScreen extends StatelessWidget {
                     children: [
                       Text(
                         S.supportHeaderTitle,
-                        style: theme.textTheme.titleMedium?.copyWith(color: AppColors.onPrimary),
+                        style: theme.textTheme.titleMedium?.copyWith(color: tokens.onPrimary),
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Text(
                         S.supportHeaderSubtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(color: AppColors.onPrimary),
+                        style: theme.textTheme.bodySmall?.copyWith(color: tokens.onPrimary),
                       ),
                     ],
                   ),
@@ -68,9 +69,9 @@ class SupportScreen extends StatelessWidget {
           else
             Container(
               decoration: BoxDecoration(
-                color: AppColors.card,
+                color: tokens.card,
                 borderRadius: BorderRadius.circular(AppRadius.card),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: tokens.border),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(AppRadius.card),
@@ -79,10 +80,10 @@ class SupportScreen extends StatelessWidget {
                     for (var i = 0; i < contacts.length; i++) ...[
                       if (i > 0) const Divider(height: 1),
                       ListTile(
-                        leading: Icon(contacts[i].icon, color: AppColors.primary),
+                        leading: Icon(contacts[i].icon, color: tokens.brand),
                         title: Text(contacts[i].title, style: theme.textTheme.bodyMedium),
                         subtitle: Text(contacts[i].subtitle, style: theme.textTheme.bodySmall),
-                        trailing: const Icon(Icons.chevron_right, color: AppColors.neutral),
+                        trailing: Icon(Icons.chevron_right, color: tokens.neutral),
                         onTap: () => openExternalOrWarn(context, contacts[i].url),
                       ),
                     ],
@@ -95,9 +96,9 @@ class SupportScreen extends StatelessWidget {
           const SizedBox(height: AppSpacing.s),
           Container(
             decoration: BoxDecoration(
-              color: AppColors.card,
+              color: tokens.card,
               borderRadius: BorderRadius.circular(AppRadius.card),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: tokens.border),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(AppRadius.card),
@@ -112,7 +113,7 @@ class SupportScreen extends StatelessWidget {
                       childrenPadding: const EdgeInsets.fromLTRB(AppSpacing.l, 0, AppSpacing.l, AppSpacing.l),
                       expandedCrossAxisAlignment: CrossAxisAlignment.start,
                       title: Text(S.faqs[i].question, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
-                      children: [Text(S.faqs[i].answer, style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary))],
+                      children: [Text(S.faqs[i].answer, style: theme.textTheme.bodyMedium?.copyWith(color: tokens.textSecondary))],
                     ),
                   ],
                 ],

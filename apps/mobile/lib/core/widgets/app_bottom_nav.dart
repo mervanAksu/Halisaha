@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/strings.dart';
-import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 /// Five-slot bottom navigation: Favorilerim, Maçlarım, [raised round centre = Keşfet],
 /// Destek, Profilim. Indices: 0 favorites, 1 matches, 2 home, 3 support, 4 profile.
@@ -18,6 +18,7 @@ class AppBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.paddingOf(context).bottom;
+    final tokens = context.tokens;
     return SizedBox(
       height: _barHeight + _lift + bottomInset,
       child: Stack(
@@ -29,9 +30,9 @@ class AppBottomNav extends StatelessWidget {
             bottom: 0,
             height: _barHeight + bottomInset,
             child: DecoratedBox(
-              decoration: const BoxDecoration(
-                color: AppColors.card,
-                border: Border(top: BorderSide(color: AppColors.border)),
+              decoration: BoxDecoration(
+                color: tokens.card,
+                border: Border(top: BorderSide(color: tokens.border)),
               ),
               child: Padding(
                 padding: EdgeInsets.only(bottom: bottomInset),
@@ -98,11 +99,11 @@ class AppBottomNav extends StatelessWidget {
                     height: _circle,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primary,
-                      border: Border.all(color: AppColors.accent, width: 4),
-                      boxShadow: const [BoxShadow(color: AppColors.shadow, blurRadius: 10, offset: Offset(0, 3))],
+                      color: tokens.primary,
+                      border: Border.all(color: tokens.accent, width: 4),
+                      boxShadow: [BoxShadow(color: tokens.shadow, blurRadius: 10, offset: const Offset(0, 3))],
                     ),
-                    child: const Icon(Icons.sports_soccer, color: AppColors.onPrimary, size: 28),
+                    child: Icon(Icons.sports_soccer, color: tokens.onPrimary, size: 28),
                   ),
                 ),
               ),
@@ -115,10 +116,11 @@ class AppBottomNav extends StatelessWidget {
 }
 
 TextStyle? _labelStyle(BuildContext context, bool selected) {
+  final tokens = context.tokens;
   return Theme.of(context).textTheme.bodySmall?.copyWith(
         fontSize: 11,
         fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-        color: selected ? AppColors.primary : AppColors.textSecondary,
+        color: selected ? tokens.brand : tokens.textSecondary,
       );
 }
 
@@ -145,7 +147,11 @@ class _NavItem extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(selected ? activeIcon : icon, size: 24, color: selected ? AppColors.primary : AppColors.textSecondary),
+            Icon(
+              selected ? activeIcon : icon,
+              size: 24,
+              color: selected ? context.tokens.brand : context.tokens.textSecondary,
+            ),
             const SizedBox(height: 2),
             Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: _labelStyle(context, selected)),
           ],

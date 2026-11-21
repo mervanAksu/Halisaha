@@ -49,6 +49,12 @@ String formatIsoDate(DateTime d) {
   return '$y-$m-$day';
 }
 
+/// Inverse of [formatIsoDate]: `yyyy-MM-dd` -> midnight of that date as a wall-clock value (UTC-flagged).
+DateTime parseIsoDate(String iso) {
+  final parts = iso.split('-').map(int.parse).toList();
+  return DateTime.utc(parts[0], parts[1], parts[2]);
+}
+
 const String _locale = 'tr_TR';
 
 /// "20:00"
@@ -60,6 +66,9 @@ String formatIstanbulDate(DateTime instant) => DateFormat('d MMMM yyyy', _locale
 /// "6 Aralık 2026, Pazar" 
 String formatIstanbulDateWithWeekday(DateTime instant) =>
     DateFormat('d MMMM yyyy, EEEE', _locale).format(toIstanbul(instant));
+
+/// Weekday name of an Istanbul calendar date, e.g. "Pazartesi". [wallClockDate] is already an Istanbul date.
+String formatWeekdayLong(DateTime wallClockDate) => DateFormat('EEEE', _locale).format(wallClockDate);
 
 /// "6 Aralık 2026, 20:00"
 String formatIstanbulDateTime(DateTime instant) => '${formatIstanbulDate(instant)}, ${formatIstanbulTime(instant)}';

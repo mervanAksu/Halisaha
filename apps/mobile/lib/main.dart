@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -6,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/config/app_config.dart';
+import 'core/security/secure_local_storage.dart';
 import 'demo/demo_overrides.dart';
 import 'demo/demo_store.dart';
 
@@ -18,7 +20,7 @@ Future<void> main() async {
 
   if (AppConfig.demoMode) {
     // Backend-free preview: Supabase is never initialised or touched.
-    runApp(ProviderScope(overrides: demoOverrides(DemoStore()), child: const HalisahaApp()));
+    runApp(ProviderScope(overrides: demoOverrides(DemoStore()), child: const RovansApp()));
     return;
   }
 
@@ -30,7 +32,12 @@ Future<void> main() async {
   await Supabase.initialize(
     url: AppConfig.supabaseUrl,
     anonKey: AppConfig.supabaseAnonKey,
+    // Mobile: the session (refresh token) lives in Keychain / Keystore instead of plain
+    // SharedPreferences. Web keeps the SDK default (browser storage is the only option there).
+    authOptions: FlutterAuthClientOptions(
+      localStorage: kIsWeb ? null : SecureLocalStorage(FlutterSecureKeyValueStore()),
+    ),
   );
 
-  runApp(const ProviderScope(child: HalisahaApp()));
+  runApp(const ProviderScope(child: RovansApp()));
 }

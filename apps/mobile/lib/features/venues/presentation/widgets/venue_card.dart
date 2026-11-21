@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/strings.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_tokens.dart';
+import '../../../../core/theme/app_text.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/utils/urls.dart';
@@ -20,13 +21,15 @@ class VenueCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     final price = venue.minHourlyPriceKurus;
     final hours = venue.isOpenToday ? S.todayHours(venue.openTime!, venue.closeTime!) : S.closedToday;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: tokens.card,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        boxShadow: const [BoxShadow(color: AppColors.shadow, blurRadius: 12, offset: Offset(0, 4))],
+        border: Border.all(color: tokens.border),
+        boxShadow: [BoxShadow(color: tokens.shadow, blurRadius: 12, offset: const Offset(0, 4))],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.card),
@@ -48,20 +51,20 @@ class VenueCard extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: AppColors.accent,
+                            color: tokens.action,
                             borderRadius: BorderRadius.circular(AppRadius.button),
                           ),
                           child: Text(
                             S.pricePerHour(formatTry(price)),
-                            style: theme.textTheme.labelMedium?.copyWith(color: AppColors.onAccent),
+                            style: numericStyle(context, size: 17, weight: FontWeight.w700, color: tokens.onAction),
                           ),
                         ),
                       ),
                     if (venue.isFavorite)
-                      const Positioned(
+                      Positioned(
                         top: AppSpacing.m,
                         left: AppSpacing.m,
-                        child: Icon(Icons.favorite, color: AppColors.danger),
+                        child: Icon(Icons.favorite, color: tokens.danger),
                       ),
                   ],
                 ),
@@ -104,7 +107,7 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: AppColors.textSecondary),
+        Icon(icon, size: 16, color: context.tokens.textSecondary),
         const SizedBox(width: AppSpacing.s),
         Expanded(child: Text(text, style: Theme.of(context).textTheme.bodySmall)),
       ],

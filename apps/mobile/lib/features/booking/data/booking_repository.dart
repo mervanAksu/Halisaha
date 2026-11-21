@@ -11,7 +11,7 @@ class BookingRepository {
 
   final SupabaseClient _client;
 
-  static const String _select = '*, pitches(name, format), venues(name, district, cancellation_window_hours)';
+  static const String _select = '*, pitches(name, format), venues(name, district, address, lat, lng, cancellation_window_hours)';
 
   /// RPC `create_booking_hold`. Returns `confirmed` immediately when the deposit is 0.
   Future<Booking> createHold({required String pitchId, required DateTime startsAt}) => guard(() async {

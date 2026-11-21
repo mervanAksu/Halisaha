@@ -3,8 +3,10 @@ import 'package:geolocator/geolocator.dart';
 
 import '../../../core/config/app_config.dart';
 import '../../../core/supabase/supabase_providers.dart';
+import '../../../core/utils/formatters.dart';
 import '../data/venues_repository.dart';
 import '../domain/slot.dart';
+import '../domain/slot_groups.dart';
 import '../domain/venue_detail.dart';
 import '../domain/venue_summary.dart';
 
@@ -140,4 +142,19 @@ typedef AvailabilityKey = ({String pitchId, String isoDate});
 
 final availabilityProvider = FutureProvider.autoDispose.family<List<Slot>, AvailabilityKey>((ref, key) {
   return ref.watch(venuesRepositoryProvider).fetchAvailability(pitchId: key.pitchId, isoDate: key.isoDate);
+});
+
+/// Key for [nearestAvailableDayProvider]: look at the [maxDays] days after [fromIsoDate].
+typedef NearestDayKey = ({String pitchId, String fromIsoDate, int maxDays});
+
+/// First day after `fromIsoDate` (within `maxDays`) that has a bookable slot, or null.
+/// Reuses [availabilityProvider], so days already looked at are served from its cache.
+final nearestAvailableDayProvider = FutureProvider.autoDispose.family<DateTime?, NearestDayKey>((ref, key) async {
+  final from = parseIsoDate(key.fromIsoDate);
+  for (var i = 1; i <= key.maxDays; i++) {
+    final day = DateTime.utc(from.year, from.month, from.day + i);
+    final slots = await ref.watch(availabilityProvider((pitchId: key.pitchId, isoDate: formatIsoDate(day))).future);
+    if (hasAvailableSlot(slots)) return day;
+  }
+  return null;
 });

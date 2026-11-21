@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/l10n/strings.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_text.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/utils/formatters.dart';
 
 /// Number of days offered in the strip (PRD M3: 14-day date strip).
@@ -30,8 +31,10 @@ class DateStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
+    final scale = MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0).toDouble();
     return SizedBox(
-      height: 84,
+      height: 84 * scale,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
@@ -41,17 +44,17 @@ class DateStrip extends StatelessWidget {
           final offset = index - (includeYesterday ? 1 : 0);
           final date = DateTime.utc(today.year, today.month, today.day + offset);
           final selected = index == selectedIndex;
-          final fg = selected ? AppColors.onPrimary : AppColors.textPrimary;
-          final fgSecondary = selected ? AppColors.onPrimary : AppColors.textSecondary;
+          final fg = selected ? tokens.onPrimary : tokens.textPrimary;
+          final fgSecondary = selected ? tokens.onPrimary : tokens.textSecondary;
           return InkWell(
             borderRadius: BorderRadius.circular(AppRadius.button),
             onTap: () => onSelected(index),
             child: Container(
-              width: 60,
+              width: 60 * (scale > 1.6 ? 1.6 : scale),
               decoration: BoxDecoration(
-                color: selected ? AppColors.primary : AppColors.card,
+                color: selected ? tokens.primary : tokens.card,
                 borderRadius: BorderRadius.circular(AppRadius.button),
-                border: Border.all(color: selected ? AppColors.primary : AppColors.border),
+                border: Border.all(color: selected ? tokens.primary : tokens.border),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -63,7 +66,7 @@ class DateStrip extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     '${date.day}',
-                    style: theme.textTheme.titleMedium?.copyWith(color: fg),
+                    style: numericStyle(context, size: 22, weight: FontWeight.w700, color: fg),
                   ),
                   const SizedBox(height: 2),
                   Text(

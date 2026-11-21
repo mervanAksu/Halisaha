@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 /// Full-width primary button with an optional busy state.
 class PrimaryButton extends StatelessWidget {
@@ -24,10 +24,10 @@ class PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget child = loading
-        ? const SizedBox(
+        ? SizedBox(
             width: 22,
             height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.onPrimary),
+            child: CircularProgressIndicator(strokeWidth: 2.5, color: context.tokens.onDisabledSlot),
           )
         : Row(
             mainAxisSize: MainAxisSize.min,

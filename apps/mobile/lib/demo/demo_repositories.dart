@@ -60,12 +60,8 @@ class DemoProfileRepository implements ProfileRepository {
     required String fullName,
     required bool marketingConsent,
   }) async {
-    final p = _store.profile;
-    _store.profile = Profile(
-      id: p.id,
+    _store.profile = _store.profile.copyWith(
       fullName: fullName.trim(),
-      phone: p.phone,
-      email: p.email,
       marketingConsent: marketingConsent,
       kvkkAckAt: _store.now().toUtc(),
     );
@@ -74,15 +70,7 @@ class DemoProfileRepository implements ProfileRepository {
 
   @override
   Future<Profile> updateName({required String userId, required String fullName}) async {
-    final p = _store.profile;
-    _store.profile = Profile(
-      id: p.id,
-      fullName: fullName.trim(),
-      phone: p.phone,
-      email: p.email,
-      marketingConsent: p.marketingConsent,
-      kvkkAckAt: p.kvkkAckAt,
-    );
+    _store.profile = _store.profile.copyWith(fullName: fullName.trim());
     return _store.profile;
   }
 

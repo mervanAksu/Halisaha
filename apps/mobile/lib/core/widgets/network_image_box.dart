@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../config/app_config.dart';
-import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 import 'generated_venue_image.dart';
 
 /// Cached remote image with neutral placeholder / error states. A null [url] shows the placeholder icon.
@@ -18,10 +18,11 @@ class NetworkImageBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (AppConfig.demoMode && title != null) return GeneratedVenueImage(name: title!);
+    final tokens = context.tokens;
     final placeholder = Container(
-      color: AppColors.neutralSoft,
+      color: tokens.disabledSlot,
       alignment: Alignment.center,
-      child: const Icon(Icons.sports_soccer, size: 40, color: AppColors.neutral),
+      child: Icon(Icons.sports_soccer, size: 40, color: tokens.neutral),
     );
     final imageUrl = url;
     if (imageUrl == null) return placeholder;
@@ -30,7 +31,7 @@ class NetworkImageBox extends StatelessWidget {
       fit: fit,
       width: double.infinity,
       height: double.infinity,
-      placeholder: (context, _) => const ColoredBox(color: AppColors.neutralSoft),
+      placeholder: (context, _) => ColoredBox(color: tokens.disabledSlot),
       errorWidget: (context, _, __) => placeholder,
     );
   }

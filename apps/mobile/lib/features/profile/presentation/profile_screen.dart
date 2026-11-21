@@ -6,12 +6,13 @@ import '../../../core/config/app_config.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/phone.dart';
 import '../../../core/utils/urls.dart';
 import '../../../core/widgets/app_input.dart';
 import '../../../core/widgets/async_value_widget.dart';
+import '../../../demo/demo_owner_toggle.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../domain/profile.dart';
 import 'profile_providers.dart';
@@ -96,7 +97,7 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text(S.cancelDismiss)),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            style: TextButton.styleFrom(foregroundColor: context.tokens.danger),
             child: const Text(S.continueLabel),
           ),
         ],
@@ -113,7 +114,11 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text(S.cancelDismiss)),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.danger, minimumSize: const Size(0, 44)),
+            style: FilledButton.styleFrom(
+              backgroundColor: context.tokens.danger,
+              foregroundColor: context.tokens.onDanger,
+              minimumSize: const Size(0, 48),
+            ),
             child: const Text(S.deleteAccountConfirm),
           ),
         ],
@@ -137,6 +142,7 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
   Widget build(BuildContext context) {
     final profile = widget.profile;
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     final phone = formatPhoneDisplay(profile.phone);
     return AbsorbPointer(
       absorbing: _deleting,
@@ -150,18 +156,18 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
         Container(
           padding: const EdgeInsets.all(AppSpacing.l),
           decoration: BoxDecoration(
-            color: AppColors.card,
+            color: tokens.card,
             borderRadius: BorderRadius.circular(AppRadius.card),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: tokens.border),
           ),
           child: Row(
             children: [
               CircleAvatar(
                 radius: 28,
-                backgroundColor: AppColors.primary,
+                backgroundColor: tokens.primary,
                 child: Text(
                   profile.initials,
-                  style: theme.textTheme.titleMedium?.copyWith(color: AppColors.onPrimary),
+                  style: theme.textTheme.titleMedium?.copyWith(color: tokens.onPrimary),
                 ),
               ),
               const SizedBox(width: AppSpacing.l),
@@ -183,6 +189,20 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
           ),
         ),
         const SizedBox(height: AppSpacing.l),
+        if (AppConfig.demoMode) ...[
+          const DemoOwnerToggle(),
+          const SizedBox(height: AppSpacing.l),
+        ],
+        if (profile.isOwner) ...[
+          _Section(children: [
+            _Tile(
+              icon: Icons.storefront_outlined,
+              label: S.ownerPanel,
+              onTap: () => context.push(AppRoutes.owner),
+            ),
+          ]),
+          const SizedBox(height: AppSpacing.l),
+        ],
         _Section(children: [
           _Tile(
             icon: Icons.notifications_none,
@@ -222,14 +242,14 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
         _Section(children: [
           _Tile(
             icon: Icons.logout,
-            iconColor: AppColors.warning,
+            iconColor: tokens.warning,
             label: S.signOut,
             onTap: () => _signOut(context, ref),
           ),
           _Tile(
             icon: Icons.delete_outline,
-            iconColor: AppColors.danger,
-            labelColor: AppColors.danger,
+            iconColor: tokens.danger,
+            labelColor: tokens.danger,
             label: S.deleteAccount,
             onTap: () => _deleteAccount(context, ref),
           ),
@@ -255,11 +275,12 @@ class _Section extends StatelessWidget {
       items.add(children[i]);
       if (i < children.length - 1) items.add(const Divider(height: 1));
     }
+    final tokens = context.tokens;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: tokens.card,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: tokens.border),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.card),
@@ -274,22 +295,23 @@ class _Tile extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
-    this.iconColor = AppColors.primary,
-    this.labelColor = AppColors.textPrimary,
+    this.iconColor,
+    this.labelColor,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final Color iconColor;
-  final Color labelColor;
+  final Color? iconColor;
+  final Color? labelColor;
 
   @override
   Widget build(BuildContext context) {
+    final tokens = context.tokens;
     return ListTile(
-      leading: Icon(icon, color: iconColor),
-      title: Text(label, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: labelColor)),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.neutral),
+      leading: Icon(icon, color: iconColor ?? tokens.brand),
+      title: Text(label, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: labelColor ?? tokens.textPrimary)),
+      trailing: Icon(Icons.chevron_right, color: tokens.neutral),
       onTap: onTap,
     );
   }
@@ -325,7 +347,7 @@ class _EditNameDialogState extends State<_EditNameDialog> {
           autofocus: true,
           maxLength: 80,
           textCapitalization: TextCapitalization.words,
-          decoration: appInputDecoration(label: S.fullNameLabel, counterText: ''),
+          decoration: appInputDecoration(context, label: S.fullNameLabel, counterText: ''),
           validator: (v) => (v ?? '').trim().length < 2 ? S.fullNameInvalid : null,
         ),
       ),

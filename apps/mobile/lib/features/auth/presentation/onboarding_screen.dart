@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/urls.dart';
 import '../../../core/widgets/app_input.dart';
@@ -75,7 +75,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(S.onboardingSubtitle, style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary)),
+                Text(S.onboardingSubtitle, style: theme.textTheme.bodyMedium?.copyWith(color: context.tokens.textSecondary)),
                 const SizedBox(height: AppSpacing.xl),
                 TextFormField(
                   controller: _nameController,
@@ -83,7 +83,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   textInputAction: TextInputAction.done,
                   maxLength: 80,
                   autofillHints: const [AutofillHints.name],
-                  decoration: appInputDecoration(label: S.fullNameLabel, counterText: ''),
+                  decoration: appInputDecoration(context, label: S.fullNameLabel, counterText: ''),
                   validator: (value) => (value ?? '').trim().length < 2 ? S.fullNameInvalid : null,
                 ),
                 const SizedBox(height: AppSpacing.l),
@@ -96,7 +96,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   subtitle: Align(
                     alignment: Alignment.centerLeft,
                     child: TextButton(
-                      style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 32)),
+                      style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 48)),
                       onPressed: () => openExternalOrWarn(context, AppConfig.legalUrl(AppConfig.legalKvkk)),
                       child: const Text(S.kvkkReadLink),
                     ),
@@ -111,7 +111,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: AppSpacing.m),
-                  Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: AppColors.danger)),
+                  Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: context.tokens.danger)),
                 ],
                 const SizedBox(height: AppSpacing.xl),
                 PrimaryButton(

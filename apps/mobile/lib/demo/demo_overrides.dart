@@ -4,9 +4,11 @@ import 'package:supabase_flutter/supabase_flutter.dart' show AuthState;
 import '../core/supabase/supabase_providers.dart';
 import '../features/auth/presentation/auth_providers.dart';
 import '../features/booking/presentation/booking_providers.dart';
+import '../features/owner/presentation/owner_providers.dart';
 import '../features/favorites/presentation/favorites_providers.dart';
 import '../features/profile/presentation/profile_providers.dart';
 import '../features/venues/presentation/venues_providers.dart';
+import 'demo_owner_repository.dart';
 import 'demo_repositories.dart';
 import 'demo_store.dart';
 
@@ -26,5 +28,6 @@ List<Override> demoOverrides(DemoStore store) {
     venuesRepositoryProvider.overrideWithValue(DemoVenuesRepository(store)),
     favoritesRepositoryProvider.overrideWithValue(DemoFavoritesRepository(store)),
     bookingRepositoryProvider.overrideWithValue(DemoBookingRepository(store)),
+    ownerRepositoryProvider.overrideWithValue(DemoOwnerRepository(store)),
   ];
 }

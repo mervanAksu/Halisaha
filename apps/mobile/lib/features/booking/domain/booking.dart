@@ -39,7 +39,7 @@ enum RefundPreview {
 const int defaultCancellationWindowHours = 24;
 
 /// A row of `bookings`, optionally joined with `pitches(name, format)` and
-/// `venues(name, district, cancellation_window_hours)`.
+/// `venues(name, district, address, lat, lng, cancellation_window_hours)`.
 class Booking {
   const Booking({
     required this.id,
@@ -59,7 +59,13 @@ class Booking {
     this.pitchFormat,
     this.venueName,
     this.venueDistrict,
+    this.venueAddress,
+    this.venueLat,
+    this.venueLng,
     this.cancellationWindowHours,
+    this.customerName,
+    this.customerPhone,
+    this.note,
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
@@ -83,7 +89,13 @@ class Booking {
       pitchFormat: pitch is Map ? pitch['format'] as String? : null,
       venueName: venue is Map ? venue['name'] as String? : null,
       venueDistrict: venue is Map ? venue['district'] as String? : null,
+      venueAddress: venue is Map ? venue['address'] as String? : null,
+      venueLat: venue is Map ? asDoubleOrNull(venue['lat']) : null,
+      venueLng: venue is Map ? asDoubleOrNull(venue['lng']) : null,
       cancellationWindowHours: venue is Map ? asIntOrNull(venue['cancellation_window_hours']) : null,
+      customerName: json['customer_name'] as String?,
+      customerPhone: json['customer_phone'] as String?,
+      note: json['note'] as String?,
     );
   }
 
@@ -104,7 +116,44 @@ class Booking {
   final String? pitchFormat;
   final String? venueName;
   final String? venueDistrict;
+  final String? venueAddress;
+  final double? venueLat;
+  final double? venueLng;
   final int? cancellationWindowHours;
+
+  /// Manual (phone) bookings only.
+  final String? customerName;
+  final String? customerPhone;
+  final String? note;
+
+  Booking copyWith({BookingStatus? status, DateTime? cancelledAt}) {
+    return Booking(
+      id: id,
+      pitchId: pitchId,
+      venueId: venueId,
+      userId: userId,
+      source: source,
+      status: status ?? this.status,
+      startsAt: startsAt,
+      endsAt: endsAt,
+      priceKurus: priceKurus,
+      depositKurus: depositKurus,
+      commissionKurus: commissionKurus,
+      holdExpiresAt: holdExpiresAt,
+      cancelledAt: cancelledAt ?? this.cancelledAt,
+      pitchName: pitchName,
+      pitchFormat: pitchFormat,
+      venueName: venueName,
+      venueDistrict: venueDistrict,
+      venueAddress: venueAddress,
+      venueLat: venueLat,
+      venueLng: venueLng,
+      cancellationWindowHours: cancellationWindowHours,
+      customerName: customerName,
+      customerPhone: customerPhone,
+      note: note,
+    );
+  }
 
   /// Amount paid at the venue.
   int get remainderKurus => priceKurus - depositKurus;

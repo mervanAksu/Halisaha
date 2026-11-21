@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../core/errors/app_exception.dart';
 import '../core/l10n/strings.dart';
 import '../core/router/app_routes.dart';
-import '../core/theme/app_colors.dart';
 import '../core/theme/app_spacing.dart';
+import '../core/theme/app_text.dart';
+import '../core/theme/app_tokens.dart';
 import '../core/utils/formatters.dart';
 import '../core/widgets/primary_button.dart';
 import '../features/booking/domain/payment_session.dart';
@@ -45,6 +46,7 @@ class _DemoPaymentScreenState extends ConsumerState<DemoPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     final store = ref.watch(demoStoreProvider);
     int? deposit;
     try {
@@ -58,23 +60,23 @@ class _DemoPaymentScreenState extends ConsumerState<DemoPaymentScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.xl),
           children: [
-            const Icon(Icons.credit_card, size: 64, color: AppColors.primary),
+            Icon(Icons.credit_card, size: 64, color: tokens.brand),
             const SizedBox(height: AppSpacing.l),
             Text(S.demoPaymentIntro, textAlign: TextAlign.center, style: theme.textTheme.bodyMedium),
             const SizedBox(height: AppSpacing.xl),
             Container(
               padding: const EdgeInsets.all(AppSpacing.l),
               decoration: BoxDecoration(
-                color: AppColors.card,
+                color: tokens.card,
                 borderRadius: BorderRadius.circular(AppRadius.card),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: tokens.border),
               ),
               child: Row(
                 children: [
                   Expanded(child: Text(S.demoPaymentDeposit, style: theme.textTheme.bodyMedium)),
                   Text(
                     deposit == null ? '-' : formatTry(deposit),
-                    style: theme.textTheme.titleMedium?.copyWith(color: AppColors.accent),
+                    style: numericStyle(context, size: 22, weight: FontWeight.w700, color: tokens.action),
                   ),
                 ],
               ),
@@ -89,8 +91,8 @@ class _DemoPaymentScreenState extends ConsumerState<DemoPaymentScreen> {
             OutlinedButton(
               onPressed: _busy ? null : () => _settle(success: false),
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.danger,
-                side: const BorderSide(color: AppColors.danger),
+                foregroundColor: tokens.danger,
+                side: BorderSide(color: tokens.danger),
               ),
               child: const Text(S.demoPaymentFail),
             ),

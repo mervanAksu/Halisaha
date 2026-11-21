@@ -22,10 +22,36 @@ String mapsUrl({double? lat, double? lng, required String query}) {
   return 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}';
 }
 
-/// Opens [url] in the external browser/app. Returns false on failure.
+/// Schemes the app may hand to the OS. Only URLs the app builds itself (maps, support contacts,
+/// legal pages, `tel:` for a venue phone) are ever launched; `http`, `intent`, `file`, `javascript`
+/// and custom schemes are refused. Server-provided strings must pass this check first.
+bool isSafeExternalUrl(String url) {
+  final uri = Uri.tryParse(url.trim());
+  if (uri == null) return false;
+  switch (uri.scheme) {
+    case 'https':
+      return uri.host.isNotEmpty;
+    case 'tel':
+    case 'mailto':
+      return uri.path.isNotEmpty;
+    default:
+      return false;
+  }
+}
+
+/// `tel:` link from a phone number; null when it has no digits.
+String? telUrl(String? phone) {
+  if (phone == null) return null;
+  final cleaned = phone.replaceAll(RegExp(r'[^0-9+]'), '');
+  final digits = cleaned.replaceAll('+', '');
+  if (digits.length < 7 || digits.length > 15) return null;
+  return 'tel:$cleaned';
+}
+
+/// Opens [url] in the external browser/app. Returns false on failure or when the URL is not safe.
 Future<bool> openExternalUrl(String url) async {
-  final uri = Uri.tryParse(url);
-  if (uri == null || !uri.hasScheme) return false;
+  if (!isSafeExternalUrl(url)) return false;
+  final uri = Uri.parse(url.trim());
   try {
     return await launchUrl(uri, mode: LaunchMode.externalApplication);
   } catch (_) {

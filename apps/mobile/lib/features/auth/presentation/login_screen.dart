@@ -7,7 +7,7 @@ import '../../../core/config/app_config.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/phone.dart';
 import '../../../core/widgets/app_input.dart';
@@ -56,6 +56,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -66,13 +67,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: AppSpacing.xl),
-                const Icon(Icons.sports_soccer, size: 48, color: AppColors.accent),
+                Icon(Icons.sports_soccer, size: 48, color: tokens.accent),
                 const SizedBox(height: AppSpacing.l),
                 Text(AppConfig.appName, style: theme.textTheme.headlineSmall),
                 const SizedBox(height: AppSpacing.s),
                 Text(
                   S.loginSubtitle,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: tokens.textSecondary),
                 ),
                 const SizedBox(height: AppSpacing.xl),
                 TextFormField(
@@ -84,6 +85,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     LengthLimitingTextInputFormatter(11),
                   ],
                   decoration: appInputDecoration(
+                    context,
                     label: S.phoneLabel,
                     hint: S.phoneHint,
                     prefixText: '${S.phonePrefix} ',
@@ -93,7 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: AppSpacing.m),
-                  Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: AppColors.danger)),
+                  Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: tokens.danger)),
                 ],
                 const SizedBox(height: AppSpacing.xl),
                 PrimaryButton(label: S.sendCode, loading: _busy, onPressed: _submit),

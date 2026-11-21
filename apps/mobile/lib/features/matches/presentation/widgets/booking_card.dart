@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/errors/app_exception.dart';
 import '../../../../core/l10n/strings.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_tokens.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/status_chip.dart';
@@ -62,7 +62,11 @@ class _BookingCardState extends ConsumerState<BookingCard> {
           TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text(S.cancelDismiss)),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.danger, minimumSize: const Size(0, 44)),
+            style: FilledButton.styleFrom(
+              backgroundColor: context.tokens.danger,
+              foregroundColor: context.tokens.onDanger,
+              minimumSize: const Size(0, 48),
+            ),
             child: const Text(S.cancelConfirm),
           ),
         ],
@@ -87,6 +91,7 @@ class _BookingCardState extends ConsumerState<BookingCard> {
   Widget build(BuildContext context) {
     final booking = widget.booking;
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     final now = DateTime.now();
     final status = booking.displayStatus(now);
     final canPay = status == BookingStatus.pendingPayment && booking.endsAt.isAfter(now);
@@ -94,9 +99,9 @@ class _BookingCardState extends ConsumerState<BookingCard> {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.l),
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: tokens.card,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: tokens.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,7 +129,7 @@ class _BookingCardState extends ConsumerState<BookingCard> {
           const SizedBox(height: AppSpacing.m),
           Row(
             children: [
-              const Icon(Icons.event, size: 18, color: AppColors.textSecondary),
+              Icon(Icons.event, size: 18, color: tokens.textSecondary),
               const SizedBox(width: AppSpacing.s),
               Expanded(
                 child: Text(
@@ -148,8 +153,8 @@ class _BookingCardState extends ConsumerState<BookingCard> {
                     child: OutlinedButton(
                       onPressed: _busy ? null : _cancel,
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.danger,
-                        side: const BorderSide(color: AppColors.danger),
+                        foregroundColor: tokens.danger,
+                        side: BorderSide(color: tokens.danger),
                       ),
                       child: const Text(S.cancelBooking),
                     ),
@@ -161,10 +166,10 @@ class _BookingCardState extends ConsumerState<BookingCard> {
                       onPressed: _busy ? null : _continuePayment,
                       style: FilledButton.styleFrom(minimumSize: const Size(0, 48)),
                       child: _busy
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 20,
                               height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2.5, color: AppColors.onPrimary),
+                              child: CircularProgressIndicator(strokeWidth: 2.5, color: tokens.onDisabledSlot),
                             )
                           : const Text(S.continuePayment),
                     ),

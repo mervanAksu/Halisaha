@@ -10,4 +10,10 @@ abstract final class AppSpacing {
 abstract final class AppRadius {
   static const double button = 12;
   static const double card = 16;
+  static const double slot = 10;
+}
+
+abstract final class AppSizes {
+  /// Minimum touch target (docs/DESIGN.md "Dokunma hedefi").
+  static const double minTarget = 48;
 }

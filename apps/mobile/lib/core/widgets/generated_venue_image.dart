@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 /// Offline venue "photo" for the demo: theme-token gradient, a sports icon and the venue initials.
 class GeneratedVenueImage extends StatelessWidget {
@@ -8,12 +8,12 @@ class GeneratedVenueImage extends StatelessWidget {
 
   final String name;
 
-  static const List<List<Color>> _palettes = [
-    [AppColors.primary, AppColors.accent],
-    [AppColors.accent, AppColors.primary],
-    [AppColors.primary, AppColors.textSecondary],
-    [AppColors.textSecondary, AppColors.accent],
-  ];
+  static List<List<Color>> _palettes(AppTokens t) => [
+        [t.primary, t.action],
+        [t.action, t.primary],
+        [t.primary, t.textSecondary],
+        [t.textSecondary, t.action],
+      ];
 
   /// First letters of the first two words, upper-cased ("Mavi Çim Spor" -> "MÇ").
   static String initialsOf(String name) {
@@ -24,7 +24,9 @@ class GeneratedVenueImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final seed = name.codeUnits.fold<int>(0, (a, b) => (a + b) % 9973);
-    final colors = _palettes[seed % _palettes.length];
+    final tokens = context.tokens;
+    final palettes = _palettes(tokens);
+    final colors = palettes[seed % palettes.length];
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: colors),
@@ -32,16 +34,16 @@ class GeneratedVenueImage extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned(
+          Positioned(
             right: -16,
             bottom: -16,
-            child: Opacity(opacity: 0.18, child: Icon(Icons.sports_soccer, size: 140, color: AppColors.onPrimary)),
+            child: Opacity(opacity: 0.18, child: Icon(Icons.sports_soccer, size: 140, color: tokens.onPrimary)),
           ),
           Center(
             child: Text(
               initialsOf(name),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: AppColors.onPrimary,
+                    color: tokens.onPrimary,
                     fontSize: 40,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 2,

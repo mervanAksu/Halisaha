@@ -4,19 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/error_view.dart';
 import '../domain/payment_session.dart';
+import '../domain/payment_url_policy.dart';
 
 /// PayTR iFrame inside a WebView with a hold countdown.
 ///
-/// A redirect to the merchant result URL (any URL containing `/payment/result`),
+/// A redirect to the merchant result URL (any allowed URL containing `/payment/result`),
 /// closing the screen or the countdown reaching zero only means "the attempt is over":
 /// the real outcome is read from the booking row on [PaymentResultScreen].
+///
+/// Hardening: navigation is filtered by [decidePaymentNavigation] (https to `*.paytr.com` and the
+/// `PAYMENT_RESULT_BASE_URL` host only), no JavaScript channels are registered, and the page that is
+/// loaded first must itself be an https PayTR URL. WebView file access is never used: `file:` URLs are
+/// blocked by the same policy.
 class PaymentWebViewScreen extends StatefulWidget {
   const PaymentWebViewScreen({super.key, required this.args});
 
@@ -34,26 +41,30 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
   bool _loadFailed = false;
   bool _finished = false;
 
-  static bool _isResultUrl(String url) => url.contains('/payment/result');
-
   @override
   void initState() {
     super.initState();
     _remaining = widget.args.holdExpiresAt.difference(DateTime.now());
     _timer = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+    // JavaScript must stay on for the PayTR form, but no JavaScriptChannel is ever added,
+    // so page scripts cannot call into the app.
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
-            if (_isResultUrl(request.url)) {
-              _finish();
-              return NavigationDecision.prevent;
+            switch (_decide(request.url, isMainFrame: request.isMainFrame)) {
+              case PaymentNavigation.allow:
+                return NavigationDecision.navigate;
+              case PaymentNavigation.finish:
+                _finish();
+                return NavigationDecision.prevent;
+              case PaymentNavigation.block:
+                return NavigationDecision.prevent;
             }
-            return NavigationDecision.navigate;
           },
           onPageStarted: (url) {
-            if (_isResultUrl(url)) _finish();
+            if (_decide(url, isMainFrame: true) == PaymentNavigation.finish) _finish();
           },
           onPageFinished: (_) {
             if (mounted) setState(() => _loading = false);
@@ -67,8 +78,25 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
             }
           },
         ),
-      )
-      ..loadRequest(Uri.parse(widget.args.iframeUrl));
+      );
+    if (!_startLoad()) {
+      _loading = false;
+      _loadFailed = true;
+    }
+  }
+
+  static PaymentNavigation _decide(String url, {required bool isMainFrame}) => decidePaymentNavigation(
+        url,
+        isMainFrame: isMainFrame,
+        resultBaseUrl: AppConfig.paymentResultBaseUrl,
+      );
+
+  /// Loads the PayTR page, but only when the server-provided URL is https on a PayTR host.
+  bool _startLoad() {
+    final url = widget.args.iframeUrl;
+    if (!isTrustedPaymentStartUrl(url)) return false;
+    _controller.loadRequest(Uri.parse(url));
+    return true;
   }
 
   @override
@@ -95,16 +123,17 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
   }
 
   void _retryLoad() {
+    final started = _startLoad();
     setState(() {
-      _loading = true;
-      _loadFailed = false;
+      _loading = started;
+      _loadFailed = !started;
     });
-    _controller.loadRequest(Uri.parse(widget.args.iframeUrl));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -123,11 +152,11 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
           children: [
             Container(
               width: double.infinity,
-              color: AppColors.accentSoft,
+              color: tokens.accentSoft,
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l, vertical: AppSpacing.s),
               child: Row(
                 children: [
-                  const Icon(Icons.timer_outlined, size: 20, color: AppColors.accent),
+                  Icon(Icons.timer_outlined, size: 20, color: tokens.action),
                   const SizedBox(width: AppSpacing.s),
                   Expanded(child: Text(S.holdCountdown(formatCountdown(_remaining)), style: theme.textTheme.bodyMedium)),
                 ],

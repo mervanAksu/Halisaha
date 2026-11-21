@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/phone.dart';
 import '../../../core/widgets/app_input.dart';
@@ -120,7 +120,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 autofillHints: const [AutofillHints.oneTimeCode],
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: theme.textTheme.headlineSmall?.copyWith(letterSpacing: 12),
-                decoration: appInputDecoration(hint: S.otpHint, counterText: ''),
+                decoration: appInputDecoration(context, hint: S.otpHint, counterText: ''),
                 onChanged: (value) {
                   setState(() {});
                   if (value.length == otpLength) _verify();
@@ -128,7 +128,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               ),
               if (_error != null) ...[
                 const SizedBox(height: AppSpacing.m),
-                Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: AppColors.danger)),
+                Text(_error!, style: theme.textTheme.bodySmall?.copyWith(color: context.tokens.danger)),
               ],
               const SizedBox(height: AppSpacing.xl),
               PrimaryButton(

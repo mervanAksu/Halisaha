@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_input.dart';
 import '../../../core/widgets/async_value_widget.dart';
@@ -74,6 +74,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onChanged: _onSearchChanged,
               textInputAction: TextInputAction.search,
               decoration: appInputDecoration(
+                context,
                 hint: S.searchHint,
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: ValueListenableBuilder<TextEditingValue>(
@@ -210,18 +211,21 @@ class _LocationBanner extends ConsumerWidget {
         action = S.shareLocation;
         onAction = notifier.request;
     }
+    final tokens = context.tokens;
     return Container(
       margin: const EdgeInsets.fromLTRB(AppSpacing.l, AppSpacing.s, AppSpacing.l, 0),
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.m, vertical: AppSpacing.s),
       decoration: BoxDecoration(
-        color: AppColors.accentSoft,
+        color: tokens.accentSoft,
         borderRadius: BorderRadius.circular(AppRadius.button),
       ),
       child: Row(
         children: [
-          const Icon(Icons.my_location, size: 20, color: AppColors.accent),
+          Icon(Icons.my_location, size: 20, color: tokens.action),
           const SizedBox(width: AppSpacing.s),
-          Expanded(child: Text(message, style: Theme.of(context).textTheme.bodySmall)),
+          Expanded(
+            child: Text(message, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: tokens.textPrimary)),
+          ),
           if (location.status == LocationStatus.loading)
             const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
           else

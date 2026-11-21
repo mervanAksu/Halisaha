@@ -6,8 +6,9 @@ import '../../../core/config/app_config.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/utils/urls.dart';
 import '../../../core/widgets/primary_button.dart';
@@ -98,26 +99,30 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
               const Divider(height: AppSpacing.xl),
               _Line(label: S.pitch, value: S.pitchLabel(draft.pitchName, draft.pitchFormat)),
               _Line(label: S.date, value: formatIstanbulDateWithWeekday(slot.startsAt)),
-              _Line(label: S.time, value: formatTimeRange(slot.startsAt, slot.endsAt)),
+              _Line(label: S.time, value: formatTimeRange(slot.startsAt, slot.endsAt), numeric: true),
             ],
           ),
           const SizedBox(height: AppSpacing.l),
           _Card(
             children: [
-              _Line(label: S.totalPrice, value: formatTry(slot.priceKurus)),
+              _Line(label: S.totalPrice, value: formatTry(slot.priceKurus), numeric: true),
               _Line(
                 label: S.depositNow,
                 value: formatTry(slot.depositKurus),
                 emphasize: true,
               ),
-              _Line(label: S.remainderAtVenue, value: formatTry(remainder)),
+              _Line(label: S.remainderAtVenue, value: formatTry(remainder), numeric: true),
             ],
           ),
           const SizedBox(height: AppSpacing.l),
           if (!zeroDeposit)
             const _InfoBox(icon: Icons.timer_outlined, text: S.holdInfo),
           if (!zeroDeposit) const SizedBox(height: AppSpacing.m),
-          _InfoBox(icon: Icons.policy_outlined, title: S.cancellationPolicyTitle, text: S.cancellationPolicy(draft.cancellationWindowHours)),
+          _InfoBox(
+            icon: Icons.policy_outlined,
+            title: S.cancellationPolicyTitle,
+            text: S.cancellationPolicy(draft.cancellationWindowHours),
+          ),
           const SizedBox(height: AppSpacing.l),
           CheckboxListTile(
             contentPadding: EdgeInsets.zero,
@@ -128,7 +133,7 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
             subtitle: Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
-                style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 32)),
+                style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: const Size(0, 48)),
                 onPressed: () => openExternalOrWarn(context, AppConfig.legalUrl(AppConfig.legalDistanceSales)),
                 child: const Text(S.distanceSalesReadLink),
               ),
@@ -139,13 +144,13 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
             Container(
               padding: const EdgeInsets.all(AppSpacing.m),
               decoration: BoxDecoration(
-                color: AppColors.dangerSoft,
+                color: context.tokens.dangerSoft,
                 borderRadius: BorderRadius.circular(AppRadius.button),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.error_outline, color: AppColors.danger),
+                  Icon(Icons.error_outline, color: context.tokens.danger),
                   const SizedBox(width: AppSpacing.s),
                   Expanded(child: Text(_error!, style: theme.textTheme.bodyMedium)),
                 ],
@@ -158,6 +163,10 @@ class _BookingSummaryScreenState extends ConsumerState<BookingSummaryScreen> {
             loading: _busy,
             onPressed: _acceptedContract ? _submit : null,
           ),
+          if (!zeroDeposit) ...[
+            const SizedBox(height: AppSpacing.m),
+            const _TrustLine(),
+          ],
         ],
       ),
     );
@@ -174,9 +183,9 @@ class _Card extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.l),
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: context.tokens.card,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: context.tokens.border),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
     );
@@ -184,24 +193,30 @@ class _Card extends StatelessWidget {
 }
 
 class _Line extends StatelessWidget {
-  const _Line({required this.label, required this.value, this.emphasize = false});
+  const _Line({required this.label, required this.value, this.emphasize = false, this.numeric = false});
 
   final String label;
   final String value;
   final bool emphasize;
 
+  /// Times and prices use the Barlow Condensed scoreboard style.
+  final bool numeric;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
     final valueStyle = emphasize
-        ? theme.textTheme.titleMedium?.copyWith(color: AppColors.accent)
-        : theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600);
+        ? numericStyle(context, size: 22, weight: FontWeight.w700, color: tokens.action)
+        : (numeric
+            ? numericStyle(context, size: 18, weight: FontWeight.w600)
+            : theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600));
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary))),
+          Expanded(child: Text(label, style: theme.textTheme.bodyMedium?.copyWith(color: tokens.textSecondary))),
           const SizedBox(width: AppSpacing.m),
           Flexible(child: Text(value, textAlign: TextAlign.right, style: valueStyle)),
         ],
@@ -223,25 +238,43 @@ class _InfoBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.m),
       decoration: BoxDecoration(
-        color: AppColors.accentSoft,
+        color: context.tokens.accentSoft,
         borderRadius: BorderRadius.circular(AppRadius.button),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.accent),
+          Icon(icon, color: context.tokens.action),
           const SizedBox(width: AppSpacing.m),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (title != null) Text(title!, style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
-                Text(text, style: theme.textTheme.bodySmall?.copyWith(color: AppColors.textPrimary)),
+                Text(text, style: theme.textTheme.bodySmall?.copyWith(color: context.tokens.textPrimary)),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// "Güvenli ödeme · PayTR" trust signal under the pay button.
+class _TrustLine extends StatelessWidget {
+  const _TrustLine();
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.tokens;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.lock_outline, size: 16, color: tokens.textSecondary),
+        const SizedBox(width: AppSpacing.xs),
+        Text(S.securePaymentTrust, style: Theme.of(context).textTheme.bodySmall),
+      ],
     );
   }
 }

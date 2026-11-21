@@ -38,6 +38,11 @@ class DemoStore {
 
   final List<DemoVenue> venues = demoVenues;
 
+  /// Demo switch "İşletmeci modunu dene": flips the demo user's role between customer and owner.
+  void setOwnerMode(bool enabled) {
+    profile = profile.copyWith(role: enabled ? 'owner' : 'customer');
+  }
+
   /// Insertion order = favourite order (newest last).
   final List<String> favoriteIds = <String>[];
 
@@ -131,6 +136,9 @@ class DemoStore {
       pitchFormat: pitch.format,
       venueName: venue.name,
       venueDistrict: venue.district,
+      venueAddress: venue.address,
+      venueLat: venue.lat,
+      venueLng: venue.lng,
       cancellationWindowHours: venue.cancellationWindowHours,
     );
   }

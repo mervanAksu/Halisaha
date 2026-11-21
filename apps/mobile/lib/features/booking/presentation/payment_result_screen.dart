@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_text.dart';
+import '../../../core/theme/app_tokens.dart';
+import '../../../core/utils/urls.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/primary_button.dart';
 import '../domain/booking.dart';
@@ -22,6 +24,7 @@ class PaymentResultScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final poll = ref.watch(paymentPollProvider(bookingId));
+    final tokens = context.tokens;
 
     ref.listen<AsyncValue<PaymentPoll>>(paymentPollProvider(bookingId), (previous, next) {
       final value = next.valueOrNull;
@@ -36,7 +39,7 @@ class PaymentResultScreen extends ConsumerWidget {
       body = poll.hasError
           ? _Message(
               icon: Icons.error_outline,
-              color: AppColors.danger,
+              color: tokens.danger,
               title: S.resultErrorTitle,
               text: AppException.from(poll.error!).message,
               actions: [
@@ -51,7 +54,7 @@ class PaymentResultScreen extends ConsumerWidget {
         case PaymentOutcome.success:
           body = _Message(
             icon: Icons.check_circle_outline,
-            color: AppColors.accent,
+            color: tokens.action,
             title: S.paymentSuccessTitle,
             text: S.paymentSuccessBody,
             extra: _BookingSummary(booking: booking),
@@ -63,7 +66,7 @@ class PaymentResultScreen extends ConsumerWidget {
         case PaymentOutcome.refund:
           body = _Message(
             icon: Icons.info_outline,
-            color: AppColors.warning,
+            color: tokens.warning,
             title: S.paymentRefundTitle,
             text: S.paymentRefundBody,
             actions: [
@@ -79,7 +82,7 @@ class PaymentResultScreen extends ConsumerWidget {
               booking.holdExpiresAt!.isAfter(DateTime.now());
           body = _Message(
             icon: Icons.cancel_outlined,
-            color: AppColors.danger,
+            color: tokens.danger,
             title: S.paymentFailedTitle,
             text: S.paymentFailedBody,
             actions: [
@@ -94,7 +97,7 @@ class PaymentResultScreen extends ConsumerWidget {
     } else if (value.timedOut) {
       body = _Message(
         icon: Icons.hourglass_bottom,
-        color: AppColors.warning,
+        color: tokens.warning,
         title: S.paymentStillPendingTitle,
         text: S.paymentStillPendingBody,
         actions: [
@@ -201,7 +204,7 @@ class _Message extends StatelessWidget {
             const SizedBox(height: AppSpacing.s),
             Text(
               text,
-              style: theme.textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+              style: theme.textTheme.bodyMedium?.copyWith(color: context.tokens.textSecondary),
               textAlign: TextAlign.center,
             ),
             if (extra != null) ...[const SizedBox(height: AppSpacing.xl), extra!],
@@ -217,20 +220,36 @@ class _Message extends StatelessWidget {
   }
 }
 
+/// Confirmation details: weekday + date, time, tappable address (opens Maps), the deposit that was
+/// paid, the remainder due at the venue and the cancellation policy.
 class _BookingSummary extends StatelessWidget {
   const _BookingSummary({required this.booking});
 
   final Booking booking;
 
+  String? get _addressLine {
+    final address = booking.venueAddress;
+    final district = booking.venueDistrict;
+    final parts = <String>[
+      if (address != null && address.isNotEmpty) address,
+      if (district != null && district.isNotEmpty) district,
+    ];
+    return parts.isEmpty ? null : parts.join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final tokens = context.tokens;
+    final addressLine = _addressLine;
+    final mapQuery = '${booking.venueName ?? ''} ${addressLine ?? ''}'.trim();
+    final hasLocation = booking.venueLat != null && booking.venueLng != null;
     return Container(
       padding: const EdgeInsets.all(AppSpacing.l),
       decoration: BoxDecoration(
-        color: AppColors.card,
+        color: tokens.card,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: tokens.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +259,70 @@ class _BookingSummary extends StatelessWidget {
             Text(S.pitchLabel(booking.pitchName!, booking.pitchFormat ?? ''), style: theme.textTheme.bodySmall),
           const SizedBox(height: AppSpacing.s),
           Text(formatIstanbulDateWithWeekday(booking.startsAt), style: theme.textTheme.bodyMedium),
-          Text(formatTimeRange(booking.startsAt, booking.endsAt), style: theme.textTheme.bodyMedium),
+          Text(
+            formatTimeRange(booking.startsAt, booking.endsAt),
+            style: numericStyle(context, size: 24, weight: FontWeight.w700, color: tokens.brand),
+          ),
+          if (addressLine != null || hasLocation) ...[
+            const SizedBox(height: AppSpacing.s),
+            InkWell(
+              borderRadius: BorderRadius.circular(AppRadius.button),
+              onTap: () => openExternalOrWarn(
+                context,
+                mapsUrl(lat: booking.venueLat, lng: booking.venueLng, query: mapQuery),
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: AppSizes.minTarget),
+                child: Row(
+                  children: [
+                    Icon(Icons.location_on_outlined, size: 20, color: tokens.action),
+                    const SizedBox(width: AppSpacing.s),
+                    Expanded(
+                      child: Text(
+                        addressLine ?? S.openInMaps,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: tokens.action,
+                          decoration: TextDecoration.underline,
+                          decorationColor: tokens.action,
+                        ),
+                      ),
+                    ),
+                    Icon(Icons.open_in_new, size: 16, color: tokens.action),
+                  ],
+                ),
+              ),
+            ),
+          ],
+          const Divider(height: AppSpacing.xl),
+          if (booking.depositKurus > 0)
+            _MoneyRow(label: S.paidDeposit, kurus: booking.depositKurus, color: tokens.action),
+          _MoneyRow(label: S.remainderAtVenue, kurus: booking.remainderKurus),
+          const SizedBox(height: AppSpacing.s),
+          Text(
+            S.cancellationPolicyShort(booking.cancellationWindowHours ?? defaultCancellationWindowHours),
+            style: theme.textTheme.bodySmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MoneyRow extends StatelessWidget {
+  const _MoneyRow({required this.label, required this.kurus, this.color});
+
+  final String label;
+  final int kurus;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      child: Row(
+        children: [
+          Expanded(child: Text(label, style: Theme.of(context).textTheme.bodyMedium)),
+          Text(formatTry(kurus), style: numericStyle(context, size: 20, weight: FontWeight.w700, color: color)),
         ],
       ),
     );

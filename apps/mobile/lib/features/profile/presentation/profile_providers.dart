@@ -33,6 +33,9 @@ class ProfileNotifier extends AsyncNotifier<Profile?> {
     state = AsyncData<Profile?>(updated);
   }
 
+  /// Replaces the cached profile (used by the demo to flip the role without a backend).
+  void replace(Profile profile) => state = AsyncData<Profile?>(profile);
+
   Future<void> updateName(String fullName) async {
     final updated = await ref.read(profileRepositoryProvider).updateName(
           userId: _requireUserId(),

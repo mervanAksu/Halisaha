@@ -15,6 +15,7 @@ import '../../features/booking/presentation/payment_result_screen.dart';
 import '../../features/booking/presentation/payment_webview_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/matches/presentation/matches_screen.dart';
+import '../../features/owner/presentation/owner_shell.dart';
 import '../../features/profile/domain/profile.dart';
 import '../../features/profile/presentation/notification_settings_screen.dart';
 import '../../features/profile/presentation/profile_providers.dart';
@@ -122,6 +123,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.bookingResult,
         builder: (context, state) => PaymentResultScreen(bookingId: state.pathParameters['id']!),
       ),
+      GoRoute(path: AppRoutes.owner, builder: (context, state) => const OwnerShell()),
     ],
   );
   ref.onDispose(router.dispose);
@@ -155,7 +157,11 @@ String? _redirect(Ref ref, GoRouterState state) {
   }
 
   const authOnly = {AppRoutes.login, AppRoutes.otp, AppRoutes.onboarding, AppRoutes.splash};
-  return authOnly.contains(loc) ? AppRoutes.home : null;
+  if (authOnly.contains(loc)) return AppRoutes.home;
+
+  // The owner panel is for owner/admin accounts only (RLS enforces it on the server as well).
+  if (loc == AppRoutes.owner && !profile.isOwner) return AppRoutes.home;
+  return null;
 }
 
 /// Shown when a route that needs `extra` is opened without it (e.g. after process restore).

@@ -16,8 +16,8 @@ const List<LocalizationsDelegate<dynamic>> _delegates = <LocalizationsDelegate<d
   GlobalCupertinoLocalizations.delegate,
 ];
 
-class HalisahaApp extends ConsumerWidget {
-  const HalisahaApp({super.key});
+class RovansApp extends ConsumerWidget {
+  const RovansApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,6 +26,8 @@ class HalisahaApp extends ConsumerWidget {
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ThemeMode.system,
       routerConfig: router,
       locale: appLocale,
       supportedLocales: const [appLocale],
@@ -45,6 +47,8 @@ class ConfigErrorApp extends StatelessWidget {
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: ThemeMode.system,
       locale: appLocale,
       supportedLocales: const [appLocale],
       localizationsDelegates: _delegates,

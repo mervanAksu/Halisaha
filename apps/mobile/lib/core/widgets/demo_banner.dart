@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/strings.dart';
-import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 import '../theme/app_spacing.dart';
 
 /// Slim, persistent ribbon shown above every route in demo mode.
@@ -13,10 +13,11 @@ class DemoBannerFrame extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
+    final tokens = context.tokens;
     return Column(
       children: [
         Material(
-          color: AppColors.warning,
+          color: tokens.warningSoft,
           child: Container(
             width: double.infinity,
             padding: EdgeInsets.fromLTRB(AppSpacing.l, media.padding.top + AppSpacing.xs, AppSpacing.l, AppSpacing.xs),
@@ -24,7 +25,7 @@ class DemoBannerFrame extends StatelessWidget {
             child: Text(
               S.demoBanner,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: AppColors.textPrimary, fontSize: 12),
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(color: tokens.textPrimary, fontSize: 12),
             ),
           ),
         ),

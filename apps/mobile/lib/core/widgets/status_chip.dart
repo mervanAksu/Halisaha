@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/booking/domain/booking.dart';
 import '../l10n/strings.dart';
-import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 /// Booking status label (docs/DESIGN.md "Durum etiketi").
 class StatusChip extends StatelessWidget {
@@ -12,7 +12,7 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = _styleFor(status);
+    final style = _styleFor(status, context.tokens);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -27,20 +27,20 @@ class StatusChip extends StatelessWidget {
     );
   }
 
-  static _ChipStyle _styleFor(BookingStatus status) {
+  static _ChipStyle _styleFor(BookingStatus status, AppTokens t) {
     switch (status) {
       case BookingStatus.confirmed:
-        return const _ChipStyle(S.statusConfirmed, AppColors.accentSoft, AppColors.accent);
+        return _ChipStyle(S.statusConfirmed, t.accentSoft, t.action);
       case BookingStatus.pendingPayment:
-        return const _ChipStyle(S.statusPendingPayment, AppColors.warningSoft, AppColors.warning);
+        return _ChipStyle(S.statusPendingPayment, t.warningSoft, t.warning);
       case BookingStatus.cancelled:
-        return const _ChipStyle(S.statusCancelled, AppColors.dangerSoft, AppColors.danger);
+        return _ChipStyle(S.statusCancelled, t.dangerSoft, t.danger);
       case BookingStatus.expired:
-        return const _ChipStyle(S.statusExpired, AppColors.neutralSoft, AppColors.textSecondary);
+        return _ChipStyle(S.statusExpired, t.disabledSlot, t.onDisabledSlot);
       case BookingStatus.completed:
-        return const _ChipStyle(S.statusCompleted, AppColors.neutralSoft, AppColors.textSecondary);
+        return _ChipStyle(S.statusCompleted, t.disabledSlot, t.onDisabledSlot);
       case BookingStatus.noShow:
-        return const _ChipStyle(S.statusNoShow, AppColors.transparent, AppColors.danger, outline: true);
+        return _ChipStyle(S.statusNoShow, t.transparent, t.danger, outline: true);
     }
   }
 }

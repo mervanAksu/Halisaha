@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state.dart';
@@ -30,11 +30,11 @@ class MatchesScreen extends ConsumerWidget {
               onPressed: () => ref.invalidate(myBookingsProvider),
             ),
           ],
-          bottom: const TabBar(
-            labelColor: AppColors.primary,
-            unselectedLabelColor: AppColors.textSecondary,
-            indicatorColor: AppColors.accent,
-            tabs: [
+          bottom: TabBar(
+            labelColor: context.tokens.brand,
+            unselectedLabelColor: context.tokens.textSecondary,
+            indicatorColor: context.tokens.accent,
+            tabs: const [
               Tab(text: S.tabUpcoming),
               Tab(text: S.tabPast),
             ],

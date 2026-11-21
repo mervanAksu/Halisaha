@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/router/app_routes.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/urls.dart';
 import '../../../core/widgets/async_value_widget.dart';
@@ -71,7 +71,7 @@ class _FavoriteTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return Material(
-      color: AppColors.card,
+      color: context.tokens.card,
       borderRadius: BorderRadius.circular(AppRadius.card),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -96,7 +96,7 @@ class _FavoriteTile extends ConsumerWidget {
             ),
             IconButton(
               tooltip: S.removeFavorite,
-              icon: const Icon(Icons.favorite, color: AppColors.danger),
+              icon: Icon(Icons.favorite, color: context.tokens.danger),
               onPressed: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 try {

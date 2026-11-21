@@ -1,7 +1,7 @@
 /// Build-time configuration. Values come from `--dart-define-from-file=env/local.json`.
 /// No secrets live here: the Supabase anon key is a public client key protected by RLS.
 abstract final class AppConfig {
-  static const String appName = 'Halısaha';
+  static const String appName = 'Rövanş';
   static const String appVersion = String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0');
 
   static const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
@@ -12,6 +12,10 @@ abstract final class AppConfig {
   static const String supportWhatsapp = String.fromEnvironment('SUPPORT_WHATSAPP');
   static const String websiteUrl = String.fromEnvironment('WEBSITE_URL');
   static const String legalBaseUrl = String.fromEnvironment('LEGAL_BASE_URL');
+
+  /// Base URL PayTR redirects to after a payment attempt (same value as the edge function secret
+  /// `PAYMENT_RESULT_BASE_URL`). Its host is the only non-PayTR host the payment WebView may open.
+  static const String paymentResultBaseUrl = String.fromEnvironment('PAYMENT_RESULT_BASE_URL');
 
   /// Public Supabase Storage bucket holding venue photos.
   static const String venuePhotosBucket = 'venue-photos';

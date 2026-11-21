@@ -1,5 +1,5 @@
 name: halisaha
-description: Halısaha rezervasyon uygulaması (müşteri).
+description: Rövanş - halı saha rezervasyon uygulaması (müşteri ve işletmeci).
 publish_to: "none"
 version: 1.0.0+1
 
@@ -22,6 +22,7 @@ dependencies:
   url_launcher: ^6.3.1
   geolocator: ^13.0.2
   google_fonts: ^6.2.1
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_test:
