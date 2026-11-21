@@ -40,15 +40,15 @@ jobs:
           python3 - <<'EOF'
           import json, re
           p = 'web/index.html'; s = open(p, encoding='utf-8').read()
-          s = re.sub(r'<title>.*?</title>', '<title>Halısaha · Demo</title>', s, flags=re.S)
-          s = re.sub(r'(name="apple-mobile-web-app-title" content=")[^"]*', r'\1Halısaha', s)
+          s = re.sub(r'<title>.*?</title>', '<title>Rövanş · Demo</title>', s, flags=re.S)
+          s = re.sub(r'(name="apple-mobile-web-app-title" content=")[^"]*', r'\1Rövanş', s)
           s = re.sub(r'(name="description" content=")[^"]*', r'\1Halı saha rezervasyon uygulaması (demo)', s)
           if 'name="theme-color"' not in s:
-              s = s.replace('</head>', '  <meta name="theme-color" content="#0F2A44">\n</head>')
+              s = s.replace('</head>', '  <meta name="theme-color" content="#0E0F0C">\n</head>')
           open(p, 'w', encoding='utf-8').write(s)
           m = json.load(open('web/manifest.json', encoding='utf-8'))
-          m.update(name='Halısaha (Demo)', short_name='Halısaha', background_color='#F5F7FA',
-                   theme_color='#0F2A44', description='Halı saha rezervasyon uygulaması (demo)')
+          m.update(name='Rövanş (Demo)', short_name='Rövanş', background_color='#F7F7F3',
+                   theme_color='#0E0F0C', description='Halı saha rezervasyon uygulaması (demo)')
           json.dump(m, open('web/manifest.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
           EOF
 
