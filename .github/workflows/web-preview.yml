@@ -97,7 +97,7 @@ jobs:
       - uses: actions/configure-pages@v5
         with: { enablement: true }
         continue-on-error: true   # needs a one-time manual enable if the token may not do it
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with: { path: apps/mobile/build/web }
 
   deploy:
