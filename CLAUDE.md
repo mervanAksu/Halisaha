@@ -55,7 +55,7 @@ cd apps/owner_panel && npm ci && npm run typecheck && npm run lint && npm run de
 ```
 
 ## Güvenlik kuralları (özet; ayrıntı: `.claude/skills/security-review`)
-- Her push'ta `Security` iş akışı çalışır: CodeQL, gitleaks, bağımlılık denetimi ve **saldırı paketi**. Açık `VULN` CI'ı kırmızıya düşürür.
+- Her push'ta `Security` iş akışı çalışır: CodeQL (yalnızca repo açıkken; gizli repoda ücretli), gitleaks, bağımlılık denetimi ve **saldırı paketi**. Açık `VULN` CI'ı kırmızıya düşürür.
 - Admin yetkisi MFA (`aal2`) ister. Hassas kolonlar kolon izniyle kapalıdır. Yeni fonksiyon allow-list'e eklenmeden çağrılamaz.
 - Auth, RLS, ödeme ya da kişisel veriye dokunan her işten sonra `red-team` ajanı çalıştırılır.
 - İmza anahtarları ve repo secrets ajanlar tarafından oluşturulmaz veya yazılmaz; kullanıcı yapar (`docs/RELEASE.md`).
