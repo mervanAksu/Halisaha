@@ -10,7 +10,7 @@ jobs:
   database:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Ensure PostgreSQL (preinstalled on GitHub Ubuntu runners)
         run: |
           ls -d /usr/lib/postgresql/*/bin || (sudo apt-get update -q && sudo apt-get install -yq postgresql postgresql-contrib)
@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: apps/mobile } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with: { channel: stable, cache: true }
       - run: flutter pub get
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: apps/owner_panel } }
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
       - run: npm install
@@ -48,7 +48,7 @@ jobs:
   secrets-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: No secrets committed
         run: |
           ! git grep -nE "(service_role|SERVICE_ROLE)[^\n]*eyJhbGci|(^|[^a-z_])merchant_key\s*[:=]\s*['\"][A-Za-z0-9]{8,}|sk_live_" -- . ':!*.md' ':!.github/**'
