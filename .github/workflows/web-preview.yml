@@ -88,7 +88,7 @@ jobs:
           mkdir -p build/web/legal
           cp -r "$GITHUB_WORKSPACE/site/legal/." build/web/legal/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: web-preview-screenshots
