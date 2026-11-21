@@ -56,7 +56,7 @@ jobs:
           cp build/app/outputs/flutter-apk/app-release.apk ../../dist/rovans-${FLAVOR}.apk
           tar -czf ../../dist/symbols-android-${FLAVOR}.tgz build/symbols
           rm -f android/app/upload-keystore.jks android/key.properties
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: android-${{ env.FLAVOR }}
           path: dist/
