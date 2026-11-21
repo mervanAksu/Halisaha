@@ -29,7 +29,7 @@ for (const d of devices) {
     });
     const page = await ctx.newPage();
     for (const [name, hash] of shots) {
-      await page.goto(base + hash, { waitUntil: 'networkidle' });
+      await page.goto(base + '?shots=1' + hash, { waitUntil: 'networkidle' });
       await page.waitForTimeout(6000);
       await page.screenshot({ path: `${out}/${d.name}-${scheme}-${name}.png` });
     }

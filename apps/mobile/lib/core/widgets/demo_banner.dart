@@ -10,8 +10,12 @@ class DemoBannerFrame extends StatelessWidget {
 
   final Widget? child;
 
+  /// Store-screenshot capture opens the web demo with `?shots=1`; the banner is hidden there only.
+  static bool get hiddenForScreenshots => Uri.base.queryParameters['shots'] == '1';
+
   @override
   Widget build(BuildContext context) {
+    if (hiddenForScreenshots) return child ?? const SizedBox.shrink();
     final media = MediaQuery.of(context);
     final tokens = context.tokens;
     return Column(
