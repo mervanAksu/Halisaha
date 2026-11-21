@@ -6,22 +6,22 @@ class GeneratedVenueImage extends StatelessWidget {
 
   final String name;
 
-  // Dedicated "pitch" palettes (not the button tokens: in dark mode `primary` is a neon green that
+  // Dedicated "pitch" palettes (not the button tokens: in dark mode `primary` is near-white that
   // turned the whole card into a flat bright block). Text on every gradient passes WCAG AA.
   static const List<List<Color>> _lightPalettes = [
-    [Color(0xFF0F2A44), Color(0xFF0A7D4B)],
-    [Color(0xFF0A7D4B), Color(0xFF0F2A44)],
-    [Color(0xFF0F2A44), Color(0xFF3B4A5C)],
-    [Color(0xFF3B4A5C), Color(0xFF0A7D4B)],
+    [Color(0xFF1E5A37), Color(0xFF0E0F0C)],
+    [Color(0xFF236640), Color(0xFF1E5A37)],
+    [Color(0xFF0E0F0C), Color(0xFF2B2D28)],
+    [Color(0xFF1E5A37), Color(0xFF2B2D28)],
   ];
   static const List<List<Color>> _darkPalettes = [
-    [Color(0xFF173226), Color(0xFF0B1410)],
-    [Color(0xFF14213D), Color(0xFF173226)],
-    [Color(0xFF1C3326), Color(0xFF0E1A14)],
-    [Color(0xFF13283A), Color(0xFF0B1410)],
+    [Color(0xFF163F27), Color(0xFF0E0F0C)],
+    [Color(0xFF1A1B17), Color(0xFF163F27)],
+    [Color(0xFF12301F), Color(0xFF0E0F0C)],
+    [Color(0xFF23241F), Color(0xFF163F27)],
   ];
   static const Color _lightInk = Color(0xFFFFFFFF);
-  static const Color _darkInk = Color(0xFFE8F1EC);
+  static const Color _darkInk = Color(0xFFF4F4F0);
 
   static List<List<Color>> palettesFor(Brightness b) => b == Brightness.dark ? _darkPalettes : _lightPalettes;
   static Color inkFor(Brightness b) => b == Brightness.dark ? _darkInk : _lightInk;

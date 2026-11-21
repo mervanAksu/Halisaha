@@ -43,7 +43,9 @@ export function Sidebar({ isAdmin }: { isAdmin: boolean }) {
 
   return (
     <nav aria-label="Ana menü" className="flex w-56 shrink-0 flex-col gap-6 bg-primary p-4 text-white">
-      <div className="px-3 py-2 text-lg font-bold">Halısaha</div>
+      <div className="flex items-center gap-1 px-3 py-2 text-xl font-extrabold italic tracking-wide">
+        RÖVANŞ<span aria-hidden="true" className="inline-block h-2 w-2 rounded-full bg-volt ring-2 ring-primary" />
+      </div>
       <ul className="space-y-1">{render(LINKS)}</ul>
       {isAdmin ? (
         <div>

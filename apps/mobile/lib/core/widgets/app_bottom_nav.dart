@@ -99,11 +99,12 @@ class AppBottomNav extends StatelessWidget {
                     height: _circle,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: tokens.primary,
-                      border: Border.all(color: tokens.accent, width: 4),
+                      // Skorbord: the volt "ball" in the middle of the bar.
+                      color: tokens.highlight,
+                      border: Border.all(color: tokens.card, width: 4),
                       boxShadow: [BoxShadow(color: tokens.shadow, blurRadius: 10, offset: const Offset(0, 3))],
                     ),
-                    child: Icon(Icons.sports_soccer, color: tokens.onPrimary, size: 28),
+                    child: Icon(Icons.sports_soccer, color: tokens.onHighlight, size: 28),
                   ),
                 ),
               ),

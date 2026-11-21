@@ -20,6 +20,6 @@ Adımlar:
 4. Provider: okuma için `FutureProvider.autoDispose.family`, yazma için `AsyncNotifier` kullan.
 5. Ekranda `AsyncValue.when` ile yükleniyor, hata (tekrar dene butonu) ve boş durumları göster.
 6. Route'u `lib/core/router/app_router.dart` dosyasına ekle.
-7. Metinleri `lib/core/l10n/strings.dart` dosyasına, renkleri `AppColors`/`Theme` üzerinden ekle.
+7. Metinleri `lib/core/l10n/strings.dart` dosyasına ekle. Renkleri `context.tokens` (AppTokens) üzerinden kullan; voltaj `highlight` üstüne yalnızca `onHighlight` yazılır (docs/DESIGN.md, ADR-10).
 8. Test: model `fromJson` için unit test, kritik ekranlar için widget test (`test/`).
 9. `flutter analyze` ve `flutter test` temiz olmalı.

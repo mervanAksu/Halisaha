@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: SemVer.
 
 ## [Unreleased]
+### Changed (2026-11-21, ADR-10)
+- Yeni tasarım dili **"Skorbord"**: mürekkep siyahı + kâğıt zemin, tek neon vurgu (voltaj `#D4FF3A`), başlık ve sayılarda Barlow Condensed. Seçili saat voltaj dolguyla, ortadaki "Keşfet" butonu voltaj topla gösteriliyor. Koyu mod aynı dilde.
+- Yeni uygulama ikonu (eğik "R" + voltaj noktası), açılış ekranı ve Play tanıtım görseli. Web paneli ve yasal sayfalar aynı renklere geçti; panelde "Halısaha" adı "RÖVANŞ" oldu.
+- Kontrast testleri yeni tokenlara güncellendi.
+
 ### Added (2026-11-21)
 - Marka **Rövanş** (`com.rovans.app`): özgün ikon, açılış ekranı, Play tanıtım görseli; açık "Temiz Çim" + koyu "Gece Maçı" teması, erişilebilirlik kontrast testleri.
 - Uygulama içi **işletmeci paneli** (Bugün takvimi, telefon rezervasyonu / saat kapatma, rezervasyonlar, sahalar, çalışma saatleri) + web demosunda denenebilir işletmeci modu.

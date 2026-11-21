@@ -13,9 +13,10 @@ void main() {
       expect(contrastRatio(white, white), closeTo(1, 0.001));
     });
 
-    test('white on accent #22B573 is the known 2.65:1 failure that DESIGN.md forbids', () {
+    test('white on volt highlight #D4FF3A fails, which is why DESIGN.md puts only ink on it', () {
       const white = Color(0xFFFFFFFF);
-      expect(contrastRatio(white, AppTokens.light.accent), closeTo(2.65, 0.05));
+      expect(contrastRatio(white, AppTokens.light.highlight), lessThan(1.5));
+      expect(contrastRatio(AppTokens.light.onHighlight, AppTokens.light.highlight), greaterThan(15));
     });
   });
 
@@ -33,45 +34,27 @@ void main() {
   checkPairs('light', AppTokens.light);
   checkPairs('dark', AppTokens.dark);
 
-  group('token values follow docs/DESIGN.md', () {
-    test('light "Temiz Çim"', () {
+  group('token values follow docs/DESIGN.md (Skorbord, ADR-10)', () {
+    test('light', () {
       const t = AppTokens.light;
-      expect(t.primary, const Color(0xFF0F2A44));
-      expect(t.action, const Color(0xFF0A7D4B));
-      expect(t.accent, const Color(0xFF22B573));
-      expect(t.accentSoft, const Color(0xFFE6F7EF));
-      expect(t.surface, const Color(0xFFF5F7FA));
+      expect(t.primary, const Color(0xFF0E0F0C));
+      expect(t.onPrimary, const Color(0xFFFFFFFF));
+      expect(t.action, const Color(0xFF1E5A37));
+      expect(t.highlight, const Color(0xFFD4FF3A));
+      expect(t.onHighlight, const Color(0xFF0E0F0C));
+      expect(t.surface, const Color(0xFFF7F7F3));
       expect(t.card, const Color(0xFFFFFFFF));
-      expect(t.textPrimary, const Color(0xFF111827));
-      expect(t.textSecondary, const Color(0xFF6B7280));
-      expect(t.border, const Color(0xFFE5E7EB));
-      expect(t.warning, const Color(0xFFB45309));
-      expect(t.danger, const Color(0xFFC81E3A));
-      expect(t.disabledSlot, const Color(0xFFF1F2F4));
+      expect(t.textSecondary, const Color(0xFF5C5F57));
+      expect(t.danger, const Color(0xFFC4232F));
     });
 
-    test('dark "Gece Maçı"', () {
+    test('dark', () {
       const t = AppTokens.dark;
-      expect(t.brand, const Color(0xFFE8F1EC));
-      expect(t.primary, const Color(0xFF2EE08A));
-      expect(t.onPrimary, const Color(0xFF06130D));
-      expect(t.accentSoft, const Color(0xFF173226));
-      expect(t.surface, const Color(0xFF0B1410));
-      expect(t.card, const Color(0xFF14201A));
-      expect(t.textSecondary, const Color(0xFF9FB3A8));
-      expect(t.border, const Color(0xFF24342C));
-      expect(t.warning, const Color(0xFFF5C84B));
-      expect(t.danger, const Color(0xFFFF5C73));
-      expect(t.disabledSlot, const Color(0xFF1E2A24));
-      expect(t.onDisabledSlot, const Color(0xFF8FA89A));
-    });
-
-    test('lerp and copyWith keep the extension usable for theme animation', () {
-      final mid = AppTokens.light.lerp(AppTokens.dark, 0.5);
-      expect(mid.surface, isNot(AppTokens.light.surface));
-      expect(AppTokens.light.lerp(AppTokens.dark, 0).surface, AppTokens.light.surface);
-      expect(AppTokens.light.lerp(AppTokens.dark, 1).surface, AppTokens.dark.surface);
-      expect(AppTokens.light.copyWith(surface: AppTokens.dark.surface).surface, AppTokens.dark.surface);
+      expect(t.primary, const Color(0xFFF4F4F0));
+      expect(t.onPrimary, const Color(0xFF0E0F0C));
+      expect(t.highlight, const Color(0xFFD4FF3A));
+      expect(t.surface, const Color(0xFF0E0F0C));
+      expect(t.card, const Color(0xFF1A1B17));
     });
   });
 }

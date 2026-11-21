@@ -23,7 +23,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
       <div className="panel-card w-full max-w-sm">
-        <h1 className="text-[22px] font-bold text-primary">Halısaha Panel</h1>
+        <h1 className="text-[22px] font-extrabold italic tracking-wide text-primary">RÖVANŞ Panel</h1>
         <p className="mb-6 mt-1 text-sm text-textSecondary">İşletme hesabınla giriş yap.</p>
         <LoginForm notice={notice} />
       </div>

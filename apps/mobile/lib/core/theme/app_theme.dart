@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_spacing.dart';
 import 'app_tokens.dart';
 
-/// Material 3 themes built from [AppTokens]: light "Temiz Çim" and dark "Gece Maçı".
+/// Material 3 themes built from [AppTokens]: "Skorbord" light (default) and dark (system dark mode).
 abstract final class AppTheme {
   static ThemeData light() => _build(AppTokens.light, Brightness.light);
 
@@ -17,8 +17,8 @@ abstract final class AppTheme {
       onPrimary: t.onPrimary,
       secondary: t.action,
       onSecondary: t.onAction,
-      secondaryContainer: t.accentSoft,
-      onSecondaryContainer: t.textPrimary,
+      secondaryContainer: t.highlight,
+      onSecondaryContainer: t.onHighlight,
       error: t.danger,
       onError: t.onDanger,
       surface: t.card,
@@ -103,15 +103,15 @@ abstract final class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: t.card,
         surfaceTintColor: t.transparent,
-        indicatorColor: t.accentSoft,
+        indicatorColor: t.highlight,
         elevation: 0,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(color: t.accent),
     );
   }
 
-  /// Inter, sizes per docs/DESIGN.md:
-  /// headlineSmall = page title 22/700, titleMedium = section 17/600,
+  /// Inter body, Barlow Condensed display (docs/DESIGN.md "Tipografi"):
+  /// headlineLarge = hero title 34/800, headlineSmall = page title 24/800 condensed, titleMedium = section 17/600,
   /// bodyMedium = body 15/400, bodySmall = secondary 13/400, labelMedium = badge 13/700.
   static TextTheme _textTheme(AppTokens t, Brightness brightness) {
     final seed = ThemeData(brightness: brightness).textTheme;
@@ -120,7 +120,20 @@ abstract final class AppTheme {
       displayColor: t.textPrimary,
     );
     return base.copyWith(
-      headlineSmall: base.headlineSmall?.copyWith(fontSize: 22, fontWeight: FontWeight.w700, color: t.brand),
+      headlineLarge: GoogleFonts.barlowCondensed(
+        fontSize: 34,
+        fontWeight: FontWeight.w800,
+        height: 1.0,
+        letterSpacing: 0.5,
+        color: t.brand,
+      ),
+      headlineSmall: GoogleFonts.barlowCondensed(
+        fontSize: 24,
+        fontWeight: FontWeight.w800,
+        height: 1.1,
+        letterSpacing: 0.3,
+        color: t.brand,
+      ),
       titleMedium: base.titleMedium?.copyWith(fontSize: 17, fontWeight: FontWeight.w600, color: t.brand),
       bodyLarge: base.bodyLarge?.copyWith(fontSize: 15, fontWeight: FontWeight.w400),
       bodyMedium: base.bodyMedium?.copyWith(fontSize: 15, fontWeight: FontWeight.w400),

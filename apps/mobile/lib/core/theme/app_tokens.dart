@@ -9,11 +9,12 @@ class ContrastPair {
   final Color background;
 }
 
-/// Semantic colour tokens of docs/DESIGN.md ("Renk tokenları") for the light theme "Temiz Çim"
-/// and the dark theme "Gece Maçı". This file and `app_theme.dart` are the only places where colour
+/// Semantic colour tokens of docs/DESIGN.md ("Renk tokenları") for the "Skorbord" design (ADR-10):
+/// an ink-and-paper base with one volt accent, light by default and dark with the system. This file and `app_theme.dart` are the only places where colour
 /// literals may appear; widgets read tokens with `context.tokens`.
 ///
-/// `accent` is for fills, icons and rings only: never put text on it (white on #22B573 is 2.65:1).
+/// `accent` is for icons, progress and the selection ring. `highlight` (volt) is the only fill that
+/// carries the "available / selected" message; text on it is always `onHighlight` (ink).
 @immutable
 class AppTokens extends ThemeExtension<AppTokens> {
   const AppTokens({
@@ -24,6 +25,8 @@ class AppTokens extends ThemeExtension<AppTokens> {
     required this.onAction,
     required this.accent,
     required this.accentSoft,
+    required this.highlight,
+    required this.onHighlight,
     required this.surface,
     required this.card,
     required this.textPrimary,
@@ -56,6 +59,10 @@ class AppTokens extends ThemeExtension<AppTokens> {
   final Color accent;
   final Color accentSoft;
 
+  /// Volt fill: selected slot, "N boş saat" badge, rebook button. Text on it: [onHighlight].
+  final Color highlight;
+  final Color onHighlight;
+
   /// Page background.
   final Color surface;
   final Color card;
@@ -87,52 +94,55 @@ class AppTokens extends ThemeExtension<AppTokens> {
   Color get transparent => const Color(0x00000000);
 
   static const AppTokens light = AppTokens(
-    brand: Color(0xFF0F2A44),
-    primary: Color(0xFF0F2A44),
+    brand: Color(0xFF0E0F0C),
+    primary: Color(0xFF0E0F0C),
     onPrimary: Color(0xFFFFFFFF),
-    action: Color(0xFF0A7D4B),
+    action: Color(0xFF1E5A37),
     onAction: Color(0xFFFFFFFF),
-    accent: Color(0xFF22B573),
-    accentSoft: Color(0xFFE6F7EF),
-    surface: Color(0xFFF5F7FA),
+    accent: Color(0xFF0E0F0C),
+    accentSoft: Color(0xFFEEF7C8),
+    highlight: Color(0xFFD4FF3A),
+    onHighlight: Color(0xFF0E0F0C),
+    surface: Color(0xFFF7F7F3),
     card: Color(0xFFFFFFFF),
-    textPrimary: Color(0xFF111827),
-    textSecondary: Color(0xFF6B7280),
-    border: Color(0xFFE5E7EB),
-    warning: Color(0xFFB45309),
-    warningSoft: Color(0xFFFEF3C7),
-    danger: Color(0xFFC81E3A),
-    dangerSoft: Color(0xFFFFE4EA),
+    textPrimary: Color(0xFF0E0F0C),
+    textSecondary: Color(0xFF5C5F57),
+    border: Color(0xFFE3E3DC),
+    warning: Color(0xFF8A5300),
+    warningSoft: Color(0xFFFFF4D6),
+    danger: Color(0xFFC4232F),
+    dangerSoft: Color(0xFFFDE7E8),
     onDanger: Color(0xFFFFFFFF),
-    disabledSlot: Color(0xFFF1F2F4),
-    // DESIGN.md lists #6B7280 here, which is only 4.32:1 on #F1F2F4. Darkened to pass AA (4.72:1).
-    onDisabledSlot: Color(0xFF656C78),
-    neutral: Color(0xFF9CA3AF),
+    disabledSlot: Color(0xFFF1F1EC),
+    onDisabledSlot: Color(0xFF5C5F57),
+    neutral: Color(0xFFA4A69E),
     overlay: Color(0x99000000),
     shadow: Color(0x14000000),
   );
 
   static const AppTokens dark = AppTokens(
-    brand: Color(0xFFE8F1EC),
-    primary: Color(0xFF2EE08A),
-    onPrimary: Color(0xFF06130D),
-    action: Color(0xFF2EE08A),
-    onAction: Color(0xFF06130D),
-    accent: Color(0xFF2EE08A),
-    accentSoft: Color(0xFF173226),
-    surface: Color(0xFF0B1410),
-    card: Color(0xFF14201A),
-    textPrimary: Color(0xFFE8F1EC),
-    textSecondary: Color(0xFF9FB3A8),
-    border: Color(0xFF24342C),
+    brand: Color(0xFFF4F4F0),
+    primary: Color(0xFFF4F4F0),
+    onPrimary: Color(0xFF0E0F0C),
+    action: Color(0xFF8FE0A6),
+    onAction: Color(0xFF0E0F0C),
+    accent: Color(0xFFD4FF3A),
+    accentSoft: Color(0xFF2A3012),
+    highlight: Color(0xFFD4FF3A),
+    onHighlight: Color(0xFF0E0F0C),
+    surface: Color(0xFF0E0F0C),
+    card: Color(0xFF1A1B17),
+    textPrimary: Color(0xFFF4F4F0),
+    textSecondary: Color(0xFFA4A69E),
+    border: Color(0xFF2C2E27),
     warning: Color(0xFFF5C84B),
     warningSoft: Color(0xFF3A2F10),
-    danger: Color(0xFFFF5C73),
-    dangerSoft: Color(0xFF3A1A21),
-    onDanger: Color(0xFF06130D),
-    disabledSlot: Color(0xFF1E2A24),
-    onDisabledSlot: Color(0xFF8FA89A),
-    neutral: Color(0xFF6F8579),
+    danger: Color(0xFFFF6B73),
+    dangerSoft: Color(0xFF3A1A1D),
+    onDanger: Color(0xFF0E0F0C),
+    disabledSlot: Color(0xFF23241F),
+    onDisabledSlot: Color(0xFF9A9C93),
+    neutral: Color(0xFF6B6E64),
     overlay: Color(0xB3000000),
     shadow: Color(0x66000000),
   );
@@ -144,6 +154,7 @@ class AppTokens extends ThemeExtension<AppTokens> {
         ContrastPair('onPrimary on primary', onPrimary, primary),
         ContrastPair('onAction on action', onAction, action),
         ContrastPair('onDanger on danger', onDanger, danger),
+        ContrastPair('onHighlight on highlight', onHighlight, highlight),
         ContrastPair('textPrimary on surface', textPrimary, surface),
         ContrastPair('textPrimary on card', textPrimary, card),
         ContrastPair('textPrimary on accentSoft', textPrimary, accentSoft),
@@ -176,6 +187,8 @@ class AppTokens extends ThemeExtension<AppTokens> {
     Color? onAction,
     Color? accent,
     Color? accentSoft,
+    Color? highlight,
+    Color? onHighlight,
     Color? surface,
     Color? card,
     Color? textPrimary,
@@ -200,6 +213,8 @@ class AppTokens extends ThemeExtension<AppTokens> {
       onAction: onAction ?? this.onAction,
       accent: accent ?? this.accent,
       accentSoft: accentSoft ?? this.accentSoft,
+      highlight: highlight ?? this.highlight,
+      onHighlight: onHighlight ?? this.onHighlight,
       surface: surface ?? this.surface,
       card: card ?? this.card,
       textPrimary: textPrimary ?? this.textPrimary,
@@ -230,6 +245,8 @@ class AppTokens extends ThemeExtension<AppTokens> {
       onAction: mix(onAction, other.onAction),
       accent: mix(accent, other.accent),
       accentSoft: mix(accentSoft, other.accentSoft),
+      highlight: mix(highlight, other.highlight),
+      onHighlight: mix(onHighlight, other.onHighlight),
       surface: mix(surface, other.surface),
       card: mix(card, other.card),
       textPrimary: mix(textPrimary, other.textPrimary),

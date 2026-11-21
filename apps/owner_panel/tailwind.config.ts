@@ -6,22 +6,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#0F2A44',
-        accent: '#22B573',
-        accentSoft: '#E6F7EF',
-        surface: '#F5F7FA',
+        // "Skorbord" (ADR-10). accent is the pitch green so white text on it passes AA;
+        // volt is a fill only, always with primary (ink) text on it.
+        primary: '#0E0F0C',
+        accent: '#1E5A37',
+        accentSoft: '#EEF7C8',
+        volt: '#D4FF3A',
+        surface: '#F7F7F3',
         card: '#FFFFFF',
-        textPrimary: '#111827',
-        textSecondary: '#6B7280',
-        border: '#E5E7EB',
-        warning: '#F59E0B',
-        danger: '#E11D48',
+        textPrimary: '#0E0F0C',
+        textSecondary: '#5C5F57',
+        border: '#E3E3DC',
+        warning: '#F5C84B', // fill only, dark text on it
+        danger: '#C4232F',
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       borderRadius: {
-        xl: '12px',
+        xl: '14px',
         '2xl': '16px',
       },
     },

@@ -25,7 +25,7 @@ env/example.json
 
 ## Theme (docs/DESIGN.md)
 
-* `core/theme/app_tokens.dart`: `AppTokens` (`ThemeExtension`) with the light "Temiz Çim" and dark "Gece Maçı" values.
+* `core/theme/app_tokens.dart`: `AppTokens` (`ThemeExtension`) with the "Skorbord" light and dark values (docs/DESIGN.md, ADR-10). Text on `highlight` is always `onHighlight`.
   Widgets read colours with `context.tokens` (falls back to light tokens when a theme lacks the extension).
   **No colour literal exists outside `core/theme/`.** `accent` (#22B573) is only for icons/rings/progress, never a text
   background; green surfaces with text use `action`.

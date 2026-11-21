@@ -10,7 +10,7 @@ import '../../domain/slot_groups.dart';
 
 /// Slot picker (docs/DESIGN.md "Bileşen kuralları"): slots grouped Akşam / Öğleden sonra / Sabah-Gece,
 /// 3 columns (2 when the text scale is above 1.3), every cell at least 48 dp high.
-/// Available = card + action border, selected = accentSoft, booked = grey with a "Dolu" label
+/// Available = card + hairline, selected = volt highlight with ink ring, booked = grey with a "Dolu" label
 /// (no strikethrough), past = hidden.
 class SlotGrid extends StatelessWidget {
   const SlotGrid({super.key, required this.slots, required this.selectedStart, required this.onSelected});
@@ -73,9 +73,12 @@ class _SlotCell extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.tokens;
     final booked = !slot.isAvailable;
-    final Color background = booked ? tokens.disabledSlot : (selected ? tokens.accentSoft : tokens.card);
-    final Color borderColor = booked ? tokens.border : (selected ? tokens.accent : tokens.action);
-    final Color textColor = booked ? tokens.onDisabledSlot : tokens.textPrimary;
+    // Skorbord: free = card with hairline, selected = volt fill with ink ring, booked = grey + "Dolu".
+    final Color background = booked ? tokens.disabledSlot : (selected ? tokens.highlight : tokens.card);
+    final Color borderColor = booked ? tokens.disabledSlot : (selected ? tokens.accent : tokens.border);
+    final Color textColor = booked
+        ? tokens.onDisabledSlot
+        : (selected ? tokens.onHighlight : tokens.textPrimary);
     final range = formatTimeRange(slot.startsAt, slot.endsAt);
     return Semantics(
       button: !booked,
@@ -97,7 +100,15 @@ class _SlotCell extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(range, style: numericStyle(context, size: 17, weight: FontWeight.w700, color: textColor)),
+              Text(
+                range,
+                style: numericStyle(
+                  context,
+                  size: 18,
+                  weight: selected ? FontWeight.w800 : FontWeight.w700,
+                  color: textColor,
+                ),
+              ),
               Text(
                 booked ? S.slotBooked : formatTry(slot.priceKurus),
                 style: numericStyle(context, size: 14, weight: FontWeight.w600, color: textColor),

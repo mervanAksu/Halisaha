@@ -8,9 +8,9 @@ abstract final class AppSpacing {
 }
 
 abstract final class AppRadius {
-  static const double button = 12;
+  static const double button = 14;
   static const double card = 16;
-  static const double slot = 10;
+  static const double slot = 12;
 }
 
 abstract final class AppSizes {

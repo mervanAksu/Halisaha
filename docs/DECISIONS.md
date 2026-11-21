@@ -34,10 +34,15 @@ Sonuç: CI bilgi notlarını raporlar ama başarısız olmaz. Uyarı (warning) v
 
 ## ADR-8 · Marka "Rövanş", paket kimliği com.rovans.app, tasarım A+B (2026-11-21)
 Bağlam: "Halısaha" adı ayırt edici değil ve korunamaz. "Saha…" ve "Maç…" ile başlayan çok sayıda uygulama var.
-Karar: Ad "Rövanş", paket kimliği `com.rovans.app` (değiştirilemez). Tasarım: açık "Temiz Çim" varsayılan, sistem koyu modunda "Gece Maçı". Ek UI kiti kullanılmıyor (Material 3 + kendi tokenlarımız). Ayrıntı: `docs/DESIGN.md`.
+Karar: Ad "Rövanş", paket kimliği `com.rovans.app` (değiştirilemez). Tasarım: açık "Temiz Çim" varsayılan, sistem koyu modunda "Gece Maçı" (tasarım kısmı ADR-10 ile değişti). Ek UI kiti kullanılmıyor (Material 3 + kendi tokenlarımız). Ayrıntı: `docs/DESIGN.md`.
 Sonuç: Marka için TÜRKPATENT başvurusu yapılmalı. Kontrast kuralları (`#22B573` üzerine beyaz yazı yok) testle korunuyor.
 
 ## ADR-9 · Kaporasız mod ile erken yayın seçeneği (2026-11-21)
 Bağlam: PayTR ve kurumsal mağaza hesapları şirket kuruluşuna bağlı.
 Karar: `deposit_kurus = 0` olan sahalarda rezervasyon ödeme olmadan onaylanır. Bu davranış zaten şemada var ve kötüye kullanım sınırlarıyla korunuyor. İlk işletmelerle ödeme altyapısı olmadan canlıya çıkılabilir.
 Sonuç: No-show koruması bu modda yok. İşletmeye bunun söylenmesi ve kara liste özelliğinin v1.1'e alınması gerekir.
+
+## ADR-10 · "Skorbord" tasarım dili (2026-11-21)
+Bağlam: Kullanıcı `flutter/samples` örneklerini referans gösterdi. Rezervasyon akışına en yakın örnek Compass'tı. Tuvalde 3 yön karşılaştırıldı: A Skorbord, B Çim Sahası, C Projektör.
+Karar: A "Skorbord" seçildi. Mürekkep `#0E0F0C` + kâğıt zemin, tek vurgu voltaj `#D4FF3A` (yalnızca mürekkep yazıyla), olumlu durumlar çim yeşili `#1E5A37`. Başlık ve sayılarda Barlow Condensed, gövdede Inter. Yeni ikon: eğik "R" + voltaj top noktası. ADR-8'in tasarım kısmının yerini alır; ad ve paket kimliği aynı kalır.
+Sonuç: Token adları korundu, `highlight`/`onHighlight` eklendi; ekranlar token okuduğu için değişiklik çoğunlukla tema dosyasında. Android/iOS ikonları "Scaffold native platforms" iş akışıyla yeniden üretilmeli. Tasarım tuvali: https://claude.ai/artifact/2expRRm9AUcabesofwtYqx
