@@ -17,12 +17,10 @@ export function paytrConfig(): PaytrConfig {
   if (!merchantId || !merchantKey || !merchantSalt) {
     throw new Error("PayTR secrets are not configured");
   }
-  return {
-    merchantId,
-    merchantKey,
-    merchantSalt,
-    testMode: Deno.env.get("PAYTR_TEST_MODE") === "0" ? "0" : "1",
-  };
+  // S-01: never default silently — a missing/typo'd value must stop payments, not run them in test mode.
+  const mode = Deno.env.get("PAYTR_TEST_MODE");
+  if (mode !== "0" && mode !== "1") throw new Error("PAYTR_TEST_MODE must be explicitly '0' or '1'");
+  return { merchantId, merchantKey, merchantSalt, testMode: mode };
 }
 
 /** base64(HMAC-SHA256(message, key)) — PayTR's token/hash format. */
@@ -54,6 +52,12 @@ export function base64Utf8(s: string): string {
 /** 50000 kuruş → "500.00" (PayTR basket and refund amounts use TL with a dot). */
 export function kurusToTl(kurus: number): string {
   return `${Math.floor(kurus / 100)}.${String(kurus % 100).padStart(2, "0")}`;
+}
+
+/** Hex SHA-256 (for pseudonymous identifiers sent to third parties). */
+export async function sha256Hex(s: string): Promise<string> {
+  const d = new Uint8Array(await crypto.subtle.digest("SHA-256", enc.encode(s)));
+  return Array.from(d, (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 /** Hash PayTR sends to the callback URL. */

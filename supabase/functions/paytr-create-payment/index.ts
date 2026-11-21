@@ -1,7 +1,7 @@
 // POST { booking_id } (customer JWT) → { iframe_url, merchant_oid, hold_expires_at }
 // Starts a PayTR iFrame payment for a held booking. Amount always comes from the DB.
-import { adminClient, callerId, corsHeaders, errorResponse, json, rpcErrorCode } from "../_shared/http.ts";
-import { base64Utf8, hmacBase64, kurusToTl, paytrConfig } from "../_shared/paytr.ts";
+import { adminClient, callerId, clientIp, corsHeaders, errorResponse, json, rpcErrorCode } from "../_shared/http.ts";
+import { base64Utf8, hmacBase64, kurusToTl, paytrConfig, sha256Hex } from "../_shared/paytr.ts";
 
 const PAYTR_TOKEN_URL = "https://www.paytr.com/odeme/api/get-token";
 
@@ -37,9 +37,10 @@ Deno.serve(async (req) => {
     .from("profiles").select("full_name, phone, email").eq("id", userId)
     .single<{ full_name: string; phone: string | null; email: string | null }>();
 
-  const userIp = (req.headers.get("x-forwarded-for") ?? "").split(",")[0].trim() || "127.0.0.1";
-  // PayTR requires an e-mail; phone-only users get a non-routable placeholder on our own domain.
-  const email = profile?.email ?? `${userId}@${Deno.env.get("PAYTR_PLACEHOLDER_EMAIL_DOMAIN") ?? "users.example.com"}`;
+  const userIp = clientIp(req);
+  // PayTR requires an e-mail; phone-only users get a pseudonymous placeholder (S-16: no raw user id leaves us).
+  const alias = (await sha256Hex(userId + (Deno.env.get("PSEUDONYM_SALT") ?? ""))).slice(0, 20);
+  const email = profile?.email ?? `u${alias}@${Deno.env.get("PAYTR_PLACEHOLDER_EMAIL_DOMAIN") ?? "users.example.com"}`;
   const amount = String(payment.amount_kurus);
   const basket = base64Utf8(JSON.stringify([
     [`Kapora - ${booking?.venues.name ?? "Halı saha"} ${booking?.pitches.name ?? ""}`.trim(), kurusToTl(payment.amount_kurus), 1],

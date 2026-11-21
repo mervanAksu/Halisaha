@@ -33,6 +33,36 @@ export async function callerId(req: Request): Promise<string | null> {
   return data.user.id;
 }
 
+/**
+ * S-09: client IP for PayTR's fraud checks. The left-most X-Forwarded-For entry is client-controlled;
+ * prefer the platform-set header, else the right-most XFF hop. VERIFY on Supabase which header carries it.
+ */
+export function clientIp(req: Request): string {
+  const real = req.headers.get("x-real-ip") ?? req.headers.get("cf-connecting-ip");
+  if (real && /^[0-9a-fA-F:.]{3,45}$/.test(real)) return real;
+  const hops = (req.headers.get("x-forwarded-for") ?? "").split(",").map((h) => h.trim()).filter(Boolean);
+  const last = hops.at(-1);
+  return last && /^[0-9a-fA-F:.]{3,45}$/.test(last) ? last : "127.0.0.1";
+}
+
+/** Claims of the caller's JWT (already verified by the gateway / getUser). */
+export function jwtClaims(req: Request): Record<string, unknown> {
+  try {
+    const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer /, "");
+    const payload = token.split(".")[1] ?? "";
+    return JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+  } catch {
+    return {};
+  }
+}
+
+/** S-12: true when the caller completed an OTP/password sign-in within the last `maxAgeSec` seconds. */
+export function recentlyAuthenticated(req: Request, maxAgeSec = 600): boolean {
+  const amr = jwtClaims(req).amr as Array<{ method?: string; timestamp?: number }> | undefined;
+  const now = Math.floor(Date.now() / 1000);
+  return Array.isArray(amr) && amr.some((m) => typeof m.timestamp === "number" && now - m.timestamp <= maxAgeSec);
+}
+
 /** Extracts a stable error code raised by our RPCs (`raise exception 'slot_taken'`). */
 export function rpcErrorCode(err: { message?: string } | null): string {
   const m = err?.message ?? "";

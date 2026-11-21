@@ -15,7 +15,10 @@ Deno.serve(async (req) => {
   const cfg = paytrConfig();
   const db = adminClient();
   const { data: claimed, error } = await db.rpc("claim_refunds", { p_limit: 20 });
-  if (error) return json({ error: error.message }, 500);
+  if (error) {
+    console.error("paytr refund: claim failed", error.message);
+    return json({ error: "claim_failed" }, 500);
+  }
 
   const rows = (claimed ?? []) as Array<{ payment_id: string; merchant_oid: string; refund_amount_kurus: number }>;
   const results: Array<{ merchant_oid: string; ok: boolean; reason?: string }> = [];

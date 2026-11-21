@@ -1,5 +1,5 @@
 // POST {} (customer JWT) → 204. In-app account deletion (Apple 5.1.1(v), KVKK).
-import { adminClient, callerId, corsHeaders, errorResponse, rpcErrorCode } from "../_shared/http.ts";
+import { adminClient, callerId, corsHeaders, errorResponse, recentlyAuthenticated, rpcErrorCode } from "../_shared/http.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -7,6 +7,8 @@ Deno.serve(async (req) => {
 
   const userId = await callerId(req);
   if (!userId) return errorResponse("not_authenticated", 401);
+  // S-12: destructive action needs a fresh sign-in (OTP within 10 minutes), so a stolen session can't wipe the account.
+  if (!recentlyAuthenticated(req)) return errorResponse("reauth_required", 401);
 
   const db = adminClient();
   const { error: prepErr } = await db.rpc("prepare_account_deletion", { p_user_id: userId });
@@ -15,7 +17,7 @@ Deno.serve(async (req) => {
   // Cascades: profiles, favorites, device_tokens. bookings/payments keep anonymised rows.
   const { error: delErr } = await db.auth.admin.deleteUser(userId);
   if (delErr) {
-    console.error("delete-account: deleteUser failed", { userId, message: delErr.message });
+    console.error("delete-account: deleteUser failed", { message: delErr.message });
     return errorResponse("unknown_error", 500);
   }
   return new Response(null, { status: 204, headers: corsHeaders });

@@ -6,16 +6,31 @@ import { callbackHash, paytrConfig, safeEqual } from "../_shared/paytr.ts";
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("method not allowed", { status: 405 });
 
-  const form = await req.formData();
-  const field = (k: string) => String(form.get(k) ?? "");
+  // S-08: bounded, well-formed input only.
+  const ct = req.headers.get("content-type") ?? "";
+  const len = Number(req.headers.get("content-length") ?? "-1");
+  if (!ct.startsWith("application/x-www-form-urlencoded") || !(len >= 0 && len <= 8192)) {
+    return new Response("bad request", { status: 400 });
+  }
+  let form: FormData;
+  try {
+    form = await req.formData();
+  } catch {
+    return new Response("bad request", { status: 400 });
+  }
+  const field = (k: string) => String(form.get(k) ?? "").slice(0, 512);
   const merchantOid = field("merchant_oid");
   const status = field("status");             // "success" | "failed"
   const totalAmount = field("total_amount");  // kuruş, may include installment interest
   const hash = field("hash");
 
+  if (!/^[A-Za-z0-9]{1,64}$/.test(merchantOid) || !/^\d{1,12}$/.test(totalAmount)) {
+    return new Response("bad request", { status: 400 });
+  }
+
   const cfg = paytrConfig();
   const expected = await callbackHash(cfg, merchantOid, status, totalAmount);
-  if (!merchantOid || !safeEqual(expected, hash)) {
+  if (!safeEqual(expected, hash)) {
     console.warn("paytr callback: bad hash", { merchantOid });
     return new Response("PAYTR notification failed: bad hash", { status: 400 });
   }
@@ -27,9 +42,16 @@ Deno.serve(async (req) => {
     if (form.has(k)) payload[k] = field(k);
   }
 
+  // S-01: a test-mode notification must never confirm a booking on a live configuration.
+  const testOnLive = cfg.testMode === "0" && field("test_mode") === "1";
+  if (testOnLive) {
+    console.error("paytr callback: test-mode notification on live config", { merchantOid });
+    payload.failed_reason_msg = "test_mode_on_live";
+  }
+
   const { data, error } = await adminClient().rpc("confirm_payment", {
     p_merchant_oid: merchantOid,
-    p_success: status === "success",
+    p_success: status === "success" && !testOnLive,
     p_total_amount_kurus: Number.parseInt(totalAmount, 10) || 0,
     p_payload: payload,
   });
