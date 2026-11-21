@@ -18,7 +18,7 @@ dependencies:
   # flutter_localizations pins intl to the version shipped with the Flutter SDK.
   # 0.20.x matches Flutter >= 3.32; use ^0.19.0 on older SDKs.
   intl: ^0.20.2
-  cached_network_image: ^3.4.1
+  cached_network_image: ^4.0.7
   url_launcher: ^6.3.1
   geolocator: ^13.0.2
   google_fonts: ^6.2.1
