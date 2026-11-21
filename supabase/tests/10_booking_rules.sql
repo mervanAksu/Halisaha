@@ -34,7 +34,7 @@ create temp table t_b1 as select * from public.create_booking_hold('20000000-000
 do $$ begin
   assert (select status from t_b1) = 'pending_payment', 'hold must be pending_payment';
   assert (select deposit_kurus from t_b1) = 50000, 'deposit from pitch';
-  assert (select commission_kurus from t_b1) = 5000, 'commission 10% of deposit';
+  assert (select commission_kurus from t_b1) is null, 'hold must not reveal commission to the customer (F-06)';
   raise notice 'ok 2a hold created';
 end $$;
 select pg_temp.as_user(:c2);
@@ -56,6 +56,14 @@ exception when others then
   assert sqlerrm = 'outside_opening_hours', 'expected outside_opening_hours, got ' || sqlerrm;
   raise notice 'ok 3 misaligned slot rejected';
 end $$;
+
+-- 3b. Commission is still stored server-side (checked as owner of the DB).
+reset role;
+do $$ begin
+  assert (select commission_kurus from public.bookings where id = (select id from t_b1)) = 5000, 'commission 10% of deposit stored';
+end $$;
+set role authenticated;
+select pg_temp.as_user(:c2);
 
 -- 4. RLS: customer 2 cannot see customer 1's booking; anon sees no bookings at all.
 do $$ begin
@@ -193,7 +201,16 @@ exception when others then
 end $$;
 select set_config('request.jwt.claim.sub', '00000000-0000-0000-0000-0000000000a1', false);
 do $$ begin
+  perform public.admin_list_venues();
+  raise exception 'FAIL: admin without MFA (aal1) could call admin RPC';
+exception when others then
+  assert sqlerrm = 'forbidden', 'got ' || sqlerrm;
+  raise notice 'ok 12b2 admin without MFA is not admin (S-04)';
+end $$;
+select set_config('request.jwt.claims', '{"aal":"aal2"}', false);
+do $$ begin
   assert (select count(*) from public.admin_list_venues() where commission_bps = 1000) = 2, 'admin sees commission';
   raise notice 'ok 12c admin reads commission via RPC';
 end $$;
 reset role;
+select set_config('request.jwt.claims', '', false);

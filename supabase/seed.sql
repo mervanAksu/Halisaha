@@ -17,6 +17,8 @@ insert into public.venues (id, owner_id, name, district, address, lat, lng, phon
    'Esenyurt', 'Örnek Mah. Test Sok. No:5', 41.0340, 28.6770, '02120000001', 'active',
    '{otopark,dus}', 'Öğleden sabaha kadar açık.')
 on conflict (id) do nothing;
+-- Seed venues are live, so they need a (fake) PayTR sub-merchant key (F-03).
+update public.venues set paytr_submerchant_key = 'TEST-SUBMERCHANT-' || left(id::text, 8) where paytr_submerchant_key is null;
 
 -- Venue 1: 11:00–24:00 every day. Venue 2: 12:00–06:00 (closes after midnight).
 insert into public.venue_hours (venue_id, iso_weekday, open_time, close_time)

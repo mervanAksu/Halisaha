@@ -21,3 +21,9 @@ grant execute on function auth.uid() to anon, authenticated, service_role;
 alter default privileges in schema public grant all on tables    to anon, authenticated, service_role;
 alter default privileges in schema public grant all on functions to anon, authenticated, service_role;
 alter default privileges in schema public grant all on sequences to anon, authenticated, service_role;
+
+-- auth.jwt(): claims of the current request (Supabase). Tests set request.jwt.claims, e.g. '{"aal":"aal2"}'.
+create or replace function auth.jwt() returns jsonb language sql stable as $$
+  select coalesce(nullif(current_setting('request.jwt.claims', true), ''), '{}')::jsonb
+$$;
+grant execute on function auth.jwt() to anon, authenticated, service_role;

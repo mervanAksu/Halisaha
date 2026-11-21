@@ -6,7 +6,7 @@ declare
   allowed_anon text[] := array['get_availability','list_venues','is_admin','is_venue_owner','venue_is_visible'];
   allowed_auth text[] := allowed_anon || array['create_booking_hold','cancel_booking','my_completed_match_count',
     'owner_create_manual_booking','owner_cancel_booking','owner_mark_attendance','owner_customer_contacts',
-    'admin_update_venue','admin_list_venues'];
+    'admin_update_venue','admin_list_venues','register_device_token','admin_verify_payout'];
   bad text := '';
 begin
   for r in
