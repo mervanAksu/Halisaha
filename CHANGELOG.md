@@ -3,6 +3,10 @@
 Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: SemVer.
 
 ## [Unreleased]
+### Security (2026-11-22, S-18)
+- İşletmeci MFA'sı artık sunucuda zorunlu: doğrulanmış TOTP faktörü olan owner, aal1 oturumla hiçbir owner hakkına ulaşamaz (`owner_mfa_satisfied()`, migration 20261122100000, test 60, saldırılar A107–A107j; toplam 131 engellendi, 0 açık).
+- Mobil işletmeci girişine iki adımlı doğrulama (TOTP) adımı eklendi.
+
 ### Changed (2026-11-22, ADR-12)
 - **Açılışta rol seçimi:** "Maç yapacağım" / "Sahamı yöneteceğim". Oyuncu telefon OTP ile, işletmeci web paneliyle aynı e-posta + şifreyle girer; her mod yalnızca kendi ekranlarını görür. Seçim cihazda saklanır.
 - İşletmeci olmayan hesap için "Bu hesap bir işletmeci hesabı değil" ekranı ve başvuru iletişimi. İşletmeci Hesap menüsü: web paneli, oyuncu uygulamasına geçiş, çıkış.

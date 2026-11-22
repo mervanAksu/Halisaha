@@ -12,6 +12,7 @@ void main() {
     bool profile = false,
     bool onboarding = false,
     bool owner = false,
+    bool mfa = false,
   }) {
     return decideRedirect(RedirectInput(
       location: location,
@@ -21,6 +22,7 @@ void main() {
       profileLoaded: profile,
       needsOnboarding: onboarding,
       isOwner: owner,
+      mfaPending: mfa,
     ));
   }
 
@@ -96,6 +98,13 @@ void main() {
     });
   });
 
+  group('player mode ignores MFA', () {
+    test('no redirect to /owner/mfa', () {
+      expect(go(AppRoutes.home, mode: AppMode.player, signedIn: true, profile: true, mfa: true), isNull);
+      expect(go(AppRoutes.ownerMfa, mode: AppMode.player, signedIn: true, profile: true, mfa: true), AppRoutes.home);
+    });
+  });
+
   group('owner mode', () {
     const m = AppMode.owner;
 
@@ -121,6 +130,25 @@ void main() {
       for (final p in [...customerPaths, AppRoutes.owner, AppRoutes.ownerLogin, AppRoutes.splash]) {
         expect(go(p, mode: m, signedIn: true, profile: true), AppRoutes.ownerNotOwner, reason: p);
       }
+    });
+
+    test('MFA pending: only /owner/mfa, whether or not the account is an owner', () {
+      for (final owner in [false, true]) {
+        expect(go(AppRoutes.ownerMfa, mode: m, signedIn: true, profile: true, owner: owner, mfa: true), isNull);
+        for (final p in [...customerPaths, AppRoutes.owner, '/owner/sub', AppRoutes.ownerLogin, AppRoutes.ownerNotOwner, AppRoutes.splash]) {
+          expect(go(p, mode: m, signedIn: true, profile: true, owner: owner, mfa: true), AppRoutes.ownerMfa, reason: p);
+        }
+      }
+    });
+
+    test('MFA pending waits for profile and onboarding first; signed out ignores it', () {
+      expect(go(AppRoutes.owner, mode: m, signedIn: true, mfa: true), AppRoutes.splash);
+      expect(go(AppRoutes.owner, mode: m, signedIn: true, profile: true, onboarding: true, mfa: true), AppRoutes.onboarding);
+      expect(go(AppRoutes.ownerMfa, mode: m, mfa: true), AppRoutes.ownerLogin);
+    });
+
+    test('MFA done: /owner/mfa moves on to the panel', () {
+      expect(go(AppRoutes.ownerMfa, mode: m, signedIn: true, profile: true, owner: true), AppRoutes.owner);
     });
 
     test('owner: only /owner, every customer route redirects there', () {

@@ -453,4 +453,13 @@ abstract final class S {
   static const String ownerOpenWebPanel = 'Web panelini aç';
   static const String ownerSwitchToPlayer = 'Oyuncu uygulamasına geç';
   static const String ownerSignOut = 'Çıkış yap';
+
+  // --- İki adımlı doğrulama (TOTP) ---------------------------------------------------------
+  static const String mfaTitle = 'İki adımlı doğrulama';
+  static const String mfaSubtitle = 'Doğrulama uygulamandaki 6 haneli kodu gir.';
+  static const String mfaCodeLabel = 'Doğrulama kodu';
+  static const String mfaSubmit = 'Doğrula';
+  static const String mfaSignOut = 'Çıkış yap';
+  static const String mfaInvalidCode = 'Kod hatalı ya da süresi geçti.';
+  static const String mfaCodeIncomplete = '6 haneli kodu gir.';
 }

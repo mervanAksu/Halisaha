@@ -19,3 +19,4 @@ description: Auth, RLS, ödeme, kişisel veri veya yeni bir uç nokta ekleyen he
 2. Değişiklik yeni bir saldırı yüzeyi açıyorsa `red-team` ajanını çalıştır. Yeni saldırılar `40_attacks.sql`'e eklenir.
 3. `security/FINDINGS.md` durumunu güncelle. Dashboard ayarı gerekiyorsa `security/BASELINE.md`'ye yaz.
 4. CI'daki `Security` iş akışı (CodeQL yalnızca repo açıkken, gitleaks, bağımlılık denetimi, saldırı paketi) yeşil olmalıdır.
+- Yeni owner kapsamlı politika veya RPC, çıplak `owner_id = auth.uid()` yerine `is_venue_owner()` (veya `owner_mfa_satisfied()`) kullanır; aksi halde MFA'lı owner aal1 ile erişir (S-18).

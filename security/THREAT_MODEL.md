@@ -96,6 +96,7 @@ Sütunlar: **S**poofing, **T**ampering, **R**epudiation, **I**nformation disclos
 | D | Tek hesapla toplu tutma, tut-iptal-tut döngüsü | Kilit + 2/4/6 kota | D | O | A96 ✓ — Sybil için S-07 |
 | T | Metin parametrelerinde SQL enjeksiyonu (`p_search`, `p_reason`, `note`, `customer_name`) | Parametre bağlama, `left()` | D | Y | A80 A81 ✓ |
 | E | Owner kendi sahasını onaylar / admin RPC'leri | `is_admin()` | D | Y | A49–A51 ✓ |
+| S/E | Çalınan owner şifresiyle `aal1` oturum (mobil e-posta girişi / doğrudan PostgREST), TOTP'si açık owner'ın MFA'sını atlar: müşteri telefonu, rezervasyon/ödeme okuma, IBAN değiştirme, manuel rezervasyon/iptal, saha/fiyat yazma, `venue-photos` yükleme (2026-11-22) | `owner_mfa_satisfied()` → `is_venue_owner()`, `venue_is_visible()`, `venues` politikaları, `get_availability`, `owner_customer_contacts` | O | Y | A107–A107j ✓ S-18 |
 
 ### 4.3 Ödeme durum makinesi (`start_payment`, `confirm_payment`, `claim_refunds`)
 
@@ -130,6 +131,7 @@ Sütunlar: **S**poofing, **T**ampering, **R**epudiation, **I**nformation disclos
 |---|---|---|---|---|
 | S | Owner/admin şifre kaba kuvvet. Giriş sunucuda yapıldığı için Supabase IP limiti panel sunucusunun IP'sini görür (ya hiç sınır yok ya da herkes kilitlenir). Captcha yok | O | Y | S-05 |
 | S | MFA yok, `aal2` zorunlu değil (admin = platformun tamamı) | O | Y | S-04 |
+| S | Owner MFA'sı yalnızca panelde (`context.ts`) zorlanıyordu; DB `aal1` kabul ediyordu. Artık DB de ister | O | Y | S-18 (A107) |
 | T | Clickjacking (onayla/askıya al/iptal/IBAN formları), CSP/HSTS yok | O | O | S-03 |
 | T | Server action'lar herkese açık POST: yetki RLS'e dayanıyor (doğru). Next.js'in Origin kontrolü CSRF'e karşı korur. `/auth/signout` route handler'ında yok | D | D | S-13 |
 | E | Next.js App Router RSC RCE (CVE-2025-66478) / middleware bypass (CVE-2025-29927). Lockfile yok, `^15.1.0` | O | Y | S-02 |

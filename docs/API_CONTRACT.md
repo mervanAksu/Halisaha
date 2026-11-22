@@ -73,6 +73,7 @@ yanar. Hatalar: `booking_not_found, not_cancellable`.
 Kampanya sayacı ("5 maçta 1 kapora bizden", v1.1).
 
 ### İşletme sahibi
+Doğrulanmış MFA faktörü olan owner için tüm owner hakları **aal2** ister (S-18). aal1 oturumda owner RPC'leri `forbidden` döner, owner okumaları boş gelir, yazmalar 42501 alır. Mobil işletmeci girişi bu durumda TOTP adımı gösterir.
 | RPC | Ne yapar | Hatalar |
 |---|---|---|
 | `owner_create_manual_booking(p_pitch_id, p_starts_at, p_ends_at, p_source 'manual'\|'block', p_customer_name?, p_customer_phone?, p_note?)` | Telefonla gelen rezervasyonu girer veya saati kapatır | `forbidden, invalid_range, invalid_source, slot_taken` |

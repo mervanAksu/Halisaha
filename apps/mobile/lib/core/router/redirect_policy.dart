@@ -12,6 +12,7 @@ class RedirectInput {
     this.profileLoaded = false,
     this.needsOnboarding = false,
     this.isOwner = false,
+    this.mfaPending = false,
   });
 
   /// `state.matchedLocation`.
@@ -26,6 +27,9 @@ class RedirectInput {
   final bool profileLoaded;
   final bool needsOnboarding;
   final bool isOwner;
+
+  /// Session is aal1 but the account has a verified TOTP factor (owner mode only).
+  final bool mfaPending;
 }
 
 bool isOwnerPath(String location) => location == AppRoutes.owner || location.startsWith('${AppRoutes.owner}/');
@@ -35,7 +39,8 @@ bool isOwnerPath(String location) => location == AppRoutes.owner || location.sta
 ///  2. no mode chosen -> /welcome
 ///  3. player: signed out -> /login|/otp; profile loading -> /splash; onboarding; no auth screens or
 ///     /owner* once signed in
-///  4. owner: signed out -> /owner/login; profile loading -> /splash; onboarding; not an owner ->
+///  4. owner: signed out -> /owner/login; profile loading -> /splash; onboarding; MFA pending ->
+///     /owner/mfa (only that route); not an owner ->
 ///     /owner/not-owner; owner -> only /owner
 String? decideRedirect(RedirectInput i) {
   final loc = i.location;
@@ -68,8 +73,9 @@ String? _owner(RedirectInput i) {
   if (!i.profileLoaded) return loc == AppRoutes.splash ? null : AppRoutes.splash;
   // KVKK applies to everyone, owners included.
   if (i.needsOnboarding) return loc == AppRoutes.onboarding ? null : AppRoutes.onboarding;
+  if (i.mfaPending) return loc == AppRoutes.ownerMfa ? null : AppRoutes.ownerMfa;
   if (!i.isOwner) return loc == AppRoutes.ownerNotOwner ? null : AppRoutes.ownerNotOwner;
 
-  final inPanel = isOwnerPath(loc) && loc != AppRoutes.ownerLogin && loc != AppRoutes.ownerNotOwner;
+  final inPanel = isOwnerPath(loc) && loc != AppRoutes.ownerLogin && loc != AppRoutes.ownerNotOwner && loc != AppRoutes.ownerMfa;
   return inPanel ? null : AppRoutes.owner;
 }

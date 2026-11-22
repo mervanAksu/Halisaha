@@ -24,6 +24,7 @@ abstract final class AppRoutes {
   static const String owner = '/owner';
   static const String ownerLogin = '/owner/login';
   static const String ownerNotOwner = '/owner/not-owner';
+  static const String ownerMfa = '/owner/mfa';
 
   static String venue(String id) => '/venue/$id';
   static String result(String bookingId) => '/booking-result/$bookingId';

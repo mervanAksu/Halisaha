@@ -34,6 +34,7 @@ tr_provinces 1─* tr_districts 1─* venues (city, district) → (province, nam
 - `audit_log` (append-only): saha durum, komisyon, PayTR anahtarı, iptal süresi ve IBAN değişiklikleri (IBAN'ın yalnızca son 4 hanesi).
 - `consent_events` (append-only): KVKK aydınlatma ve pazarlama izni geçmişi.
 - `venues_photo_paths_ok`: fotoğraflar `<venue_id>/<uuid>.(jpg|png|webp)` biçiminde olur, en fazla 10 tanedir, kapak fotoğrafı listeden seçilir.
+- İşletme MFA'sı (2026-11-22, S-18): doğrulanmış MFA faktörü olan işletmenin yetkileri (`is_venue_owner()`, sahibine özel `venues`/`pitches`/`venue_hours`/`bookings`/`payments`/`venue_payout_accounts` erişimi, işletme RPC'leri, `venue-photos` yazma) JWT `aal2` ister (`owner_mfa_satisfied()`). Faktörü olmayan işletme ve müşteri erişimi değişmez.
 
 ## Konum (il / ilçe) (2026-11-22, ADR-11)
 - `tr_provinces(plate smallint pk, name text unique)`: 81 il. `tr_districts(province text → tr_provinces.name, name text, pk (province, name))`: 973 ilçe.

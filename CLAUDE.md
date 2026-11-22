@@ -77,4 +77,5 @@ cd apps/owner_panel && npm ci && npm run typecheck && npm run lint && npm run de
 - 2026-11-20: Yazım ortamında paket indirilemiyorsa derleme doğrulaması CI'da yapılır; `gh run view --log-failed` ile hata okunup düzeltilir. CI yeşil olmadan iş "bitti" sayılmaz.
 - 2026-11-21: Kırmızı takım (114 saldırı) 10 açık + 17 statik bulgu çıkardı; hepsi kapatıldı. Ders: "engellendi" testleri doğru hata koduyla doğrulanmalı (TESTBUG), aksi halde yanlış güven verir.
 - 2026-11-21: Supabase `is_admin()` MFA ister; testlerde admin için `request.jwt.claims = {"aal":"aal2"}` ayarlanır.
+- 2026-11-22: Owner MFA yalnızca panel arayüzünde zorlanıyordu; aal1 JWT tüm owner haklarına ulaşıyordu. Çözüm: `owner_mfa_satisfied()` ortak owner yardımcılarında (migration 100000, A107, test 60). Ders: arayüzde zorlanan güvenlik kuralı veritabanında da zorlanır.
 - Bu tür dersler buraya kısa bir satır olarak eklenir ve ilgili skill dosyası da güncellenir.

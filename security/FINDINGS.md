@@ -5,6 +5,8 @@ Kanıt: [`supabase/tests/40_attacks.sql`](../supabase/tests/40_attacks.sql) (CI'
 
 **Durum (2026-11-21):** 114 saldırı denendi, **114'ü engellendi, açık zafiyet 0**. Statik bulguların tamamı düzeltildi. Yalnızca `VERIFY` ile işaretli dış bağımlılık varsayımları açık.
 
+**Güncelleme (2026-11-22):** S-18 (işletme MFA'sı sunucuda yoktu) kapatıldı. Saldırı paketi: 131 saldırı, **131'i engellendi, açık zafiyet 0**.
+
 ## Çalıştırılabilir saldırıyla kanıtlanan bulgular
 
 | ID | Önem | Konu | Saldırı | Düzeltme | Durum |
@@ -41,6 +43,7 @@ Kanıt: [`supabase/tests/40_attacks.sql`](../supabase/tests/40_attacks.sql) (CI'
 | S-15 | Düşük | CI iş akışı yetkileri geniş | Varsayılan `contents: read`; yazma yalnızca gereken işlerde | ✅ |
 | S-16 | Düşük | PayTR'ye kullanıcı UUID'i gidiyordu | Tuzlu SHA-256 takma ad | ✅ |
 | S-17 | Bilgi | `list_venues` NaN koordinatla hata | Geçersiz konum yok sayılır; LIKE joker kaçışı | ✅ |
+| S-18 | Yüksek | İşletme MFA'sı yalnızca panel arayüzünde zorlanıyordu: çalınan şifreyle alınan `aal1` oturum (mobil e-posta girişi, doğrudan PostgREST) TOTP'yi atlayıp tüm işletme yetkilerine (rezervasyon/ödeme okuma, müşteri telefonu, IBAN, saha/saat/fiyat yazma, fotoğraf yükleme, işletme RPC'leri) ulaşıyordu | `owner_mfa_satisfied()`: doğrulanmış MFA faktörü olan işletme için `aal2` şart; `is_venue_owner()`, `venue_is_visible()`, `venues` politikaları, `get_availability`, `owner_customer_contacts` bunu ister (A107–A107j, test 60) | ✅ 20261122100000 |
 | M-01 | Orta | Mobil oturum düz depolamadaydı | `SecureLocalStorage` (Keychain / EncryptedSharedPreferences) | ✅ |
 | M-02 | Orta | Ödeme WebView her adrese gidebiliyordu | Ana çerçevede yalnızca `*.paytr.com` + sonuç adresi | ✅ (3DS: VERIFY) |
 | M-03 | Bilgi | Release sertleştirme | Kod karartma, yedekleme kapalı, cleartext kapalı | ✅ |
@@ -51,3 +54,4 @@ Kanıt: [`supabase/tests/40_attacks.sql`](../supabase/tests/40_attacks.sql) (CI'
 - Supabase Edge'de gerçek istemci IP'si hangi başlıkta? (S-09)
 - Bazı bankaların 3DS sayfası ana çerçeveyi yönlendiriyor mu? (M-02; PayTR test kartıyla denenecek)
 - Supabase planında sızdırılmış parola koruması ve ağ kısıtlaması var mı? (BASELINE)
+- Barındırılan Supabase'de `auth.mfa_factors` kolonları (`user_id`, `status` = `verified`) ve migration rolünün (`postgres`) bu tabloyu okuma izni; her erişim JWT'sinde `aal` claim'i bulunması. (S-18; claim yoksa `aal1` sayılır, yani güvenli tarafta kalır)

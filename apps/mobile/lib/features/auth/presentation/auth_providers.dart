@@ -4,6 +4,19 @@ import '../../../core/app_mode/app_mode.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/auth_repository.dart';
 
+/// True while the signed-in session must still pass the TOTP step (next aal2, current aal1).
+/// Re-evaluated on auth events; invalidate it after a successful verification. A failed read counts
+/// as "not pending" (the server enforces aal2 anyway and the data would simply be empty).
+final mfaPendingProvider = FutureProvider<bool>((ref) async {
+  ref.watch(authStateProvider);
+  if (ref.watch(currentUserIdProvider) == null) return false;
+  try {
+    return (await ref.watch(authRepositoryProvider).assuranceLevel()).mfaPending;
+  } catch (_) {
+    return false;
+  }
+});
+
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(ref.watch(supabaseClientProvider));
 });

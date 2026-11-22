@@ -9,6 +9,7 @@ import '../../features/auth/presentation/onboarding_screen.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/auth/presentation/welcome_screen.dart';
+import '../../features/auth/presentation/auth_providers.dart';
 import '../../features/booking/domain/booking_draft.dart';
 import '../../features/booking/domain/payment_session.dart';
 import '../../features/booking/presentation/booking_summary_screen.dart';
@@ -18,6 +19,7 @@ import '../../features/favorites/presentation/favorites_screen.dart';
 import '../../features/matches/presentation/matches_screen.dart';
 import '../../features/owner/presentation/not_owner_screen.dart';
 import '../../features/owner/presentation/owner_login_screen.dart';
+import '../../features/owner/presentation/owner_mfa_screen.dart';
 import '../../features/owner/presentation/owner_shell.dart';
 import '../../features/profile/domain/profile.dart';
 import '../../features/profile/presentation/notification_settings_screen.dart';
@@ -59,6 +61,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen<AsyncValue<AuthState>>(authStateProvider, (_, __) => refresh.ping());
   ref.listen<AsyncValue<Profile?>>(profileProvider, (_, __) => refresh.ping());
   ref.listen<AsyncValue<AppMode?>>(appModeProvider, (_, __) => refresh.ping());
+  ref.listen<AsyncValue<bool>>(mfaPendingProvider, (_, __) => refresh.ping());
   ref.listen<String?>(currentUserIdProvider, (_, __) => refresh.ping());
   ref.onDispose(refresh.dispose);
 
@@ -133,6 +136,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: AppRoutes.owner, builder: (context, state) => const OwnerShell()),
       GoRoute(path: AppRoutes.ownerLogin, builder: (context, state) => const OwnerLoginScreen()),
+      GoRoute(path: AppRoutes.ownerMfa, builder: (context, state) => const OwnerMfaScreen()),
       GoRoute(path: AppRoutes.ownerNotOwner, builder: (context, state) => const NotOwnerScreen()),
     ],
   );
@@ -153,6 +157,7 @@ String? _redirect(Ref ref, GoRouterState state) {
     profileLoaded: profile != null,
     needsOnboarding: profile?.needsOnboarding ?? false,
     isOwner: profile?.isOwner ?? false,
+    mfaPending: userId != null && (ref.read(mfaPendingProvider).valueOrNull ?? false),
   ));
 }
 

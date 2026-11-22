@@ -815,6 +815,90 @@ begin
 end $$;
 
 -- =====================================================================================================
+-- Owner MFA (S-18, 20261122100000): a stolen password gives an aal1 JWT (mobile e-mail login / direct
+-- PostgREST). For an owner with a verified TOTP factor that session must not reach owner capabilities.
+-- OM owns VM (active, payout account); CX has a paid booking at VM. Each attack has an aal2 control that
+-- must succeed, so "blocked" is proven to come from the MFA check and not from a broken fixture (TESTBUG).
+-- =====================================================================================================
+insert into auth.users (id, phone, email, raw_user_meta_data) values
+  ('40000000-0000-0000-0000-0000000000d0', null, 'owner-mfa@example.com', '{"full_name":"Owner MFA"}');
+update public.profiles set role = 'owner' where id = '40000000-0000-0000-0000-0000000000d0';
+insert into auth.mfa_factors (user_id, status, factor_type) values ('40000000-0000-0000-0000-0000000000d0', 'verified', 'totp');
+insert into public.venues (id, owner_id, name, district, status, cancellation_window_hours, paytr_submerchant_key) values
+  ('41000000-0000-0000-0000-0000000000d1', '40000000-0000-0000-0000-0000000000d0', 'MFA Arena', 'Kadıköy', 'active', 24, 'TEST-SM-00d1');
+insert into public.venue_hours (venue_id, iso_weekday, open_time, close_time)
+select '41000000-0000-0000-0000-0000000000d1', d::smallint, '08:00', '00:00' from generate_series(1, 7) d;
+insert into public.pitches (id, venue_id, name, hourly_price_kurus, deposit_kurus, slot_minutes) values
+  ('42000000-0000-0000-0000-0000000000d1', '41000000-0000-0000-0000-0000000000d1', 'M-60', 300000, 50000, 60);
+insert into public.venue_payout_accounts (venue_id, legal_name, tax_number, iban)
+values ('41000000-0000-0000-0000-0000000000d1', 'MFA Spor Ltd', '1234567891', 'TR000000000000000000000002');
+insert into public.bookings (id, pitch_id, venue_id, user_id, source, status, starts_at, ends_at,
+                             price_kurus, deposit_kurus, commission_kurus, confirmed_at)
+values ('43000000-0000-0000-0000-0000000000d1', '42000000-0000-0000-0000-0000000000d1', '41000000-0000-0000-0000-0000000000d1',
+        '40000000-0000-0000-0000-0000000000c0', 'app', 'confirmed', pg_temp.slot(5, 20), pg_temp.slot(5, 21),
+        300000, 50000, 5000, now() - interval '1 day');
+
+-- Runs p_sql (value or statement) as OM with the given aal, rolled back. Used for the aal2 controls.
+create function pg_temp.as_om(p_aal text, p_sql text, p_value boolean) returns text language plpgsql as $$
+declare r text;
+begin
+  begin
+    perform pg_temp.act('authenticated', '40000000-0000-0000-0000-0000000000d0');
+    perform set_config('request.jwt.claims', json_build_object('aal', p_aal)::text, true);
+    r := case when p_value then pg_temp.val(p_sql) else pg_temp.try(p_sql) end;
+    raise exception using errcode = 'ZX999', message = 'rollback';
+  exception when sqlstate 'ZX999' then null;
+  end;
+  return r;
+end $$;
+create function pg_temp.control(p_id text, p_sql text, p_want text, p_value boolean default false) returns void
+language plpgsql as $$
+declare r text := pg_temp.as_om('aal2', p_sql, p_value);
+begin
+  if r is distinct from p_want then
+    raise exception 'TESTBUG % control (aal2) must succeed: want "%" got "%"', p_id, p_want, r;
+  end if;
+end $$;
+
+do $$
+declare
+  q_contacts text := $q$select count(*) from public.owner_customer_contacts(array['40000000-0000-0000-0000-0000000000c0']::uuid[])$q$;
+  q_manual   text := $q$select public.owner_create_manual_booking('42000000-0000-0000-0000-0000000000d1', pg_temp.slot(6, 10), pg_temp.slot(6, 11), 'manual', 'Sahte')$q$;
+  q_venue    text := $q$update public.venues set name = 'Ele Geçirildi', phone = '905000000000' where id = '41000000-0000-0000-0000-0000000000d1'$q$;
+  q_bookings text := $q$select count(*) from public.bookings where venue_id = '41000000-0000-0000-0000-0000000000d1'$q$;
+  q_payout_r text := $q$select count(*) from public.venue_payout_accounts where venue_id = '41000000-0000-0000-0000-0000000000d1'$q$;
+  q_payout_w text := $q$update public.venue_payout_accounts set iban = 'TR990000000000000000000099' where venue_id = '41000000-0000-0000-0000-0000000000d1'$q$;
+  q_cancel   text := $q$select public.owner_cancel_booking('43000000-0000-0000-0000-0000000000d1', 'stolen')$q$;
+  q_pitch    text := $q$insert into public.pitches (venue_id, name, hourly_price_kurus, deposit_kurus) values ('41000000-0000-0000-0000-0000000000d1', 'Bedava', 100, 0)$q$;
+  q_storage  text := $q$select count(*) filter (where public.is_venue_owner('41000000-0000-0000-0000-0000000000d1')) from (values (1)) v$q$;
+begin
+  perform pg_temp.control('A107',  q_contacts, '1', true);
+  perform pg_temp.control('A107b', q_manual,   'ok 1');
+  perform pg_temp.control('A107c', q_venue,    'ok 1');
+  perform pg_temp.control('A107d', q_bookings, '1', true);
+  perform pg_temp.control('A107e', q_payout_r, '1', true);
+  perform pg_temp.control('A107f', q_payout_w, 'ok 1');
+  perform pg_temp.control('A107g', q_cancel,   'ok 1');
+  perform pg_temp.control('A107h', q_pitch,    'ok 1');
+  perform pg_temp.control('A107i', q_storage,  '1', true);
+
+  perform pg_temp.act('authenticated', '40000000-0000-0000-0000-0000000000d0');
+  perform set_config('request.jwt.claims', '{"aal":"aal1"}', true);
+  perform pg_temp.must_zero('A107',  'stolen password (aal1, owner has TOTP): owner_customer_contacts', q_contacts);
+  perform pg_temp.must_fail('A107b', 'stolen password (aal1): owner_create_manual_booking', q_manual, '^P0001 forbidden$');
+  perform pg_temp.must_fail('A107c', 'stolen password (aal1): update own venue', q_venue);
+  perform pg_temp.must_zero('A107d', 'stolen password (aal1): read bookings of own venue', q_bookings);
+  perform pg_temp.must_zero('A107e', 'stolen password (aal1): read payout account (IBAN/VKN)', q_payout_r);
+  perform pg_temp.must_fail('A107f', 'stolen password (aal1): redirect payouts (IBAN change)', q_payout_w);
+  perform pg_temp.must_fail('A107g', 'stolen password (aal1): owner_cancel_booking of a paid booking', q_cancel, '^P0001 forbidden$');
+  perform pg_temp.must_fail('A107h', 'stolen password (aal1): insert pitch', q_pitch, '^42501 new row violates row-level security policy');
+  perform pg_temp.must_zero('A107i', 'stolen password (aal1): storage write predicate on venue-photos', q_storage);
+  -- No aal claim at all (old / hand-made token) counts as aal1.
+  perform set_config('request.jwt.claims', '{}', true);
+  perform pg_temp.must_zero('A107j', 'token without aal claim: read bookings of own venue', q_bookings);
+end $$;
+
+-- =====================================================================================================
 -- Summary
 -- =====================================================================================================
 \o

@@ -48,6 +48,12 @@ class DemoAuthRepository implements AuthRepository {
   }
 
   @override
+  Future<AuthLevel> assuranceLevel() async => const AuthLevel.satisfied();
+
+  @override
+  Future<void> verifyTotp(String code) async {}
+
+  @override
   Future<void> signOut() async => _onAuthChanged(false);
 }
 
