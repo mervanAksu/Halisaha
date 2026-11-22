@@ -40,10 +40,7 @@ class DemoStore {
 
   /// Demo switch "İşletmeci modunu dene": flips the demo user's role between customer and owner.
   void setOwnerMode(bool enabled) {
-    profile = profile.copyWith(
-      role: enabled ? 'owner' : 'customer',
-      fullName: enabled ? 'Demo İşletmeci' : 'Demo Oyuncu',
-    );
+    profile = profile.copyWith(role: enabled ? 'owner' : 'customer');
   }
 
   /// Insertion order = favourite order (newest last).
