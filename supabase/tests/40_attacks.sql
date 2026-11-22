@@ -190,7 +190,7 @@ do $$ begin
   perform pg_temp.must_zero('A9',  'anon reads commission_bps / paytr_submerchant_key',
     $q$select count(commission_bps) + count(paytr_submerchant_key) from public.venues$q$);
   perform pg_temp.must_fail('A9b', 'anon writes venues',
-    $q$insert into public.venues (owner_id, name, district) values ('40000000-0000-0000-0000-0000000000a0', 'anon venue', 'X')$q$);
+    $q$insert into public.venues (owner_id, name, district) values ('40000000-0000-0000-0000-0000000000a0', 'anon venue', 'Kadıköy')$q$);
 end $$;
 
 -- =====================================================================================================
@@ -247,17 +247,17 @@ do $$ begin
   perform pg_temp.must_fail('A26', 'customer inserts a second profile as owner',
     $q$insert into public.profiles (id, role) values ('40000000-0000-0000-0000-0000000000ff', 'owner')$q$);
   perform pg_temp.must_fail('A27', 'customer creates a venue',
-    $q$insert into public.venues (name, district) values ('Sahte Saha', 'X')$q$);
+    $q$insert into public.venues (name, district) values ('Sahte Saha', 'Kadıköy')$q$);
   perform pg_temp.must_fail('A27b', 'customer updates other customer''s profile name',
     $q$update public.profiles set full_name = 'hacked' where id = '40000000-0000-0000-0000-0000000000c0'$q$);
 
   perform pg_temp.act('authenticated', '40000000-0000-0000-0000-0000000000a0');
   perform pg_temp.must_fail('A28', 'owner inserts venue with owner_id of another owner',
-    $q$insert into public.venues (owner_id, name, district) values ('40000000-0000-0000-0000-0000000000b0', 'Spoof', 'X')$q$);
+    $q$insert into public.venues (owner_id, name, district) values ('40000000-0000-0000-0000-0000000000b0', 'Spoof', 'Kadıköy')$q$);
   perform pg_temp.must_fail('A29', 'owner inserts venue already status=active',
-    $q$insert into public.venues (name, district, status) values ('Kendi Onayım', 'X', 'active')$q$);
+    $q$insert into public.venues (name, district, status) values ('Kendi Onayım', 'Kadıköy', 'active')$q$);
   perform pg_temp.must_fail('A30', 'owner inserts venue with commission_bps=0',
-    $q$insert into public.venues (name, district, commission_bps) values ('Komisyonsuz', 'X', 0)$q$);
+    $q$insert into public.venues (name, district, commission_bps) values ('Komisyonsuz', 'Kadıköy', 0)$q$);
   perform pg_temp.must_fail('A31', 'owner self-approves pending venue',
     $q$update public.venues set status = 'active' where id = '41000000-0000-0000-0000-0000000000a2'$q$);
   perform pg_temp.must_fail('A32', 'owner lowers own commission / sets PayTR sub-merchant key',
@@ -428,7 +428,7 @@ begin
 
   t0 := clock_timestamp();
   n := pg_temp.val($q$select count(*) from public.list_venues(repeat('%_', 100000))$q$) || '/'
-    || pg_temp.val($q$select count(*) from public.list_venues(repeat('a%', 50000) || 'b', repeat('x', 100000))$q$);
+    || pg_temp.val($q$select count(*) from public.list_venues(repeat('a%', 50000) || 'b', repeat('x', 100000), array[repeat('x', 100000)])$q$);
   ms := extract(epoch from clock_timestamp() - t0) * 1000;
   perform pg_temp.report('A79', 'list_venues with 200 KB pathological LIKE pattern', ms < 2000, format('rows=%s in %s ms', n, round(ms)));
 
@@ -436,8 +436,8 @@ begin
     $q$select count(*) from public.list_venues('%') where id in ('41000000-0000-0000-0000-0000000000a2','41000000-0000-0000-0000-0000000000b2','41000000-0000-0000-0000-0000000000b3')$q$);
   perform pg_temp.must_zero('A78b', 'list_venues search by exact hidden venue name / LIKE wildcards',
     $q$select (select count(*) from public.list_venues('Gizli%')) + (select count(*) from public.list_venues('_skıdaki'))$q$);
-  perform pg_temp.must_zero('A80', 'SQL injection through list_venues p_search / p_district',
-    $q$select count(*) from public.list_venues($x$'; delete from public.bookings; --$x$, $x$' or 1=1 --$x$)$q$);
+  perform pg_temp.must_zero('A80', 'SQL injection through list_venues p_search / p_city / p_districts',
+    $q$select count(*) from public.list_venues($x$'; delete from public.bookings; --$x$, $x$' or 1=1 --$x$, array[$x$' or 1=1 --$x$])$q$);
 
   perform pg_temp.act('authenticated', '40000000-0000-0000-0000-0000000000a0');
   t0 := clock_timestamp();
@@ -646,7 +646,7 @@ begin
   perform pg_temp.report('A92', 'get_availability exposes no booker identity (signature)',
     not cols && array['user_id', 'customer_name', 'customer_phone', 'booking_id', 'note'], array_to_string(cols, ','));
   select array_agg(a) into cols from pg_proc p, unnest(p.proargnames) a
-   where p.oid = 'public.list_venues(text, text, double precision, double precision)'::regprocedure;
+   where p.oid = 'public.list_venues(text, text, text[], double precision, double precision)'::regprocedure;
   perform pg_temp.report('A92b', 'list_venues exposes no owner/commission/PayTR columns (signature)',
     not cols && array['owner_id', 'commission_bps', 'paytr_submerchant_key', 'phone'], array_to_string(cols, ','));
 end $$;
@@ -773,6 +773,45 @@ begin
   perform pg_temp.act('anon');
   perform pg_temp.report('A102b', 'storage path policy: anon cannot write',
     pg_temp.photo_write_allowed('41000000-0000-0000-0000-0000000000a1/a.jpg') in ('false', 'error'), 'anon → denied');
+end $$;
+
+-- =====================================================================================================
+-- Location reference data (ADR-11, 20261122090000): tr_provinces / tr_districts are read-only for clients.
+-- =====================================================================================================
+do $$
+declare t0 timestamptz; ms numeric; n text;
+begin
+  -- A103 owner rewrites the il/ilçe list (e.g. adds a fake district so a venue can claim it)
+  perform pg_temp.act('authenticated', '40000000-0000-0000-0000-0000000000a0');
+  perform pg_temp.must_fail('A103', 'owner inserts a fake district into tr_districts',
+    $q$insert into public.tr_districts (province, name) values ('İstanbul', 'Hayalköy')$q$);
+  perform pg_temp.must_fail('A103b', 'owner renames / deletes districts (cascades into venues)',
+    $q$update public.tr_districts set name = 'Hacked' where province = 'İstanbul' and name = 'Beşiktaş'$q$);
+  perform pg_temp.must_fail('A103c', 'owner deletes a province',
+    $q$delete from public.tr_provinces where plate = 34$q$);
+  perform pg_temp.act('anon');
+  perform pg_temp.must_fail('A103d', 'anon truncates tr_districts',
+    $q$truncate public.tr_districts cascade$q$);
+
+  -- A104 owner moves own venue to a made-up district (would split the filter / hide from the picker)
+  perform pg_temp.act('authenticated', '40000000-0000-0000-0000-0000000000a0');
+  perform pg_temp.must_fail('A104', 'owner sets own venue to a district outside the official list',
+    $q$update public.venues set district = 'Kadiköy' where id = '41000000-0000-0000-0000-0000000000a1'$q$, '23503');
+
+  -- A105 huge p_districts array: only the first 50 are considered, the call stays fast
+  perform pg_temp.act('anon');
+  t0 := clock_timestamp();
+  n := pg_temp.val($q$select count(*) from public.list_venues(null, 'İstanbul',
+         array(select 'x' || g from generate_series(1, 200000) g) || array['Kadıköy'])$q$);
+  ms := extract(epoch from clock_timestamp() - t0) * 1000;
+  perform pg_temp.report('A105', 'list_venues with 200 000-element p_districts (cap 50)', n = '0' and ms < 2000,
+    format('rows=%s in %s ms (Kadıköy at index 200001 must be ignored)', n, round(ms)));
+
+  -- A106 SQL-ish / wildcard strings in p_city match nothing (no dynamic SQL, equality only)
+  perform pg_temp.must_zero('A106', 'SQL-ish and wildcard strings in list_venues p_city',
+    $q$select (select count(*) from public.list_venues(null, $x$İstanbul' or '1'='1$x$))
+           + (select count(*) from public.list_venues(null, '%'))
+           + (select count(*) from public.list_venues(null, $x$İstanbul'; drop table public.venues; --$x$, array['Kadıköy']))$q$);
 end $$;
 
 -- =====================================================================================================

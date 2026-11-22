@@ -11,6 +11,20 @@ abstract class SecureKeyValueStore {
   Future<void> delete(String key);
 }
 
+/// Non-persistent store (demo build, tests).
+class InMemoryKeyValueStore implements SecureKeyValueStore {
+  final Map<String, String> _data = <String, String>{};
+
+  @override
+  Future<String?> read(String key) async => _data[key];
+
+  @override
+  Future<void> write(String key, String value) async => _data[key] = value;
+
+  @override
+  Future<void> delete(String key) async => _data.remove(key);
+}
+
 /// Keychain (iOS) / EncryptedSharedPreferences backed by Keystore (Android).
 class FlutterSecureKeyValueStore implements SecureKeyValueStore {
   FlutterSecureKeyValueStore()

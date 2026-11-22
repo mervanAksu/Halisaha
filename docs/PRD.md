@@ -19,7 +19,7 @@ uygulama. Kapora işletmeyi no-show'a karşı korur. İşletme takvimini tek bir
 | # | Özellik | Kabul kriteri |
 |---|---|---|
 | M1 | Telefonla giriş (SMS OTP) | Numara gir → 6 haneli kod → ilk girişte ad soyad + KVKK aydınlatma onayı |
-| M2 | Saha listesi (ana sayfa) | Arama kutusu, ilçe filtresi, kart: kapak foto, ad, bugünkü çalışma saati, ilçe, en düşük saatlik fiyat, "Sahayı görüntüle". Konum izni verilirse yakınlığa göre sıralanır |
+| M2 | Saha listesi (ana sayfa) | Arama kutusu, konum filtresi (önce il, sonra o ilin bir veya birden çok ilçesi; yalnızca sahası olan il/ilçeler listelenir, seçim cihazda hatırlanır), kart: kapak foto, ad, bugünkü çalışma saati, ilçe, en düşük saatlik fiyat, "Sahayı görüntüle". Konum izni verilirse yakınlığa göre sıralanır |
 | M3 | Saha detayı | Foto galerisi, adres + haritada aç, olanaklar, saha (pitch) seçici, 14 günlük tarih şeridi, slot ızgarası (dolu/boş/geçmiş), favori butonu |
 | M4 | Rezervasyon özeti | Saha, tarih-saat, toplam ücret, **şimdi ödenecek kapora**, sahada ödenecek kalan, iptal politikası, mesafeli satış sözleşmesi onay kutusu |
 | M5 | Ödeme | PayTR iFrame WebView. Sonuç ekranı booking durumunu backend'den okur. 10 dk geri sayım gösterilir |

@@ -172,6 +172,8 @@ end $$;
 do $$ begin
   assert (select count(*) from public.venue_payout_accounts) = 0, 'customer must not see IBANs';
   assert (select count(*) from public.list_venues()) = 2, 'list_venues returns active venues';
+  assert (select count(*) from public.list_venues(p_city => 'İstanbul', p_districts => array['Esenyurt'])) = 1,
+         'list_venues filters by city + district';
   raise notice 'ok 11b payout accounts hidden';
 end $$;
 reset role;

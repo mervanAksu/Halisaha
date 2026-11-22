@@ -90,6 +90,22 @@ abstract final class S {
   static const String noVenues = 'Şu an listelenecek saha yok.';
   static const String noVenuesForFilter = 'Aramana uygun saha bulunamadı.';
   static const String clearFilters = 'Filtreleri temizle';
+
+  // --- Location filter -------------------------------------------------------
+  static const String locationAll = 'Tüm Türkiye';
+  static const String locationFilterSemantics = 'Konum filtresi';
+  static const String clearLocationFilter = 'Konum filtresini temizle';
+  static const String selectProvince = 'İl seç';
+  static const String searchProvince = 'İl ara';
+  static const String noProvinceMatch = 'Eşleşen il bulunamadı.';
+  static const String noLocations = 'Henüz konum seçeneği yok.';
+  static const String noVenuesInLocation = 'Bu konumda saha bulunamadı';
+  static const String clearLocationShort = 'Filtreyi temizle';
+  static const String goBack = 'Geri';
+  static String districtsOf(String city) => '$city ilçeleri';
+  static String districtCount(int n) => '$n ilçe';
+  static String venueCount(int n) => '$n saha';
+  static String showVenuesCount(int n) => '$n sahayı göster';
   static const String viewVenue = 'Sahayı görüntüle';
   static const String closedToday = 'Bugün kapalı';
   static String todayHours(String open, String close) => 'Bugün $open – $close';

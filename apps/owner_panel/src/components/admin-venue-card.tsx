@@ -11,6 +11,7 @@ import type { VenueStatus } from '@/lib/database.types';
 export type AdminVenue = {
   id: string;
   name: string;
+  city: string;
   district: string;
   ownerName: string;
   status: VenueStatus;
@@ -26,7 +27,7 @@ export function AdminVenueCard({ venue }: { venue: AdminVenue }) {
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-[17px] font-semibold text-primary">{venue.name}</h2>
-          <p className="text-sm text-textSecondary">{venue.district} · {venue.ownerName || 'Sahip bilgisi yok'}</p>
+          <p className="text-sm text-textSecondary">{venue.district}, {venue.city} · {venue.ownerName || 'Sahip bilgisi yok'}</p>
         </div>
         <VenueStatusBadge status={venue.status} />
       </div>

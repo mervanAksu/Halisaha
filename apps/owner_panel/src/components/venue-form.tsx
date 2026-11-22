@@ -1,16 +1,18 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useMemo, useState } from 'react';
 import { saveVenue } from '@/actions/venues';
 import { FormMessage } from '@/components/form-message';
 import { SubmitButton } from '@/components/submit-button';
 import type { ActionState } from '@/lib/action-state';
 import { AMENITIES } from '@/lib/constants';
+import type { Locations } from '@/lib/locations';
 
 export type VenueFormValues = {
   id?: string;
   name: string;
   description: string;
+  city: string;
   district: string;
   address: string;
   lat: number | null;
@@ -23,6 +25,7 @@ export type VenueFormValues = {
 const EMPTY: VenueFormValues = {
   name: '',
   description: '',
+  city: 'İstanbul',
   district: '',
   address: '',
   lat: null,
@@ -32,7 +35,55 @@ const EMPTY: VenueFormValues = {
   cancellation_window_hours: 24,
 };
 
-export function VenueForm({ venue = EMPTY }: { venue?: VenueFormValues }) {
+function LocationSelects({ locations, city: initialCity, district: initialDistrict }: {
+  locations: Locations;
+  city: string;
+  district: string;
+}) {
+  const [city, setCity] = useState(initialCity);
+  const [district, setDistrict] = useState(initialDistrict);
+  const districts = useMemo(() => locations.districts[city] ?? [], [locations, city]);
+  return (
+    <>
+      <div>
+        <label htmlFor="city" className="label">İl</label>
+        <select
+          id="city"
+          name="city"
+          required
+          value={city}
+          onChange={(e) => {
+            setCity(e.target.value);
+            setDistrict('');
+          }}
+          className="input"
+        >
+          {locations.provinces.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label htmlFor="district" className="label">İlçe</label>
+        <select
+          id="district"
+          name="district"
+          required
+          value={district}
+          onChange={(e) => setDistrict(e.target.value)}
+          className="input"
+        >
+          <option value="">Seçin</option>
+          {districts.map((d) => (
+            <option key={d} value={d}>{d}</option>
+          ))}
+        </select>
+      </div>
+    </>
+  );
+}
+
+export function VenueForm({ venue = EMPTY, locations }: { venue?: VenueFormValues; locations: Locations }) {
   const [state, action] = useActionState<ActionState, FormData>(saveVenue, null);
   return (
     <form action={action} className="space-y-4">
@@ -42,10 +93,7 @@ export function VenueForm({ venue = EMPTY }: { venue?: VenueFormValues }) {
           <label htmlFor="name" className="label">Tesis adı</label>
           <input id="name" name="name" required minLength={2} maxLength={80} defaultValue={venue.name} className="input" />
         </div>
-        <div>
-          <label htmlFor="district" className="label">İlçe</label>
-          <input id="district" name="district" required defaultValue={venue.district} className="input" />
-        </div>
+        <LocationSelects locations={locations} city={venue.city} district={venue.district} />
         <div className="md:col-span-2">
           <label htmlFor="address" className="label">Adres</label>
           <input id="address" name="address" defaultValue={venue.address} className="input" />

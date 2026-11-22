@@ -6,6 +6,7 @@ class VenueSummary {
     required this.id,
     required this.name,
     required this.district,
+    this.city = '',
     required this.address,
     this.coverPhotoPath,
     this.minHourlyPriceKurus,
@@ -19,6 +20,7 @@ class VenueSummary {
     return VenueSummary(
       id: json['id'] as String,
       name: json['name'] as String,
+      city: (json['city'] as String?) ?? '',
       district: (json['district'] as String?) ?? '',
       address: (json['address'] as String?) ?? '',
       coverPhotoPath: json['cover_photo_path'] as String?,
@@ -32,6 +34,7 @@ class VenueSummary {
 
   final String id;
   final String name;
+  final String city;
   final String district;
   final String address;
   final String? coverPhotoPath;

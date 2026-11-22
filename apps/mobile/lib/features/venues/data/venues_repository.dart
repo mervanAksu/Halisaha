@@ -4,6 +4,7 @@ import '../../../core/errors/app_exception.dart';
 import '../../../core/utils/json_utils.dart';
 import '../domain/slot.dart';
 import '../domain/venue_detail.dart';
+import '../domain/venue_location.dart';
 import '../domain/venue_summary.dart';
 
 class VenuesRepository {
@@ -12,10 +13,18 @@ class VenuesRepository {
   final SupabaseClient _client;
 
   /// RPC `list_venues`. Null / empty filters are omitted.
-  Future<List<VenueSummary>> listVenues({String? search, String? district, double? lat, double? lng}) => guard(() async {
+  Future<List<VenueSummary>> listVenues({
+    String? search,
+    String? city,
+    List<String>? districts,
+    double? lat,
+    double? lng,
+  }) =>
+      guard(() async {
         final params = <String, dynamic>{};
         if (search != null && search.trim().isNotEmpty) params['p_search'] = search.trim();
-        if (district != null && district.isNotEmpty) params['p_district'] = district;
+        if (city != null && city.isNotEmpty) params['p_city'] = city;
+        if (districts != null && districts.isNotEmpty) params['p_districts'] = districts;
         if (lat != null && lng != null) {
           params['p_lat'] = lat;
           params['p_lng'] = lng;
@@ -24,11 +33,17 @@ class VenuesRepository {
         return asRows(response).map(VenueSummary.fromJson).toList();
       });
 
+  /// RPC `list_venue_locations`: provinces / districts that currently have venues.
+  Future<List<VenueLocation>> listVenueLocations() => guard(() async {
+        final response = await _client.rpc('list_venue_locations');
+        return asRows(response).map(VenueLocation.fromJson).toList();
+      });
+
   Future<VenueDetail> fetchVenue(String venueId) => guard(() async {
         final row = await _client
             .from('venues')
             .select(
-              'id, name, description, district, address, lat, lng, phone, cover_photo_path, photo_paths, '
+              'id, name, description, city, district, address, lat, lng, phone, cover_photo_path, photo_paths, '
               'amenities, cancellation_window_hours, '
               'pitches(id, venue_id, name, format, is_indoor, hourly_price_kurus, deposit_kurus, slot_minutes, is_active, sort_order)',
             )

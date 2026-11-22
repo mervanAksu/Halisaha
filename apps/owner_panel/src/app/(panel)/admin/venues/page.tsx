@@ -25,6 +25,7 @@ export default async function AdminVenuesPage() {
     .map((v) => ({
       id: v.id,
       name: v.name,
+      city: v.city,
       district: v.district,
       ownerName: owners.get(v.owner_id) ?? '',
       status: v.status,

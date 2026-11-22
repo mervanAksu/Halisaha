@@ -222,7 +222,7 @@ class _VenueDetailScreenState extends ConsumerState<VenueDetailScreen> {
                   const SizedBox(width: AppSpacing.s),
                   Expanded(
                     child: Text(
-                      venue.address.isEmpty ? venue.district : '${venue.address}, ${venue.district}',
+                      venue.addressLine,
                       style: theme.textTheme.bodyMedium,
                     ),
                   ),
@@ -233,7 +233,7 @@ class _VenueDetailScreenState extends ConsumerState<VenueDetailScreen> {
                 child: TextButton.icon(
                   onPressed: () => openExternalOrWarn(
                     context,
-                    mapsUrl(lat: venue.lat, lng: venue.lng, query: '${venue.name} ${venue.address} ${venue.district}'),
+                    mapsUrl(lat: venue.lat, lng: venue.lng, query: '${venue.name} ${venue.address} ${venue.district} ${venue.city}'),
                   ),
                   icon: const Icon(Icons.map_outlined),
                   label: const Text(S.openInMaps),

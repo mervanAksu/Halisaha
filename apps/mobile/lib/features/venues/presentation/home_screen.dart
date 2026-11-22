@@ -14,9 +14,10 @@ import '../../../core/widgets/async_value_widget.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../domain/venue_summary.dart';
 import 'venues_providers.dart';
+import 'widgets/location_filter_bar.dart';
 import 'widgets/venue_card.dart';
 
-/// Centre tab: venue list with search, district chips and optional location sorting.
+/// Centre tab: venue list with search, location filter and optional location sorting.
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
@@ -62,7 +63,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final venues = ref.watch(venueListProvider);
-    final hasFilters = ref.watch(venueSearchProvider).isNotEmpty || ref.watch(venueDistrictProvider) != null;
+    final locationActive = ref.watch(locationFilterProvider).isActive;
+    final hasFilters = ref.watch(venueSearchProvider).isNotEmpty || ref.watch(locationFilterProvider).isActive;
     return Scaffold(
       appBar: AppBar(title: const Text(AppConfig.appName)),
       body: Column(
@@ -95,7 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-          const _DistrictChips(),
+          const LocationFilterBar(),
           const _LocationBanner(),
           Expanded(
             child: AsyncValueWidget<List<VenueSummary>>(
@@ -111,13 +113,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             height: 360,
                             child: EmptyState(
                               icon: Icons.search_off,
-                              message: hasFilters ? S.noVenuesForFilter : S.noVenues,
-                              actionLabel: hasFilters ? S.clearFilters : null,
+                              message: locationActive
+                                  ? S.noVenuesInLocation
+                                  : (hasFilters ? S.noVenuesForFilter : S.noVenues),
+                              actionLabel: locationActive ? S.clearLocationShort : (hasFilters ? S.clearFilters : null),
                               onAction: hasFilters
                                   ? () {
                                       _searchController.clear();
                                       ref.read(venueSearchProvider.notifier).state = '';
-                                      ref.read(venueDistrictProvider.notifier).state = null;
+                                      ref.read(locationFilterProvider.notifier).clear();
                                     }
                                   : null,
                             ),
@@ -140,43 +144,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DistrictChips extends ConsumerWidget {
-  const _DistrictChips();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final districts = ref.watch(districtsProvider).valueOrNull ?? const <String>[];
-    if (districts.isEmpty) return const SizedBox.shrink();
-    final selected = ref.watch(venueDistrictProvider);
-    return SizedBox(
-      height: 44,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.s),
-            child: ChoiceChip(
-              label: const Text(S.allDistricts),
-              selected: selected == null,
-              onSelected: (_) => ref.read(venueDistrictProvider.notifier).state = null,
-            ),
-          ),
-          for (final d in districts)
-            Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.s),
-              child: ChoiceChip(
-                label: Text(d),
-                selected: selected == d,
-                onSelected: (_) => ref.read(venueDistrictProvider.notifier).state = selected == d ? null : d,
-              ),
-            ),
         ],
       ),
     );

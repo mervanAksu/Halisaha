@@ -36,10 +36,21 @@ Yeni kullanıcıda `profiles` satırı trigger ile oluşur. İlk girişte `full_
 
 ## RPC'ler (`supabase.rpc(name, params)`)
 
-### `list_venues(p_search?, p_district?, p_lat?, p_lng?)` → satırlar
-Herkes çağırabilir. Dönen alanlar: `id, name, district, address, cover_photo_path, min_hourly_price_kurus,
+### `list_venues(p_search?, p_city?, p_districts?, p_lat?, p_lng?)` → satırlar
+Herkes çağırabilir. `p_city text` (il adı, ör. `'İstanbul'`), `p_districts text[]` (o ilin seçili ilçeleri; null veya boş = ilin tamamı).
+`p_districts` en fazla 50 eleman alır, fazlası yok sayılır. `p_city` null ise `p_districts` yok sayılır.
+Dönen alanlar: `id, name, city, district, address, cover_photo_path, min_hourly_price_kurus,
 open_time, close_time` (bugünün saatleri, null = bugün kapalı), `distance_km` (konum verilmezse null), `is_favorite`.
-Sıralama: mesafe, sonra ad. En fazla 100 satır döner.
+Sıralama: mesafe, sonra ad. En fazla 100 satır döner. (Eski `p_district text` parametresi kaldırıldı.)
+
+### `list_venue_locations()` → satırlar
+Herkes çağırabilir. Aktif ve en az bir aktif sahası olan tesislerin bulunduğu il/ilçeleri döndürür:
+`city, district, venue_count`. Sıralama il, sonra ilçe (Türkçe alfabe). Uygulamanın konum seçicisi yalnızca
+burada çıkan il ve ilçeleri gösterir, böylece seçim hiçbir zaman boş liste vermez.
+
+### Tablolar `tr_provinces`, `tr_districts`
+Herkes okuyabilir (`select`). İşletme paneli tesis formundaki il/ilçe açılır listelerini buradan doldurur. Not: 973 satır PostgREST'in
+varsayılan `max-rows` (1000) sınırına yakın; ilçe sayısı artarsa panel sayfalı okumalı.
 
 ### `get_availability(p_pitch_id uuid, p_date date)` → satırlar
 Herkes çağırabilir. `p_date` sahanın **iş günü**dür. 12:00–06:00 çalışan bir sahada 6 Aralık'ın slotları

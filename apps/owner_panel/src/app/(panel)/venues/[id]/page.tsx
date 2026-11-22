@@ -5,6 +5,7 @@ import { PhotoManager } from '@/components/photo-manager';
 import { PitchManager } from '@/components/pitch-manager';
 import { VenueStatusBadge } from '@/components/status-badge';
 import { VenueForm } from '@/components/venue-form';
+import { loadLocations } from '@/lib/locations';
 import { first, getStaffContext, type SearchParams } from '@/lib/context';
 import { toTurkishError } from '@/lib/errors';
 import { shortTime } from '@/lib/time';
@@ -22,6 +23,7 @@ export default async function VenueDetailPage({
 
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
 
+  const locations = await loadLocations(supabase);
   const [venueRes, hoursRes, pitchesRes] = await Promise.all([
     supabase
       .from('venues')
@@ -66,10 +68,12 @@ export default async function VenueDetailPage({
       <section className="panel-card" aria-labelledby="sec-info">
         <h2 id="sec-info" className="mb-4 text-[17px] font-semibold text-primary">Tesis bilgileri</h2>
         <VenueForm
+          locations={locations}
           venue={{
             id: venue.id,
             name: venue.name,
             description: venue.description,
+            city: venue.city,
             district: venue.district,
             address: venue.address,
             lat: venue.lat,

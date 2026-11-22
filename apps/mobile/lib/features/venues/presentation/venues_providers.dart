@@ -2,12 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../../../core/config/app_config.dart';
+import '../../../core/security/secure_local_storage.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../../../core/utils/formatters.dart';
 import '../data/venues_repository.dart';
+import '../domain/location_filter.dart';
 import '../domain/slot.dart';
 import '../domain/slot_groups.dart';
 import '../domain/venue_detail.dart';
+import '../domain/venue_location.dart';
 import '../domain/venue_summary.dart';
 
 final venuesRepositoryProvider = Provider<VenuesRepository>((ref) {
@@ -19,8 +22,81 @@ final venuesRepositoryProvider = Provider<VenuesRepository>((ref) {
 /// Debounced search text (the debounce lives in the search field widget).
 final venueSearchProvider = StateProvider<String>((ref) => '');
 
-/// Selected district chip; null = all districts.
-final venueDistrictProvider = StateProvider<String?>((ref) => null);
+/// Device-local key/value store (platform keystore). Overridden in demo mode and tests.
+final keyValueStoreProvider = Provider<SecureKeyValueStore>((ref) => FlutterSecureKeyValueStore());
+
+/// Storage key of the persisted [LocationFilter] (JSON).
+const String locationFilterStorageKey = 'location_filter_v1';
+
+/// Province / district filter of the home list. Persisted on device and restored on start;
+/// a saved province that no longer has venues falls back to "all".
+class LocationFilterNotifier extends Notifier<LocationFilter> {
+  bool _touched = false;
+
+  /// Completes when the saved filter has been restored (list loading waits for it).
+  late Future<void> ready;
+
+  @override
+  LocationFilter build() {
+    ready = _restore();
+    return LocationFilter.none;
+  }
+
+  Future<void> _restore() async {
+    try {
+      final saved = LocationFilter.fromJsonString(await ref.read(keyValueStoreProvider).read(locationFilterStorageKey));
+      if (!saved.isActive || _touched) return;
+      var restored = saved;
+      try {
+        final locations = await ref
+            .read(venuesRepositoryProvider)
+            .listVenueLocations()
+            .timeout(const Duration(seconds: 5));
+        final cityExists = locations.any((l) => l.city == saved.city);
+        final districts = districtOptions(locations, saved.city!).map((d) => d.district).toSet();
+        restored = cityExists
+            ? LocationFilter(city: saved.city, districts: saved.districts.intersection(districts))
+            : LocationFilter.none;
+      } catch (_) {
+        // Offline: keep what was saved; the list shows its own error if the network is really down.
+      }
+      if (_touched) return;
+      state = restored;
+      if (restored != saved) await _persist(restored);
+    } catch (_) {
+      // Unreadable storage: stay on "all".
+    }
+  }
+
+  Future<void> apply({required String? city, Set<String> districts = const <String>{}}) {
+    _touched = true;
+    final next = city == null ? LocationFilter.none : LocationFilter(city: city, districts: Set.unmodifiable(districts));
+    state = next;
+    return _persist(next);
+  }
+
+  Future<void> clear() => apply(city: null);
+
+  Future<void> _persist(LocationFilter filter) async {
+    try {
+      final store = ref.read(keyValueStoreProvider);
+      if (filter.isActive) {
+        await store.write(locationFilterStorageKey, filter.toJsonString());
+      } else {
+        await store.delete(locationFilterStorageKey);
+      }
+    } catch (_) {
+      // Persistence is best-effort.
+    }
+  }
+}
+
+final locationFilterProvider = NotifierProvider<LocationFilterNotifier, LocationFilter>(LocationFilterNotifier.new);
+
+/// Provinces / districts that have venues (feeds the picker sheet).
+final venueLocationsProvider = FutureProvider.autoDispose<List<VenueLocation>>((ref) {
+  return ref.watch(venuesRepositoryProvider).listVenueLocations();
+});
 
 // --- Location ----------------------------------------------------------------
 
@@ -114,23 +190,20 @@ final locationProvider = NotifierProvider<LocationController, LocationState>(Loc
 
 // --- Reads -------------------------------------------------------------------
 
-final venueListProvider = FutureProvider.autoDispose<List<VenueSummary>>((ref) {
+final venueListProvider = FutureProvider.autoDispose<List<VenueSummary>>((ref) async {
   final search = ref.watch(venueSearchProvider);
-  final district = ref.watch(venueDistrictProvider);
+  ref.watch(locationFilterProvider);
   final location = ref.watch(locationProvider);
-  return ref.watch(venuesRepositoryProvider).listVenues(
+  // Wait for the saved filter so the first list is not fetched unfiltered.
+  await ref.read(locationFilterProvider.notifier).ready;
+  final filter = ref.read(locationFilterProvider);
+  return ref.read(venuesRepositoryProvider).listVenues(
         search: search,
-        district: district,
+        city: filter.city,
+        districts: filter.districtsParam,
         lat: location.lat,
         lng: location.lng,
       );
-});
-
-/// Distinct districts for the filter chips (unfiltered list).
-final districtsProvider = FutureProvider.autoDispose<List<String>>((ref) async {
-  final venues = await ref.watch(venuesRepositoryProvider).listVenues();
-  final set = venues.map((v) => v.district).where((d) => d.isNotEmpty).toSet().toList()..sort();
-  return set;
 });
 
 final venueDetailProvider = FutureProvider.autoDispose.family<VenueDetail, String>((ref, venueId) {

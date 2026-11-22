@@ -3,6 +3,12 @@
 Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: SemVer.
 
 ## [Unreleased]
+### Added (2026-11-22, ADR-11)
+- **Konum filtresi:** ana sayfada önce il, sonra o ilin bir veya birden çok ilçesi seçilerek sahalar listeleniyor. Yalnızca sahası olan il/ilçeler ve saha sayıları gösteriliyor; seçim cihazda hatırlanıyor.
+- 81 il / 973 ilçe referans tablosu (`tr_provinces`, `tr_districts`); tesislerin il/ilçesi bu listeye yabancı anahtarla bağlı. Yeni RPC `list_venue_locations`; `list_venues` artık `p_city` + `p_districts[]` alıyor.
+- İşletme paneli tesis formunda bağlı İl → İlçe açılır listeleri; panel listelerinde "İlçe, İl".
+- Demoya İzmir/Bornova ve Aydın/Efeler'de birer örnek saha. Saldırı paketi 121 senaryo (A103–A106 yeni).
+
 ### Changed (2026-11-21, ADR-10)
 - Yeni tasarım dili **"Skorbord"**: mürekkep siyahı + kâğıt zemin, tek neon vurgu (voltaj `#D4FF3A`), başlık ve sayılarda Barlow Condensed. Seçili saat voltaj dolguyla, ortadaki "Keşfet" butonu voltaj topla gösteriliyor. Koyu mod aynı dilde.
 - Yeni uygulama ikonu (eğik "R" + voltaj noktası), açılış ekranı ve Play tanıtım görseli. Web paneli ve yasal sayfalar aynı renklere geçti; panelde "Halısaha" adı "RÖVANŞ" oldu.

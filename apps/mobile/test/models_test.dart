@@ -108,6 +108,7 @@ void main() {
       final v = VenueSummary.fromJson({
         'id': 'v1',
         'name': 'Yıldız Halı Saha',
+        'city': 'İstanbul',
         'district': 'Kadıköy',
         'address': 'Moda Cd. 1',
         'cover_photo_path': 'v1/cover.jpg',
@@ -117,6 +118,7 @@ void main() {
         'distance_km': 2.5,
         'is_favorite': true,
       });
+      expect(v.city, 'İstanbul');
       expect(v.minHourlyPriceKurus, 350000);
       expect(v.openTime, '18:00');
       expect(v.closeTime, '02:00');
@@ -138,6 +140,7 @@ void main() {
         'distance_km': null,
         'is_favorite': false,
       });
+      expect(v.city, '');
       expect(v.isOpenToday, isFalse);
       expect(v.minHourlyPriceKurus, isNull);
       expect(v.distanceKm, isNull);

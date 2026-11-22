@@ -46,3 +46,9 @@ Sonuç: No-show koruması bu modda yok. İşletmeye bunun söylenmesi ve kara li
 Bağlam: Kullanıcı `flutter/samples` örneklerini referans gösterdi. Rezervasyon akışına en yakın örnek Compass'tı. Tuvalde 3 yön karşılaştırıldı: A Skorbord, B Çim Sahası, C Projektör.
 Karar: A "Skorbord" seçildi. Mürekkep `#0E0F0C` + kâğıt zemin, tek vurgu voltaj `#D4FF3A` (yalnızca mürekkep yazıyla), olumlu durumlar çim yeşili `#1E5A37`. Başlık ve sayılarda Barlow Condensed, gövdede Inter. Yeni ikon: eğik "R" + voltaj top noktası. ADR-8'in tasarım kısmının yerini alır; ad ve paket kimliği aynı kalır.
 Sonuç: Token adları korundu, `highlight`/`onHighlight` eklendi; ekranlar token okuduğu için değişiklik çoğunlukla tema dosyasında. Android/iOS ikonları "Scaffold native platforms" iş akışıyla yeniden üretilmeli. Tasarım tuvali: https://claude.ai/artifact/2expRRm9AUcabesofwtYqx
+
+## ADR-11 · İl → ilçe konum filtresi (2026-11-22)
+Bağlam: Kullanıcı "önce il, sonra o ilin ilçeleri" seçilerek sahaların listelenmesini istedi. Uygulama İstanbul dışına açılacak.
+Karar: 81 il / 973 ilçe veritabanında referans tablo olarak tutulur (`tr_provinces`, `tr_districts`). Tesislerin il/ilçesi bu listeye yabancı anahtarla bağlanır, böylece "Kadiköy" gibi yazım farkları filtreyi bölemez. Müşteri seçicisi yalnızca sahası olan il/ilçeleri gösterir (`list_venue_locations`). İlçe çoklu seçilebilir.
+Sonuç: `list_venues` imzası değişti (`p_city`, `p_districts[]`). İl/ilçe listesi yasal bir değişiklikte (yeni ilçe vb.) yeni migration ile güncellenir.
+

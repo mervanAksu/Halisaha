@@ -1,4 +1,5 @@
 import '../core/errors/app_exception.dart';
+import '../core/utils/turkish.dart';
 import '../features/auth/data/auth_repository.dart';
 import '../features/booking/data/booking_repository.dart';
 import '../features/booking/domain/booking.dart';
@@ -11,26 +12,15 @@ import '../features/profile/domain/profile.dart';
 import '../features/venues/data/venues_repository.dart';
 import '../features/venues/domain/slot.dart';
 import '../features/venues/domain/venue_detail.dart';
+import '../features/venues/domain/venue_location.dart';
 import '../features/venues/domain/venue_summary.dart';
 import 'demo_data.dart';
 import 'demo_store.dart';
 
+export '../core/utils/turkish.dart' show foldTr;
+
 /// Short artificial latency so loading states are visible and the UI feels like a real backend.
 Future<void> _latency() => Future<void>.delayed(const Duration(milliseconds: 250));
-
-/// Lower-case, diacritic-free form for search ("İstanbul" -> "istanbul", "Ataşehir" -> "atasehir").
-String foldTr(String input) {
-  const map = <String, String>{
-    'İ': 'i', 'I': 'i', 'ı': 'i', 'Ş': 's', 'ş': 's', 'Ğ': 'g', 'ğ': 'g',
-    'Ü': 'u', 'ü': 'u', 'Ö': 'o', 'ö': 'o', 'Ç': 'c', 'ç': 'c',
-  };
-  final buffer = StringBuffer();
-  for (final rune in input.runes) {
-    final ch = String.fromCharCode(rune);
-    buffer.write(map[ch] ?? ch.toLowerCase());
-  }
-  return buffer.toString();
-}
 
 class DemoAuthRepository implements AuthRepository {
   @override
@@ -84,16 +74,41 @@ class DemoVenuesRepository implements VenuesRepository {
   final DemoStore _store;
 
   @override
-  Future<List<VenueSummary>> listVenues({String? search, String? district, double? lat, double? lng}) async {
+  Future<List<VenueSummary>> listVenues({
+    String? search,
+    String? city,
+    List<String>? districts,
+    double? lat,
+    double? lng,
+  }) async {
     await _latency();
     final query = foldTr((search ?? '').trim());
+    final hasCity = city != null && city.isNotEmpty;
+    final wanted = districts ?? const <String>[];
     final list = _store.venues.where((v) {
-      if (district != null && district.isNotEmpty && v.district != district) return false;
+      if (hasCity && v.city != city) return false;
+      if (wanted.isNotEmpty && !wanted.contains(v.district)) return false;
       if (query.isEmpty) return true;
-      return foldTr('${v.name} ${v.district} ${v.address}').contains(query);
+      return foldTr('${v.name} ${v.district} ${v.city} ${v.address}').contains(query);
     }).toList()
       ..sort((a, b) => foldTr(a.name).compareTo(foldTr(b.name)));
     return list.map((v) => v.toSummary(isFavorite: _store.favoriteIds.contains(v.id))).toList();
+  }
+
+  @override
+  Future<List<VenueLocation>> listVenueLocations() async {
+    await _latency();
+    final counts = <(String, String), int>{};
+    for (final v in _store.venues) {
+      counts.update((v.city, v.district), (n) => n + 1, ifAbsent: () => 1);
+    }
+    final result = [
+      for (final e in counts.entries) VenueLocation(city: e.key.$1, district: e.key.$2, venueCount: e.value),
+    ]..sort((a, b) {
+        final byCity = compareTr(a.city, b.city);
+        return byCity != 0 ? byCity : compareTr(a.district, b.district);
+      });
+    return result;
   }
 
   @override

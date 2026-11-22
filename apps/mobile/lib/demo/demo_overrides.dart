@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthState;
 
+import '../core/security/secure_local_storage.dart';
 import '../core/supabase/supabase_providers.dart';
 import '../features/auth/presentation/auth_providers.dart';
 import '../features/booking/presentation/booking_providers.dart';
@@ -26,6 +27,7 @@ List<Override> demoOverrides(DemoStore store) {
     authRepositoryProvider.overrideWithValue(DemoAuthRepository()),
     profileRepositoryProvider.overrideWithValue(DemoProfileRepository(store)),
     venuesRepositoryProvider.overrideWithValue(DemoVenuesRepository(store)),
+    keyValueStoreProvider.overrideWithValue(InMemoryKeyValueStore()),
     favoritesRepositoryProvider.overrideWithValue(DemoFavoritesRepository(store)),
     bookingRepositoryProvider.overrideWithValue(DemoBookingRepository(store)),
     ownerRepositoryProvider.overrideWithValue(DemoOwnerRepository(store)),

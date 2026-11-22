@@ -108,6 +108,9 @@ Sütunlar: **S**poofing, **T**ampering, **R**epudiation, **I**nformation disclos
 | T | Aynı `merchant_oid` için önce `failed`, sonra `success` → para çekildi, onay da iade de yok | Yok | O* | Y | **A90 ✗ F-01** (*PayTR davranışı VERIFY) |
 | D | Sınırsız ödeme denemesi (token üretimi) | 5 deneme | D | D | A87 ✓ |
 | T | Admin, alt üye işyeri anahtarı olmayan sahayı aktif eder → kapora platform hesabına düşer | Yok | O | Y (uyum) | **A101 ✗ F-03** |
+| T | Owner il/ilçe referans tablolarını değiştirir veya siler (2026-11-22) | RLS + yalnızca select izni | D | O | A103–A103d ✓ |
+| T | Owner yazım farkıyla ("Kadiköy") filtreyi bölen ilçe girer | FK `venues_city_district_fk` | D | D | A104 ✓ |
+| D | Dev `p_districts` dizisi / enjeksiyon benzeri `p_city` ile `list_venues` | İlk 50 eleman, parametreli sorgu | D | D | A105, A106 ✓ |
 
 ### 4.4 Edge Functions
 

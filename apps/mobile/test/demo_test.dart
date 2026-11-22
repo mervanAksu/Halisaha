@@ -190,7 +190,7 @@ void main() {
     test('search folds Turkish characters and district filter works', () async {
       final venues = DemoVenuesRepository(store);
       expect((await venues.listVenues(search: 'atasehir')).map((v) => v.district), everyElement('Ataşehir'));
-      final kadikoy = await venues.listVenues(district: 'Kadıköy');
+      final kadikoy = await venues.listVenues(city: 'İstanbul', districts: ['Kadıköy']);
       expect(kadikoy, isNotEmpty);
       expect(kadikoy.every((v) => v.district == 'Kadıköy'), isTrue);
     });

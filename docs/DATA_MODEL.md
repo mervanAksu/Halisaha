@@ -12,6 +12,7 @@ pitches 1─* bookings (source: app|manual|block; status: pending_payment|confir
 bookings 1─* payments (merchant_oid unique; status: initiated|succeeded|failed|refund_required|refund_processing|refunded)
 profiles *─* venues  via favorites
 profiles 1─* device_tokens
+tr_provinces 1─* tr_districts 1─* venues (city, district) → (province, name)
 ```
 
 ## Kritik kurallar
@@ -34,5 +35,12 @@ profiles 1─* device_tokens
 - `consent_events` (append-only): KVKK aydınlatma ve pazarlama izni geçmişi.
 - `venues_photo_paths_ok`: fotoğraflar `<venue_id>/<uuid>.(jpg|png|webp)` biçiminde olur, en fazla 10 tanedir, kapak fotoğrafı listeden seçilir.
 
+## Konum (il / ilçe) (2026-11-22, ADR-11)
+- `tr_provinces(plate smallint pk, name text unique)`: 81 il. `tr_districts(province text → tr_provinces.name, name text, pk (province, name))`: 973 ilçe.
+  Kaynak: İçişleri Bakanlığı e-icisleri listesi (mertmtn/CityDistrictJSONAPI, 2023) ile ubeydeozdmr/turkiye-api (2025, MIT) çapraz kontrol edildi.
+  Yazım Türkçe büyük/küçük harf kuralıyla ("Ataşehir", "Merkez", "19 Mayıs"). Büyükşehir olmayan 51 ilin "Merkez" ilçesi vardır.
+- Bu iki tablo yalnızca migration ile değişir; herkes okuyabilir, kimse yazamaz.
+- `venues (city, district)` → `tr_districts (province, name)` yabancı anahtarı: işletme sahibi listede olmayan bir il/ilçe giremez.
+
 ## İndeksler
-`bookings(user_id, starts_at desc)`, `bookings(venue_id, starts_at)`, `bookings(hold_expires_at) where pending`, `venues(status, district)`.
+`bookings(user_id, starts_at desc)`, `bookings(venue_id, starts_at)`, `bookings(hold_expires_at) where pending`, `venues(status, city, district)`.

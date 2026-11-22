@@ -7,6 +7,7 @@ class DemoVenue {
   const DemoVenue({
     required this.id,
     required this.name,
+    required this.city,
     required this.district,
     required this.address,
     required this.description,
@@ -22,6 +23,7 @@ class DemoVenue {
 
   final String id;
   final String name;
+  final String city;
   final String district;
   final String address;
   final String description;
@@ -52,6 +54,7 @@ class DemoVenue {
   VenueSummary toSummary({required bool isFavorite}) => VenueSummary(
         id: id,
         name: name,
+        city: city,
         district: district,
         address: address,
         minHourlyPriceKurus: minHourlyPriceKurus,
@@ -64,6 +67,7 @@ class DemoVenue {
         id: id,
         name: name,
         description: description,
+        city: city,
         district: district,
         address: address,
         lat: lat,
@@ -96,6 +100,7 @@ final List<DemoVenue> demoVenues = <DemoVenue>[
   DemoVenue(
     id: 'demo-venue-1',
     name: 'Mavi Çim Spor Tesisleri',
+    city: 'İstanbul',
     district: 'Büyükçekmece',
     address: 'Sahil Yolu Cd. No: 14',
     description: 'Deniz manzaralı, tam ışıklandırmalı üç sahalı tesis. Hafta içi akşam saatleri hızlı dolar.',
@@ -115,6 +120,7 @@ final List<DemoVenue> demoVenues = <DemoVenue>[
   DemoVenue(
     id: demoOvernightVenueId,
     name: 'Gece Kuşu Arena',
+    city: 'İstanbul',
     district: 'Esenyurt',
     address: 'Hadımköy Yolu Sk. No: 3',
     description: 'Öğleden sabaha kadar açık. Vardiya çıkışı ve gece maçları için ideal.',
@@ -133,6 +139,7 @@ final List<DemoVenue> demoVenues = <DemoVenue>[
   DemoVenue(
     id: 'demo-venue-3',
     name: 'Kıyı Park Halısaha',
+    city: 'İstanbul',
     district: 'Beylikdüzü',
     address: 'Yaşam Vadisi Cd. No: 27',
     description: 'Park içinde, ailece gelinebilecek sakin bir tesis. Gece yarısına kadar açık.',
@@ -151,6 +158,7 @@ final List<DemoVenue> demoVenues = <DemoVenue>[
   DemoVenue(
     id: 'demo-venue-4',
     name: 'Yeşil Vadi Spor Kulübü',
+    city: 'İstanbul',
     district: 'Kadıköy',
     address: 'Bağdat Cd. Çınar Sk. No: 8',
     description: 'Kadıköy sırtlarında, şehir içinde kapalı ve açık seçenekli butik tesis.',
@@ -169,6 +177,7 @@ final List<DemoVenue> demoVenues = <DemoVenue>[
   DemoVenue(
     id: 'demo-venue-5',
     name: 'Atlas Spor Kompleksi',
+    city: 'İstanbul',
     district: 'Ataşehir',
     address: 'Küçükbakkalköy Mh. Atlas Sk. No: 21',
     description: 'Modern soyunma odaları ve geniş otoparkıyla şirket turnuvalarının favorisi.',
@@ -188,6 +197,7 @@ final List<DemoVenue> demoVenues = <DemoVenue>[
   DemoVenue(
     id: 'demo-venue-6',
     name: 'Martı Sahil Arena',
+    city: 'İstanbul',
     district: 'Büyükçekmece',
     address: 'Kumburgaz Sahil Cd. No: 52',
     description: 'Yaz akşamlarında deniz kenarında oynamak isteyenler için açık saha ağırlıklı tesis.',
@@ -201,6 +211,44 @@ final List<DemoVenue> demoVenues = <DemoVenue>[
     pitches: [
       _pitch('demo-pitch-6a', 'Martı 1', '6v6', price: 340000, deposit: 50000, indoor: false, order: 1),
       _pitch('demo-pitch-6b', 'Martı 2', '5v5', price: 300000, deposit: 50000, indoor: false, order: 2),
+    ],
+  ),
+  DemoVenue(
+    id: 'demo-venue-7',
+    name: 'Bornova Gol Park',
+    city: 'İzmir',
+    district: 'Bornova',
+    address: 'Kazımdirik Mh. Gol Sk. No: 5',
+    description: 'Kampüs çevresinde, öğrenci takımlarının ve mahalle liglerinin uğrak noktası kapalı ve açık saha tesisi.',
+    phone: '+902320000107',
+    lat: 38.4622,
+    lng: 27.2214,
+    amenities: const ['otopark', 'dus', 'kafeterya'],
+    cancellationWindowHours: 24,
+    openMinutes: 10 * 60,
+    closeMinutes: 0,
+    pitches: [
+      _pitch('demo-pitch-7a', 'Gol 1', '7v7', price: 360000, deposit: 60000, order: 1),
+      _pitch('demo-pitch-7b', 'Gol 2', '5v5', price: 280000, deposit: 50000, indoor: false, order: 2),
+    ],
+  ),
+  DemoVenue(
+    id: 'demo-venue-8',
+    name: 'Efeler Spor Sahası',
+    city: 'Aydın',
+    district: 'Efeler',
+    address: 'Hasan Efendi Mh. Spor Cd. No: 12',
+    description: 'Şehir merkezine yakın, akşam saatlerinde ışıklandırmalı sakin bir halı saha.',
+    phone: '+902560000108',
+    lat: 37.8560,
+    lng: 27.8416,
+    amenities: const ['otopark', 'soyunma'],
+    cancellationWindowHours: 24,
+    openMinutes: 12 * 60,
+    closeMinutes: 23 * 60,
+    pitches: [
+      _pitch('demo-pitch-8a', 'Efe 1', '6v6', price: 300000, deposit: 50000, order: 1),
+      _pitch('demo-pitch-8b', 'Efe 2', '5v5', price: 260000, deposit: 40000, indoor: false, order: 2),
     ],
   ),
 ];

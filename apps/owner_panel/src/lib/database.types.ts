@@ -167,6 +167,18 @@ export type Database = {
         Update: Partial<ProfileRow>;
         Relationships: [];
       };
+      tr_provinces: {
+        Row: { plate: number; name: string };
+        Insert: { plate: number; name: string };
+        Update: Partial<{ plate: number; name: string }>;
+        Relationships: [];
+      };
+      tr_districts: {
+        Row: { province: string; name: string };
+        Insert: { province: string; name: string };
+        Update: Partial<{ province: string; name: string }>;
+        Relationships: [];
+      };
       venues: {
         Row: VenueRow;
         Insert: Insertable<VenueRow, 'name' | 'district'>;
@@ -367,13 +379,15 @@ export type Database = {
       list_venues: {
         Args: {
           p_search?: string;
-          p_district?: string;
+          p_city?: string;
+          p_districts?: string[];
           p_lat?: number;
           p_lng?: number;
         };
         Returns: {
           id: string;
           name: string;
+          city: string;
           district: string;
           address: string;
           cover_photo_path: string | null;
@@ -383,6 +397,10 @@ export type Database = {
           distance_km: number | null;
           is_favorite: boolean;
         }[];
+      };
+      list_venue_locations: {
+        Args: Record<string, never>;
+        Returns: { city: string; district: string; venue_count: number }[];
       };
       my_completed_match_count: { Args: Record<PropertyKey, never>; Returns: number };
       owner_cancel_booking: {

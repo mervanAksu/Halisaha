@@ -6,6 +6,7 @@ class VenueDetail {
     required this.name,
     required this.description,
     required this.district,
+    this.city = '',
     required this.address,
     required this.cancellationWindowHours,
     required this.photoPaths,
@@ -31,6 +32,7 @@ class VenueDetail {
       id: json['id'] as String,
       name: json['name'] as String,
       description: (json['description'] as String?) ?? '',
+      city: (json['city'] as String?) ?? '',
       district: (json['district'] as String?) ?? '',
       address: (json['address'] as String?) ?? '',
       lat: (json['lat'] as num?)?.toDouble(),
@@ -47,6 +49,7 @@ class VenueDetail {
   final String id;
   final String name;
   final String description;
+  final String city;
   final String district;
   final String address;
   final double? lat;
@@ -57,6 +60,9 @@ class VenueDetail {
   final List<String> amenities;
   final int cancellationWindowHours;
   final List<Pitch> pitches;
+
+  /// "address, district, city" without empty parts.
+  String get addressLine => [address, district, city].where((p) => p.isNotEmpty).join(', ');
 
   /// Cover first, then the remaining photos without duplicates.
   List<String> get galleryPaths {

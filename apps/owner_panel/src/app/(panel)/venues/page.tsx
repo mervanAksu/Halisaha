@@ -9,7 +9,7 @@ export default async function VenuesPage() {
   const { supabase, user } = await getStaffContext();
   const { data, error } = await supabase
     .from('venues')
-    .select('id, name, district, address, status')
+    .select('id, name, city, district, address, status')
     .eq('owner_id', user.id)
     .order('name');
   if (error) throw new Error(toTurkishError(error));
@@ -28,7 +28,7 @@ export default async function VenuesPage() {
             <li key={v.id} className="panel-card flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-[17px] font-semibold text-primary">{v.name}</h2>
-                <p className="text-sm text-textSecondary">{v.district}{v.address ? ` · ${v.address}` : ''}</p>
+                <p className="text-sm text-textSecondary">{v.district}, {v.city}{v.address ? ` · ${v.address}` : ''}</p>
                 <Link href={`/venues/${v.id}?venue=${v.id}`} className="mt-3 inline-block text-sm font-semibold text-primary underline">
                   Düzenle
                 </Link>
