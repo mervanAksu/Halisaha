@@ -1,8 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/app_mode/app_mode.dart';
 import '../../../core/supabase/supabase_providers.dart';
 import '../data/auth_repository.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(ref.watch(supabaseClientProvider));
 });
+
+/// Signs out and then (when [mode] is given) switches the app mode. A session belongs to one audience
+/// (ADR-12), so a mode change always closes the session first; when sign-out fails the mode is left
+/// alone and the [AppException] propagates.
+///
+/// The notifiers are read before the first `await`: the sign-out re-runs the router redirect, which
+/// can dispose the calling widget (and its `ref`) before this future completes.
+Future<void> signOutAndSwitchMode(WidgetRef ref, AppMode? mode) async {
+  final auth = ref.read(authRepositoryProvider);
+  final modeNotifier = ref.read(appModeProvider.notifier);
+  await auth.signOut();
+  if (mode != null) await modeNotifier.set(mode);
+}

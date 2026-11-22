@@ -10,6 +10,8 @@ abstract final class AppConfig {
   static const String supportEmail = String.fromEnvironment('SUPPORT_EMAIL');
   static const String supportPhone = String.fromEnvironment('SUPPORT_PHONE');
   static const String supportWhatsapp = String.fromEnvironment('SUPPORT_WHATSAPP');
+  /// Web panel (apps/owner_panel) address shown in the owner account sheet; the row is hidden when empty.
+  static const String ownerPanelUrl = String.fromEnvironment('OWNER_PANEL_URL');
   static const String websiteUrl = String.fromEnvironment('WEBSITE_URL');
   static const String legalBaseUrl = String.fromEnvironment('LEGAL_BASE_URL');
 

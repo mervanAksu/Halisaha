@@ -178,12 +178,21 @@ void main() {
       );
     });
 
-    test('profile edit works; sign-out and delete are disabled', () async {
+    test('profile edit works, delete is disabled, demo auth flips the role', () async {
       final profiles = DemoProfileRepository(store);
       final updated = await profiles.updateName(userId: DemoStore.userId, fullName: 'Ayşe Yıldız');
       expect(updated.fullName, 'Ayşe Yıldız');
       expect(updated.needsOnboarding, isFalse);
-      await expectLater(DemoAuthRepository().signOut(), throwsA(isA<Object>()));
+      final signedIn = <bool>[];
+      final auth = DemoAuthRepository(store: store, onAuthChanged: signedIn.add);
+      await auth.signOut();
+      expect(signedIn, [false]);
+      await auth.signInWithPassword(email: 'a@b.co', password: 'x');
+      expect(signedIn, [false, true]);
+      expect(store.profile.isOwner, isTrue);
+      await auth.verifyOtp(e164Phone: '+905550000000', code: '123456');
+      expect(signedIn.last, isTrue);
+      expect(store.profile.isOwner, isFalse);
       await expectLater(profiles.deleteAccount(), throwsA(isA<Object>()));
     });
 

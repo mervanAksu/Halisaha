@@ -351,8 +351,6 @@ abstract final class S {
   static const String bookingConfirmedHint = 'Adrese dokunarak haritada açabilirsin.';
 
   // --- İşletmeci modu (owner) -------------------------------------------------------------
-  static const String ownerPanel = 'İşletmeci paneli';
-  static const String ownerPanelSubtitle = 'Takvimi, rezervasyonları ve sahaları yönet';
   static const String ownerTabBookings = 'Rezervasyonlar';
   static const String ownerTabBookingsShort = 'Rezervasyon';
   static const String ownerTabPitches = 'Sahalarım';
@@ -421,8 +419,38 @@ abstract final class S {
   static const String closeLabel = 'Kapanış';
   static const String overnightHint = 'Gece yarısını aşar';
   static const String hoursSaved = 'Çalışma saatleri kaydedildi.';
-  static const String demoOwnerSwitch = 'İşletmeci modunu dene (demo)';
-  static const String demoOwnerSwitchHint = 'Demo kullanıcıyı 2 örnek tesisin işletmecisi yapar.';
   static const String statusPaymentPendingShort = 'Ödeme bekliyor';
   static const String bookedByApp = 'Uygulama';
+
+  // --- Rol seçimi / işletmeci girişi (ADR-12) -----------------------------------
+  static const String welcomeTagline = 'Boş saati gör, kaporayla anında tut.';
+  static const String welcomePlayerTitle = 'Maç yapacağım';
+  static const String welcomePlayerSubtitle = 'Saha bul, saat seç, kaporayı öde';
+  static const String welcomeOwnerTitle = 'Sahamı yöneteceğim';
+  static const String welcomeOwnerSubtitle = 'Rezervasyonlar, saatler ve sahalar';
+  static const String welcomeFooter = "Seçimini daha sonra Profil'den değiştirebilirsin.";
+  static const String ownerLoginTitle = 'İşletmeci girişi';
+  static const String ownerLoginSubtitle = 'Web paneliyle aynı e-posta ve şifreyi kullan.';
+  static const String emailLabel = 'E-posta';
+  static const String emailInvalid = 'Geçerli bir e-posta adresi gir.';
+  static const String passwordLabel = 'Şifre';
+  static const String passwordRequired = 'Şifreni gir.';
+  static const String showPassword = 'Şifreyi göster';
+  static const String hidePassword = 'Şifreyi gizle';
+  static const String ownerLoginSubmit = 'Giriş yap';
+  static const String ownerLoginInvalid = 'E-posta veya şifre hatalı.';
+  static const String ownerLoginResetHint = 'Şifreni web panelinden sıfırlayabilirsin.';
+  static const String ownerLoginNotOwner = 'İşletmeci değil misin? Oyuncu olarak devam et';
+  static const String ownerDemoLoginHint = 'Demo: herhangi bir e-posta ve şifreyle girebilirsin.';
+  static const String ownerListVenueTitle = "Rövanş'ta sahanı listelemek ister misin?";
+  static const String ownerListVenueBody = 'Bize ulaş, başvurunu birlikte tamamlayalım.';
+  static const String notOwnerTitle = 'Bu hesap bir işletmeci hesabı değil.';
+  static const String notOwnerContinuePlayer = 'Oyuncu olarak devam et';
+  static const String notOwnerOtherAccount = 'Başka hesapla giriş yap';
+  static const String switchToOwnerLogin = 'İşletmeci girişi';
+  static const String switchToOwnerBody = 'İşletmeci girişine geçmek için oturumun kapatılacak.';
+  static const String ownerAccountTooltip = 'Hesap';
+  static const String ownerOpenWebPanel = 'Web panelini aç';
+  static const String ownerSwitchToPlayer = 'Oyuncu uygulamasına geç';
+  static const String ownerSignOut = 'Çıkış yap';
 }

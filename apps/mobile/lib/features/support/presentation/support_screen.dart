@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/config/app_config.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/utils/urls.dart';
+import 'support_contacts.dart';
 
 class SupportScreen extends StatelessWidget {
   const SupportScreen({super.key});
@@ -13,21 +12,7 @@ class SupportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tokens = context.tokens;
-    final contacts = <_Contact>[
-      if (AppConfig.supportEmail.isNotEmpty)
-        const _Contact(Icons.mail_outline, S.contactEmail, AppConfig.supportEmail, 'mailto:${AppConfig.supportEmail}'),
-      if (AppConfig.supportPhone.isNotEmpty)
-        const _Contact(Icons.phone_outlined, S.contactPhone, AppConfig.supportPhone, 'tel:${AppConfig.supportPhone}'),
-      if (AppConfig.supportWhatsapp.isNotEmpty)
-        _Contact(
-          Icons.chat_outlined,
-          S.contactWhatsapp,
-          S.contactWhatsappSubtitle,
-          'https://wa.me/${AppConfig.supportWhatsapp.replaceAll(RegExp(r'[^0-9]'), '')}',
-        ),
-      if (AppConfig.websiteUrl.isNotEmpty)
-        const _Contact(Icons.language, S.contactWebsite, AppConfig.websiteUrl, AppConfig.websiteUrl),
-    ];
+    final contacts = buildSupportContacts();
 
     return Scaffold(
       appBar: AppBar(title: const Text(S.navSupport)),
@@ -67,30 +52,7 @@ class SupportScreen extends StatelessWidget {
           if (contacts.isEmpty)
             Text(S.supportNoContacts, style: theme.textTheme.bodySmall)
           else
-            Container(
-              decoration: BoxDecoration(
-                color: tokens.card,
-                borderRadius: BorderRadius.circular(AppRadius.card),
-                border: Border.all(color: tokens.border),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadius.card),
-                child: Column(
-                  children: [
-                    for (var i = 0; i < contacts.length; i++) ...[
-                      if (i > 0) const Divider(height: 1),
-                      ListTile(
-                        leading: Icon(contacts[i].icon, color: tokens.brand),
-                        title: Text(contacts[i].title, style: theme.textTheme.bodyMedium),
-                        subtitle: Text(contacts[i].subtitle, style: theme.textTheme.bodySmall),
-                        trailing: Icon(Icons.chevron_right, color: tokens.neutral),
-                        onTap: () => openExternalOrWarn(context, contacts[i].url),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
+            SupportContactCard(contacts: contacts),
           const SizedBox(height: AppSpacing.xl),
           Text(S.faqTitle, style: theme.textTheme.titleMedium),
           const SizedBox(height: AppSpacing.s),
@@ -125,13 +87,4 @@ class SupportScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class _Contact {
-  const _Contact(this.icon, this.title, this.subtitle, this.url);
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final String url;
 }

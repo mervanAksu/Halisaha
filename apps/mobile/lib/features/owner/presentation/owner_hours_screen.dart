@@ -12,6 +12,7 @@ import '../../../core/widgets/primary_button.dart';
 import '../domain/owner_models.dart';
 import 'owner_common.dart';
 import 'owner_providers.dart';
+import 'owner_account_button.dart';
 
 /// "Saatler": weekly opening hours editor. Closed days have no row; an overnight day
 /// (closing at or before the opening time) is allowed and flagged "Gece yarısını aşar".
@@ -21,7 +22,7 @@ class OwnerHoursScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(S.ownerTabHours)),
+      appBar: AppBar(title: const Text(S.ownerTabHours), actions: const [OwnerAccountButton()]),
       body: OwnerVenueScope(
         builder: (context, venue, switcher) => _HoursBody(venueId: venue.id, switcher: switcher),
       ),

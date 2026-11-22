@@ -18,6 +18,7 @@ uygulama. Kapora işletmeyi no-show'a karşı korur. İşletme takvimini tek bir
 ### Mobil uygulama
 | # | Özellik | Kabul kriteri |
 |---|---|---|
+| M0 | Giriş seçimi (ADR-12) | İlk açılışta "Maç yapacağım" (oyuncu) / "Sahamı yöneteceğim" (işletmeci) seçimi. Seçim cihazda saklanır, uygulama bir daha sormaz. Oyuncu → M1. İşletmeci → e-posta + şifre girişi (web paneliyle aynı hesap); hesap `owner`/`admin` değilse "Bu hesap işletmeci hesabı değil" ekranı + başvuru iletişimi + "Oyuncu olarak devam et". Mod değiştirme: oyuncuda Profilim'in en altında "İşletmeci girişi", işletmecide Hesap menüsünde "Oyuncu uygulamasına geç" (ikisi de oturumu kapatıp seçime döner). İşletmeci modunda müşteri ekranları, oyuncu modunda işletme ekranları açılamaz |
 | M1 | Telefonla giriş (SMS OTP) | Numara gir → 6 haneli kod → ilk girişte ad soyad + KVKK aydınlatma onayı |
 | M2 | Saha listesi (ana sayfa) | Arama kutusu, konum filtresi (önce il, sonra o ilin bir veya birden çok ilçesi; yalnızca sahası olan il/ilçeler listelenir, seçim cihazda hatırlanır), kart: kapak foto, ad, bugünkü çalışma saati, ilçe, en düşük saatlik fiyat, "Sahayı görüntüle". Konum izni verilirse yakınlığa göre sıralanır |
 | M3 | Saha detayı | Foto galerisi, adres + haritada aç, olanaklar, saha (pitch) seçici, 14 günlük tarih şeridi, slot ızgarası (dolu/boş/geçmiş), favori butonu |

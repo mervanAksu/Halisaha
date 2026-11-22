@@ -22,15 +22,33 @@ export '../core/utils/turkish.dart' show foldTr;
 /// Short artificial latency so loading states are visible and the UI feels like a real backend.
 Future<void> _latency() => Future<void>.delayed(const Duration(milliseconds: 250));
 
+/// Demo auth: nothing is verified. A phone code signs in the customer, any e-mail/password signs in
+/// the demo owner (ADR-12); [onAuthChanged] flips the demo session flag the providers watch.
 class DemoAuthRepository implements AuthRepository {
+  DemoAuthRepository({required DemoStore store, required void Function(bool signedIn) onAuthChanged})
+      : _store = store,
+        _onAuthChanged = onAuthChanged;
+
+  final DemoStore _store;
+  final void Function(bool signedIn) _onAuthChanged;
+
   @override
   Future<void> sendOtp(String e164Phone) async {}
 
   @override
-  Future<void> verifyOtp({required String e164Phone, required String code}) async {}
+  Future<void> verifyOtp({required String e164Phone, required String code}) async {
+    _store.setOwnerMode(false);
+    _onAuthChanged(true);
+  }
 
   @override
-  Future<void> signOut() async => throw demoDisabledException();
+  Future<void> signInWithPassword({required String email, required String password}) async {
+    _store.setOwnerMode(true);
+    _onAuthChanged(true);
+  }
+
+  @override
+  Future<void> signOut() async => _onAuthChanged(false);
 }
 
 class DemoProfileRepository implements ProfileRepository {

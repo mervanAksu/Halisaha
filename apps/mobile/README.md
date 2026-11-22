@@ -63,9 +63,18 @@ remainder and the policy.
 * Data goes through `OwnerRepository` (`features/owner/data`) and Riverpod providers; widgets never call Supabase.
 * Admin accounts only see venues they own (`venues.owner_id = auth.uid()`).
 
-Demo: Profil has the switch **İşletmeci modunu dene (demo)**; it makes the demo user the owner of two demo venues
+Demo: choose **Sahamı yöneteceğim** on the role screen and sign in with any e-mail and password (or open the web preview
+with `?mode=owner`); the demo user becomes the owner of two demo venues
 (Mavi Çim 09-23, Gece Kuşu 12-06) served by the in-memory `DemoOwnerRepository` with a mix of app / phone / closed /
 unpaid bookings. Owner changes in the demo do not affect the customer-side demo availability.
+
+## Role choice (ADR-12)
+
+First launch shows `/welcome` (Maç yapacağım / Sahamı yöneteceğim). The choice is stored under `app_mode_v1`
+(`appModeProvider`); the router (`core/router/redirect_policy.dart`) keeps the splash until it is restored (2 s timeout).
+Player mode: phone OTP flow, `/owner*` closed. Owner mode: e-mail + password (`/owner/login`), non-owner accounts get
+`/owner/not-owner`, customer routes are closed. Switching modes always signs out first. Demo web preview:
+`?mode=player|owner` pre-sets the mode, `?shots=1` hides the demo banner.
 
 ## Security notes
 
@@ -117,6 +126,7 @@ cp env/example.json env/local.json      # env/local.json is git-ignored
 |---|---|
 | `SUPABASE_URL`, `SUPABASE_ANON_KEY` | Supabase client. Never put the `service_role` key here. |
 | `SUPPORT_EMAIL`, `SUPPORT_PHONE`, `SUPPORT_WHATSAPP` | Support screen rows (hidden when empty). WhatsApp: digits with country code, e.g. `905551234567`. |
+| `OWNER_PANEL_URL` | Web panel address for "Web panelini aç" in the owner account sheet (hidden when empty). |
 | `WEBSITE_URL` | Support screen link. |
 | `LEGAL_BASE_URL` | Legal pages are opened at `<LEGAL_BASE_URL>/{about,privacy,terms,kvkk,distance-sales}`. |
 | `PAYMENT_RESULT_BASE_URL` | Same value as the edge function secret. Its host is the only non-PayTR host the payment WebView may open. |

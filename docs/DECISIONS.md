@@ -52,3 +52,8 @@ Bağlam: Kullanıcı "önce il, sonra o ilin ilçeleri" seçilerek sahaların li
 Karar: 81 il / 973 ilçe veritabanında referans tablo olarak tutulur (`tr_provinces`, `tr_districts`). Tesislerin il/ilçesi bu listeye yabancı anahtarla bağlanır, böylece "Kadiköy" gibi yazım farkları filtreyi bölemez. Müşteri seçicisi yalnızca sahası olan il/ilçeleri gösterir (`list_venue_locations`). İlçe çoklu seçilebilir.
 Sonuç: `list_venues` imzası değişti (`p_city`, `p_districts[]`). İl/ilçe listesi yasal bir değişiklikte (yeni ilçe vb.) yeni migration ile güncellenir.
 
+## ADR-12 · Uygulama açılışında oyuncu / işletmeci seçimi (2026-11-22)
+Bağlam: İşletmeci modu Profilim'de bir anahtarla açılıyordu; profesyonel görünmüyordu ve iki kitlenin ekranları iç içeydi.
+Karar: İlk açılışta rol seçimi yapılır ve cihazda saklanır. Oyuncu telefon OTP ile (ADR-6), işletmeci web paneliyle aynı e-posta + şifre hesabıyla girer. Seçim yalnızca hangi ekranların gösterileceğini belirler; **yetki sunucudadır**: `owner` rolünü yalnızca admin verir, RLS ve RPC kontrolleri değişmedi. Rol seçimi kimseye işletmeci yetkisi vermez. Mod değişimi oturumu kapatır, böylece bir oturum tek kitleye aittir.
+Sonuç: Mobilde e-posta/şifre girişi eklendi. Captcha açıldığında (BASELINE S-05) bu uç da `captchaToken` göndermeli. İşletmeci başvurusu v1'de iletişim üzerinden yapılır (self-servis kayıt yok). Demo modda işletmeci girişi herhangi bir e-posta/şifreyle demo işletmeciye düşer; Profilim'deki demo anahtarı kaldırıldı.
+

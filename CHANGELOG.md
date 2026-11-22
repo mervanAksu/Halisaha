@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com/tr/1.1.0/). Sürümleme: SemVer.
 
 ## [Unreleased]
+### Changed (2026-11-22, ADR-12)
+- **Açılışta rol seçimi:** "Maç yapacağım" / "Sahamı yöneteceğim". Oyuncu telefon OTP ile, işletmeci web paneliyle aynı e-posta + şifreyle girer; her mod yalnızca kendi ekranlarını görür. Seçim cihazda saklanır.
+- İşletmeci olmayan hesap için "Bu hesap bir işletmeci hesabı değil" ekranı ve başvuru iletişimi. İşletmeci Hesap menüsü: web paneli, oyuncu uygulamasına geçiş, çıkış.
+- Profilim'deki demo "İşletmeci modu" anahtarı kaldırıldı; yerine en altta "İşletmeci girişi". Yönlendirme kuralları test edilebilir saf bir fonksiyona taşındı.
+
 ### Added (2026-11-22, ADR-11)
 - **Konum filtresi:** ana sayfada önce il, sonra o ilin bir veya birden çok ilçesi seçilerek sahalar listeleniyor. Yalnızca sahası olan il/ilçeler ve saha sayıları gösteriliyor; seçim cihazda hatırlanıyor.
 - 81 il / 973 ilçe referans tablosu (`tr_provinces`, `tr_districts`); tesislerin il/ilçesi bu listeye yabancı anahtarla bağlı. Yeni RPC `list_venue_locations`; `list_venues` artık `p_city` + `p_districts[]` alıyor.

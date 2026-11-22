@@ -18,6 +18,7 @@ import '../domain/owner_models.dart';
 import 'owner_booking_sheets.dart';
 import 'owner_common.dart';
 import 'owner_providers.dart';
+import 'owner_account_button.dart';
 
 /// "Bugün": date strip and a pitch x time calendar for the selected venue.
 class OwnerTodayScreen extends ConsumerStatefulWidget {
@@ -43,7 +44,7 @@ class _OwnerTodayScreenState extends ConsumerState<OwnerTodayScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(S.today)),
+      appBar: AppBar(title: const Text(S.today), actions: const [OwnerAccountButton()]),
       body: OwnerVenueScope(
         builder: (context, venue, switcher) => RefreshIndicator(
           onRefresh: () async => _refresh(venue.id),

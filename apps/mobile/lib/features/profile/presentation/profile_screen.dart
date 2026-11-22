@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/app_mode/app_mode.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
@@ -12,7 +13,6 @@ import '../../../core/utils/phone.dart';
 import '../../../core/utils/urls.dart';
 import '../../../core/widgets/app_input.dart';
 import '../../../core/widgets/async_value_widget.dart';
-import '../../../demo/demo_owner_toggle.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../domain/profile.dart';
 import 'profile_providers.dart';
@@ -81,6 +81,29 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
     final messenger = ScaffoldMessenger.of(context);
     try {
       await ref.read(authRepositoryProvider).signOut();
+    } on AppException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  /// Owner login: the session ends first (a session belongs to one audience, ADR-12), then the
+  /// app switches to owner mode and the router shows the owner login.
+  Future<void> _switchToOwner(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text(S.switchToOwnerLogin),
+        content: const Text(S.switchToOwnerBody),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(false), child: const Text(S.cancelDismiss)),
+          TextButton(onPressed: () => Navigator.of(dialogContext).pop(true), child: const Text(S.continueLabel)),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await signOutAndSwitchMode(ref, AppMode.owner);
     } on AppException catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(e.message)));
     }
@@ -189,20 +212,6 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
           ),
         ),
         const SizedBox(height: AppSpacing.l),
-        if (AppConfig.demoMode) ...[
-          const DemoOwnerToggle(),
-          const SizedBox(height: AppSpacing.l),
-        ],
-        if (profile.isOwner) ...[
-          _Section(children: [
-            _Tile(
-              icon: Icons.storefront_outlined,
-              label: S.ownerPanel,
-              onTap: () => context.push(AppRoutes.owner),
-            ),
-          ]),
-          const SizedBox(height: AppSpacing.l),
-        ],
         _Section(children: [
           _Tile(
             icon: Icons.notifications_none,
@@ -254,7 +263,18 @@ class _ProfileBodyState extends ConsumerState<_ProfileBody> {
             onTap: () => _deleteAccount(context, ref),
           ),
         ]),
-        const SizedBox(height: AppSpacing.xl),
+        const SizedBox(height: AppSpacing.l),
+        Center(
+          child: TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: tokens.textSecondary,
+              minimumSize: const Size(0, AppSizes.minTarget),
+            ),
+            onPressed: () => _switchToOwner(context, ref),
+            child: const Text(S.switchToOwnerLogin),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.s),
         Center(child: Text(S.appVersionLabel(AppConfig.appVersion), style: theme.textTheme.bodySmall)),
         const SizedBox(height: AppSpacing.l),
       ],

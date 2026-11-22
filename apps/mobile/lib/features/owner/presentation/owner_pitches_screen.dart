@@ -17,6 +17,7 @@ import '../domain/owner_logic.dart';
 import '../domain/owner_models.dart';
 import 'owner_common.dart';
 import 'owner_providers.dart';
+import 'owner_account_button.dart';
 
 /// "Sahalarım": price, deposit and active switch of each pitch.
 class OwnerPitchesScreen extends ConsumerWidget {
@@ -25,7 +26,7 @@ class OwnerPitchesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: const Text(S.ownerTabPitches)),
+      appBar: AppBar(title: const Text(S.ownerTabPitches), actions: const [OwnerAccountButton()]),
       body: OwnerVenueScope(
         builder: (context, venue, switcher) => Column(
           children: [

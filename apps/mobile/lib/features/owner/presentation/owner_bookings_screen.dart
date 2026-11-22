@@ -18,6 +18,7 @@ import '../domain/owner_models.dart';
 import 'owner_booking_sheets.dart';
 import 'owner_common.dart';
 import 'owner_providers.dart';
+import 'owner_account_button.dart';
 
 /// "Rezervasyonlar": upcoming bookings of the selected venue with source / status filters.
 class OwnerBookingsScreen extends ConsumerStatefulWidget {
@@ -48,7 +49,7 @@ class _OwnerBookingsScreenState extends ConsumerState<OwnerBookingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(S.ownerTabBookings)),
+      appBar: AppBar(title: const Text(S.ownerTabBookings), actions: const [OwnerAccountButton()]),
       body: OwnerVenueScope(
         builder: (context, venue, switcher) => Column(
           children: [

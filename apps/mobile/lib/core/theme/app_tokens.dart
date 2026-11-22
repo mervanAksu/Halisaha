@@ -93,6 +93,12 @@ class AppTokens extends ThemeExtension<AppTokens> {
   /// Fully transparent colour (kept here so no literal is needed elsewhere).
   Color get transparent => const Color(0x00000000);
 
+  /// Brand ink and its text colours for the full-screen brand surface (welcome screen). The brand
+  /// screen is ink in light AND dark mode, so it does not follow the themed tokens.
+  static const Color ink = Color(0xFF0E0F0C);
+  static const Color onInk = Color(0xFFFFFFFF);
+  static const Color onInkMuted = Color(0xFFA4A69E);
+
   static const AppTokens light = AppTokens(
     brand: Color(0xFF0E0F0C),
     primary: Color(0xFF0E0F0C),

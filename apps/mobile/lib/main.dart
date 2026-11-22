@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
+import 'core/app_mode/app_mode.dart';
 import 'core/config/app_config.dart';
 import 'core/security/secure_local_storage.dart';
 import 'demo/demo_overrides.dart';
@@ -20,7 +21,9 @@ Future<void> main() async {
 
   if (AppConfig.demoMode) {
     // Backend-free preview: Supabase is never initialised or touched.
-    runApp(ProviderScope(overrides: demoOverrides(DemoStore()), child: const RovansApp()));
+    // Web preview only: `?mode=player` / `?mode=owner` skips the role screen (store screenshots, demo links).
+    final initialMode = kIsWeb ? AppMode.tryParse(Uri.base.queryParameters['mode']) : null;
+    runApp(ProviderScope(overrides: demoOverrides(DemoStore(), initialMode: initialMode), child: const RovansApp()));
     return;
   }
 

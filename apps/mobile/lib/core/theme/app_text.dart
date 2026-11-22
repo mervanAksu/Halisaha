@@ -8,11 +8,13 @@ TextStyle numericStyle(
   BuildContext context, {
   double size = 17,
   FontWeight weight = FontWeight.w600,
+  FontStyle fontStyle = FontStyle.normal,
   Color? color,
 }) {
   return GoogleFonts.barlowCondensed(
     fontSize: size,
     fontWeight: weight,
+    fontStyle: fontStyle,
     height: 1.15,
     color: color ?? context.tokens.textPrimary,
   );

@@ -13,7 +13,9 @@ abstract class SecureKeyValueStore {
 
 /// Non-persistent store (demo build, tests).
 class InMemoryKeyValueStore implements SecureKeyValueStore {
-  final Map<String, String> _data = <String, String>{};
+  InMemoryKeyValueStore({Map<String, String>? initial}) : _data = <String, String>{...?initial};
+
+  final Map<String, String> _data;
 
   @override
   Future<String?> read(String key) async => _data[key];

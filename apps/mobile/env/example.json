@@ -4,6 +4,7 @@
   "SUPPORT_EMAIL": "destek@example.com",
   "SUPPORT_PHONE": "+902120000000",
   "SUPPORT_WHATSAPP": "902120000000",
+  "OWNER_PANEL_URL": "https://panel.example.com",
   "WEBSITE_URL": "https://example.com",
   "LEGAL_BASE_URL": "https://example.com/legal",
   "PAYMENT_RESULT_BASE_URL": "https://example.com/payment/result"
