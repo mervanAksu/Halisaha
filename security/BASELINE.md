@@ -8,7 +8,7 @@
 ### Kimlik doğrulama
 - [ ] ✱ **MFA (TOTP)** owner ve admin hesaplarında zorunlu. Panel `aal2` istemeli, `is_admin()` `aal2` kontrol etmeli (S-04). **[Ücretsiz]**. Telefonla MFA ayrı ücretli eklentidir **[Ücretli]**
 - [ ] ✱ **Leaked password protection** (HaveIBeenPwned) açık, minimum şifre uzunluğu ≥ 12, harf+rakam+sembol şartı **[Doğrula: Pro ve üstü]**
-- [ ] ✱ **CAPTCHA** (Cloudflare Turnstile veya hCaptcha): sign-in, sign-up ve OTP uçlarında. Mobil ve panel `captchaToken` göndermeli (S-05, S-07) **[Ücretsiz]**
+- [ ] ✱ **CAPTCHA** (Cloudflare Turnstile veya hCaptcha): sign-in, sign-up ve OTP uçlarında. Mobil (OTP ve işletmeci e-posta/şifre girişi) ve panel `captchaToken` göndermeli (S-05, S-07) **[Ücretsiz]**
 - [ ] ✱ **SMS hız limitleri**: Auth → Rate Limits. Saatlik OTP gönderimi düşürülmeli (ör. 30/saat/IP), OTP süresi ≤ 5 dk, OTP uzunluğu 6 **[Ücretsiz]**. SMS sağlayıcısı ücretlidir **[Ücretli]**
 - [ ] ✱ SMS sağlayıcısında coğrafi kısıt: yalnızca `+90`. Toll-fraud/pumping koruması açık (S-07) **[Ücretli: sağlayıcıya göre]**
 - [ ] **JWT süresi** ≤ 3600 sn (varsayılan). Refresh token rotation ve reuse detection açık. Inactivity timeout (owner/admin için 12 saat) **[Ücretsiz]**, oturum süresi sınırları **[Doğrula: Pro ve üstü]**

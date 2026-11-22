@@ -6,6 +6,7 @@ import '../../../core/app_mode/app_mode.dart';
 import '../../../core/config/app_config.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/supabase/supabase_providers.dart';
+import '../../profile/presentation/profile_providers.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_text.dart';
 import '../../../core/theme/app_tokens.dart';
@@ -18,8 +19,11 @@ class WelcomeScreen extends ConsumerWidget {
 
   Future<void> _choose(WidgetRef ref, AppMode mode) async {
     final signedIn = ref.read(currentUserIdProvider) != null;
+    final isOwnerSession = ref.read(profileProvider).valueOrNull?.isOwner ?? false;
     final modeNotifier = ref.read(appModeProvider.notifier);
-    if (mode == AppMode.owner && signedIn) {
+    // A session belongs to one audience (ADR-12): a customer session never carries into owner mode
+    // and an owner session never carries into player mode.
+    if (signedIn && (mode == AppMode.owner || isOwnerSession)) {
       // A leftover customer session (app update, demo) must not carry over into the owner mode.
       try {
         await ref.read(authRepositoryProvider).signOut();

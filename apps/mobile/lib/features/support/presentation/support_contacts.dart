@@ -45,15 +45,15 @@ class SupportContactCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final tokens = context.tokens;
-    return Container(
-      decoration: BoxDecoration(
-        color: tokens.card,
+    // A Material (not a decorated Container) so ListTile ink splashes stay visible.
+    return Material(
+      color: tokens.card,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: tokens.border),
+        side: BorderSide(color: tokens.border),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        child: Column(
+      child: Column(
           children: [
             for (var i = 0; i < contacts.length; i++) ...[
               if (i > 0) const Divider(height: 1),
@@ -67,7 +67,6 @@ class SupportContactCard extends StatelessWidget {
             ],
           ],
         ),
-      ),
     );
   }
 }

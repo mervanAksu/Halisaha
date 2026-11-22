@@ -296,16 +296,15 @@ class _Section extends StatelessWidget {
       if (i < children.length - 1) items.add(const Divider(height: 1));
     }
     final tokens = context.tokens;
-    return Container(
-      decoration: BoxDecoration(
-        color: tokens.card,
+    // A Material (not a decorated Container) so ListTile ink splashes stay visible.
+    return Material(
+      color: tokens.card,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: tokens.border),
+        side: BorderSide(color: tokens.border),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppRadius.card),
-        child: Column(children: items),
-      ),
+      child: Column(children: items),
     );
   }
 }
