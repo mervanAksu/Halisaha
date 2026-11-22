@@ -315,6 +315,8 @@ abstract final class S {
 
   // --- Demo / web preview ------------------------------------------------------
   static const String demoBanner = 'DEMO · gerçek ödeme alınmaz';
+  static const String demoLoginHint = 'Demo: herhangi bir telefon numarası girebilirsin, SMS gönderilmez.';
+  static const String demoOtpHint = 'Demo: herhangi bir 6 haneli kod çalışır.';
   static const String demoDisabled = 'Demo modunda bu işlem kapalı';
   static const String demoPaymentTitle = 'Demo ödeme';
   static const String demoPaymentIntro = 'Bu bir demo. Kart bilgisi istenmez ve hiçbir ücret alınmaz.';

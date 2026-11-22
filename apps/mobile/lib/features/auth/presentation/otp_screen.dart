@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/config/app_config.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/l10n/strings.dart';
 import '../../../core/theme/app_tokens.dart';
@@ -110,6 +111,10 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(S.otpSentTo(formatPhoneDisplay(widget.phone)), style: theme.textTheme.bodyMedium),
+              if (AppConfig.demoMode) ...[
+                const SizedBox(height: AppSpacing.s),
+                Text(S.demoOtpHint, style: theme.textTheme.bodySmall),
+              ],
               const SizedBox(height: AppSpacing.xl),
               TextField(
                 controller: _codeController,

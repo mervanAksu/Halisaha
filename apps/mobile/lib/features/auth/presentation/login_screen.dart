@@ -101,6 +101,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 PrimaryButton(label: S.sendCode, loading: _busy, onPressed: _submit),
                 const SizedBox(height: AppSpacing.l),
                 Text(S.loginSmsNote, style: theme.textTheme.bodySmall),
+                if (AppConfig.demoMode) ...[
+                  const SizedBox(height: AppSpacing.s),
+                  Text(S.demoLoginHint, style: theme.textTheme.bodySmall),
+                ],
               ],
             ),
           ),

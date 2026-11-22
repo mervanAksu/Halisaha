@@ -17,9 +17,10 @@ import 'demo_store.dart';
 /// Gives the demo payment screen access to the in-memory backend. Throws outside demo mode.
 final demoStoreProvider = Provider<DemoStore>((ref) => throw StateError('demoStoreProvider is only available in demo mode'));
 
-/// Whether the demo session is signed in. Starts signed in (as the demo customer) so the player demo
-/// opens straight on the home screen; sign-out and the owner login flip it.
-final demoSignedInProvider = StateProvider<bool>((ref) => true);
+/// Whether the demo session is signed in. Starts signed out, exactly like a fresh install of the real
+/// app, so "Maç yapacağım" asks for a phone number. Only the `?mode=` preview links (store
+/// screenshots) start signed in. Sign-in, sign-out and the owner login flip it.
+final demoSignedInProvider = StateProvider<bool>((ref) => false);
 
 /// Root `ProviderScope` overrides for the backend-free demo. With these in place no provider ever
 /// reads `supabaseClientProvider`, so `Supabase.instance` is never touched.
@@ -30,7 +31,7 @@ List<Override> demoOverrides(DemoStore store, {AppMode? initialMode}) {
   if (initialMode == AppMode.owner) store.setOwnerMode(true);
   return <Override>[
     demoStoreProvider.overrideWithValue(store),
-    // Signed in as the demo user for the whole session.
+    if (initialMode != null) demoSignedInProvider.overrideWith((ref) => true),
     authStateProvider.overrideWith((ref) => const Stream<AuthState>.empty()),
     currentUserIdProvider.overrideWith((ref) => ref.watch(demoSignedInProvider) ? DemoStore.userId : null),
     authRepositoryProvider.overrideWith(

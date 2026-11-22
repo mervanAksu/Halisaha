@@ -63,6 +63,19 @@ void main() {
     expect(find.byType(WelcomeScreen), findsNothing);
   });
 
+  testWidgets('a fresh demo start is signed out: "Maç yapacağım" asks for the phone number', (tester) async {
+    tester.view.physicalSize = const Size(430, 932);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    // Plain demoOverrides, no test overrides: the same start as the web demo.
+    await tester.pumpWidget(ProviderScope(overrides: demoOverrides(DemoStore()), child: const RovansApp()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Maç yapacağım'));
+    await tester.pumpAndSettle();
+    expect(find.byType(LoginScreen), findsOneWidget);
+    expect(find.byType(ShellScaffold), findsNothing);
+  });
+
   testWidgets('"Maç yapacağım" when signed out lands on the phone login', (tester) async {
     await launch(tester, signedIn: false);
     await tester.tap(find.text('Maç yapacağım'));
