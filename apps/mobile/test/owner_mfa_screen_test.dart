@@ -8,9 +8,9 @@ import 'package:halisaha/features/auth/presentation/auth_providers.dart';
 import 'package:halisaha/features/owner/presentation/owner_mfa_screen.dart';
 
 class _FakeAuthRepository implements AuthRepository {
-  _FakeAuthRepository({this.pending = true});
+  _FakeAuthRepository();
 
-  bool pending;
+  bool pending = true;
   final List<String> attempts = [];
 
   @override
