@@ -44,7 +44,9 @@ class LocationFilterNotifier extends Notifier<LocationFilter> {
 
   Future<void> _restore() async {
     try {
-      final saved = LocationFilter.fromJsonString(await ref.read(keyValueStoreProvider).read(locationFilterStorageKey));
+      final saved = LocationFilter.fromJsonString(
+        await ref.read(keyValueStoreProvider).read(locationFilterStorageKey).timeout(const Duration(seconds: 2)),
+      );
       if (!saved.isActive || _touched) return;
       var restored = saved;
       try {

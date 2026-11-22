@@ -37,8 +37,9 @@ int _rank(String ch) {
   final index = _trAlphabet.indexOf(ch);
   if (index >= 0) return 1000 + index;
   final code = ch.codeUnitAt(0);
-  // q, w, x are not Turkish letters; keep them after the Turkish ones in a stable place.
-  return code < 1000 ? code : 2000 + code;
+  // Digits and punctuation sort first; other letters (q, w, x, foreign) after the Turkish ones.
+  final isLetter = RegExp(r'\p{L}', unicode: true).hasMatch(ch);
+  return isLetter ? 2000 + code : code;
 }
 
 /// Compares two strings by the Turkish alphabet:

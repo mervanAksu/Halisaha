@@ -49,6 +49,9 @@ void main() {
       expect(compareTr('Ordu', 'Ödemiş'), lessThan(0));
       expect(compareTr('Aydın', 'Aydın'), 0);
       expect(compareTr('Ana', 'Anadolu'), lessThan(0));
+      expect(compareTr('19 Mayıs', 'Alaçam'), lessThan(0));
+      expect(compareTr('Xanthos', 'Zile'), greaterThan(0));
+      expect(compareTr('Wien', 'Ünye'), greaterThan(0));
     });
 
     test('sorts a province list', () {

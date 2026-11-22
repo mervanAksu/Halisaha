@@ -10,7 +10,7 @@ import { parseNumber, str } from '@/lib/form';
 
 function locationAwareError(error: { message?: string | null; code?: string | null }): string {
   // FK venues(city, district) -> tr_districts violated.
-  if (error.code === '23503') return 'Seçilen il/ilçe geçerli değil.';
+  if (error.code === '23503' && (error.message ?? '').includes('venues_city_district_fk')) return 'Seçilen il/ilçe geçerli değil.';
   return toTurkishError(error);
 }
 

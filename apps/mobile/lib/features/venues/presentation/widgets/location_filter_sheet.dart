@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -64,16 +66,25 @@ class _LocationFilterSheetState extends ConsumerState<LocationFilterSheet> {
 
   void _backToCities() => setState(() => _city = null);
 
-  Future<void> _clearAndClose() async {
-    final navigator = Navigator.of(context);
-    await ref.read(locationFilterProvider.notifier).clear();
-    navigator.pop();
+  // Close first, persist in the background: a double tap must not pop the page under the sheet.
+  bool _closing = false;
+
+  void _clearAndClose() {
+    if (_closing) return;
+    _closing = true;
+    final notifier = ref.read(locationFilterProvider.notifier);
+    Navigator.of(context).pop();
+    unawaited(notifier.clear());
   }
 
-  Future<void> _applyAndClose() async {
-    final navigator = Navigator.of(context);
-    await ref.read(locationFilterProvider.notifier).apply(city: _city, districts: _districts);
-    navigator.pop();
+  void _applyAndClose() {
+    if (_closing) return;
+    _closing = true;
+    final notifier = ref.read(locationFilterProvider.notifier);
+    final city = _city;
+    final districts = {..._districts};
+    Navigator.of(context).pop();
+    unawaited(notifier.apply(city: city, districts: districts));
   }
 
   @override
